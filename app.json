@@ -5,16 +5,12 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "dsamastery",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "light",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
-      "backgroundColor": "#F4F2EE",
-      "resizeMode": "contain",
-      "dark": {
-        "image": "./assets/splash-dark.png",
-        "backgroundColor": "#0E0E10"
-      }
+      "backgroundColor": "#F6F3ED",
+      "resizeMode": "contain"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -27,7 +23,7 @@
       "package": "com.dsamastery.app",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#0E0E10"
+        "backgroundColor": "#F6F3ED"
       },
       "permissions": [
         "POST_NOTIFICATIONS",
@@ -44,7 +40,7 @@
         "expo-notifications",
         {
           "icon": "./assets/adaptive-icon.png",
-          "color": "#E5393B"
+          "color": "#D2593C"
         }
       ]
     ],

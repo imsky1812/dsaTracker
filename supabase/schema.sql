@@ -10,7 +10,9 @@ create table if not exists roadmap_phases (
   summary text not null,
   est_weeks text,
   checkpoint text,
-  learn jsonb not null default '[]'
+  learn jsonb not null default '[]',
+  -- topic slugs belonging to this phase; drives the progress journey on Learn
+  topics jsonb not null default '[]'
 );
 
 create table if not exists languages (
@@ -61,6 +63,9 @@ create table if not exists problems (
   platform text not null,
   difficulty text not null,
   tier text not null,
+  -- optional curated explanation video; null means the app falls back to a
+  -- YouTube search (see problemVideoUrl in src/lib/content.ts)
+  video text,
   -- the same problem is taught under several topics (Two Sum: arrays, stl,
   -- hashing), so identity is (topic, name) — not name alone.
   unique (topic_id, name)

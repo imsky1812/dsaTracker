@@ -1,14 +1,16 @@
-// Design system — two palettes, one shape language.
+// Design system — one light palette, one shape language.
 //
-// The app follows the phone's colour scheme. Both palettes define exactly the
-// same keys, so a screen never has to know which one it is rendering; it reads
-// `useColors()` and the values swap underneath it.
+// Light only, by decision: a single palette means every surface, shadow and
+// contrast pair is tuned once and actually checked, rather than two half-tuned
+// sets. Colour is still read through `useColors()` in theme.ts, so a second
+// palette can be reintroduced later without touching a single screen.
 //
-// Shape and type are deliberately NOT themed: a card has the same generous
-// radius and the same typographic rhythm in both modes. Only colour changes.
+// Direction: warm and soft rather than clinical. The ground is a warm sand,
+// cards are near-white and float on generous radii, and a single terracotta
+// carries every primary action. Supporting colours are muted, never saturated.
 
 export interface Palette {
-  // three grounds, low → high elevation
+  // grounds, low → high elevation
   bg: string;
   surface: string;
   surface2: string;
@@ -22,6 +24,13 @@ export interface Palette {
   accentSoft: string;
   /** text/icons sitting on top of a filled accent */
   onAccent: string;
+
+  /** calm secondary, used for "done" and positive states */
+  mint: string;
+  mintSoft: string;
+  /** warm secondary, used for in-progress and attention */
+  sun: string;
+  sunSoft: string;
 
   text: string;
   textMuted: string;
@@ -42,98 +51,65 @@ export interface Palette {
   heat3: string;
   heat4: string;
 
-  /** ambient shadow colour — near-black in light, pure black in dark */
   shadowColor: string;
   shadowOpacity: number;
 }
 
-// Warm off-white rather than pure white: paper, not a spreadsheet. Greys carry
-// a slight warm cast so they sit with the red accent instead of fighting it.
-export const lightPalette: Palette = {
-  bg: '#F4F2EE',
+export const palette: Palette = {
+  // Warm sand, not white — paper you'd want to work on for hours.
+  bg: '#F6F3ED',
   surface: '#FFFFFF',
-  surface2: '#EEEBE5',
-  surface3: '#E4E0D8',
+  surface2: '#F0ECE3',
+  surface3: '#E5DFD2',
 
-  border: '#E2DED6',
-  borderSoft: '#EDEAE4',
+  border: '#E7E1D6',
+  borderSoft: '#F0ECE3',
 
-  accent: '#C8362F',
-  accentDim: '#E8A9A5',
-  accentSoft: 'rgba(200,54,47,0.10)',
+  // Terracotta: warmer and friendlier than the old fire-engine red, and it sits
+  // naturally on sand instead of vibrating against it.
+  accent: '#D2593C',
+  accentDim: '#EBB3A2',
+  accentSoft: '#FBEDE8',
   onAccent: '#FFFFFF',
 
-  text: '#1B1A18',
-  textMuted: '#6E6A63',
-  textFaint: '#A19C93',
+  mint: '#4C9A78',
+  mintSoft: '#E4F1EA',
+  sun: '#D99A2B',
+  sunSoft: '#FBF0DC',
 
-  easy: '#3E8E5F',
-  medium: '#B08417',
-  hard: '#C8362F',
+  // Deep warm brown rather than black: softer, and it belongs to the ground.
+  text: '#2A2420',
+  textMuted: '#736A61',
+  textFaint: '#A79D91',
 
-  warmup: '#3E8E5F',
-  core: '#B08417',
+  easy: '#4C9A78',
+  medium: '#D99A2B',
+  hard: '#D2593C',
+
+  warmup: '#4C9A78',
+  core: '#D99A2B',
   interview: '#C97544',
-  hardTier: '#C8362F',
+  hardTier: '#D2593C',
 
-  // Light-mode heat ramp runs pale → saturated so an empty day reads as
-  // "nothing here" rather than as a filled square.
-  heat0: '#E7E3DB',
-  heat1: '#F3C9C4',
-  heat2: '#E39A93',
-  heat3: '#D2635B',
-  heat4: '#C8362F',
+  // Pale → saturated, so an empty day reads as genuinely empty.
+  heat0: '#EAE5DA',
+  heat1: '#F7D9CD',
+  heat2: '#EDAF97',
+  heat3: '#DF8163',
+  heat4: '#D2593C',
 
-  shadowColor: '#3A332B',
-  shadowOpacity: 0.10,
+  shadowColor: '#4A3B2E',
+  shadowOpacity: 0.09,
 };
 
-export const darkPalette: Palette = {
-  bg: '#0E0E10',
-  surface: '#17171A',
-  surface2: '#202024',
-  surface3: '#2A2A30',
-
-  border: '#2A2A30',
-  borderSoft: '#1E1E22',
-
-  accent: '#E5393B',
-  accentDim: '#A01F2E',
-  accentSoft: 'rgba(229,57,59,0.12)',
-  onAccent: '#FFFFFF',
-
-  text: '#EDE7E7',
-  textMuted: '#A49B9C',
-  textFaint: '#6B6466',
-
-  easy: '#4A9D6A',
-  medium: '#C9A227',
-  hard: '#E5393B',
-
-  warmup: '#4A9D6A',
-  core: '#C9A227',
-  interview: '#E5936B',
-  hardTier: '#E5393B',
-
-  heat0: '#1A1A1E',
-  heat1: '#3A2224',
-  heat2: '#6E2429',
-  heat3: '#A62630',
-  heat4: '#E5393B',
-
-  shadowColor: '#000000',
-  shadowOpacity: 0.35,
-};
-
-// ---------- shape & rhythm (theme-independent) ----------
+// ---------- shape & rhythm ----------
 
 export const spacing = {
   xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 36,
 };
 
 // Generous radii are the single biggest thing separating a considered layout
-// from a default one. Cards are soft; anything interactive is a full pill or a
-// circle.
+// from a default one. Cards are soft; anything interactive is a pill or circle.
 export const radius = {
   sm: 10, md: 16, lg: 22, xl: 28, xxl: 34, pill: 999,
 };
@@ -157,7 +133,6 @@ export const type = {
   monoBold: 'JetBrainsMono_700Bold',
 };
 
-/** Shadows need the palette, since light mode wants a warm, much softer lift. */
 export const shadows = (p: Palette) => ({
   card: {
     shadowColor: p.shadowColor,

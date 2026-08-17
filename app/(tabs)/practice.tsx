@@ -5,7 +5,8 @@ import { useLocalSearchParams } from 'expo-router';
 import { Palette, spacing, radius, type, tabInset, difficultyColor } from '../../src/theme/tokens';
 import { useColors, useThemedStyles } from '../../src/theme/theme';
 import { Card, Pill, PrimaryButton } from '../../src/components/ui';
-import { plan, allProblems, ProblemStatus } from '../../src/lib/content';
+import { Feather } from '@expo/vector-icons';
+import { plan, allProblems, ProblemStatus, problemVideoUrl } from '../../src/lib/content';
 import { useProgress } from '../../src/store/progress';
 
 type StatusFilter = 'all' | ProblemStatus;
@@ -49,7 +50,7 @@ export default function Practice() {
 
   // openURL rejects when no browser can handle the link; unhandled, that is an
   // unexplained crash-looking failure on a tap.
-  const openProblem = async (url: string, name: string) => {
+  const openLink = async (url: string, name: string) => {
     try {
       await Linking.openURL(url);
     } catch {
@@ -112,7 +113,7 @@ export default function Practice() {
                 <Text style={[s.statusGlyph, { color: c.onAccent }]}>{statusGlyph(st)}</Text>
               </Pressable>
 
-              <Pressable style={{ flex: 1 }} onPress={() => void openProblem(p.url, p.name)}>
+              <Pressable style={{ flex: 1 }} onPress={() => void openLink(p.url, p.name)}>
                 <Text style={s.name}>{p.name}</Text>
                 <Text style={s.meta}>
                   {p.topicSlug.replace(/-/g, ' ')}
@@ -122,9 +123,19 @@ export default function Practice() {
 
               <View style={s.rightCol}>
                 <Pill label={p.difficulty} filled color={difficultyColor(c, p.difficulty)} small />
-                <Pressable onPress={() => openNote(p.id)} hitSlop={8} style={s.noteBtn}>
-                  <Text style={[s.noteIcon, hasNote && { color: c.accent }]}>✎</Text>
-                </Pressable>
+                <View style={s.actionRow}>
+                  {/* Stuck? Go straight to an explanation. */}
+                  <Pressable
+                    onPress={() => void openLink(problemVideoUrl(p, p.topicSlug), p.name)}
+                    hitSlop={8}
+                    style={s.iconBtn}
+                  >
+                    <Feather name="play" size={13} color={c.accent} />
+                  </Pressable>
+                  <Pressable onPress={() => openNote(p.id)} hitSlop={8} style={s.iconBtn}>
+                    <Feather name="edit-2" size={13} color={hasNote ? c.accent : c.textFaint} />
+                  </Pressable>
+                </View>
               </View>
             </Card>
           );
@@ -213,8 +224,8 @@ const makeStyles = (c: Palette) => StyleSheet.create({
   name: { fontFamily: type.heading, fontSize: 15.5, color: c.text, lineHeight: 21 },
   meta: { fontFamily: type.mono, fontSize: 10.5, color: c.textFaint, marginTop: 4, textTransform: 'capitalize' },
   rightCol: { alignItems: 'flex-end', gap: spacing.sm },
-  noteBtn: { width: 30, height: 30, borderRadius: 15, backgroundColor: c.surface2, alignItems: 'center', justifyContent: 'center' },
-  noteIcon: { fontSize: 14, color: c.textFaint },
+  actionRow: { flexDirection: 'row', gap: 6 },
+  iconBtn: { width: 30, height: 30, borderRadius: 15, backgroundColor: c.surface2, alignItems: 'center', justifyContent: 'center' },
 
   empty: { alignItems: 'center', paddingVertical: spacing.xxl, gap: spacing.sm },
   emptyTitle: { fontFamily: type.display, fontSize: 22, color: c.text },

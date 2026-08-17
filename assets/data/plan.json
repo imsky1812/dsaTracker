@@ -17,7 +17,10 @@
           "Core STL: vector, pair, string",
           "Pattern printing (nested loops)"
         ],
-        "checkpoint": "You can write, compile, and debug a 40-line program without looking up basic syntax."
+        "checkpoint": "You can write, compile, and debug a 40-line program without looking up basic syntax.",
+        "topics": [
+          "basics-patterns"
+        ]
       },
       {
         "order": 2,
@@ -31,7 +34,13 @@
           "STL containers: map, set, unordered_*",
           "Patterns: two pointers, sliding window, prefix sum"
         ],
-        "checkpoint": "You can recognize when a problem is a sliding-window or two-pointer problem without being told."
+        "checkpoint": "You can recognize when a problem is a sliding-window or two-pointer problem without being told.",
+        "topics": [
+          "arrays",
+          "binary-search",
+          "strings",
+          "stl"
+        ]
       },
       {
         "order": 3,
@@ -45,7 +54,12 @@
           "Merge sort, quick sort",
           "Divide & conquer"
         ],
-        "checkpoint": "You can write a backtracking solution from the template without copying one."
+        "checkpoint": "You can write a backtracking solution from the template without copying one.",
+        "topics": [
+          "recursion",
+          "backtracking",
+          "sorting"
+        ]
       },
       {
         "order": 4,
@@ -59,7 +73,11 @@
           "Monotonic stack",
           "Deque patterns"
         ],
-        "checkpoint": "You can reverse a linked list and detect a cycle without reference."
+        "checkpoint": "You can reverse a linked list and detect a cycle without reference.",
+        "topics": [
+          "linked-lists",
+          "stacks-queues"
+        ]
       },
       {
         "order": 5,
@@ -73,7 +91,13 @@
           "Heaps / priority queue, top-K",
           "Hashing techniques"
         ],
-        "checkpoint": "You can do all four traversals iteratively and solve a top-K problem with a heap."
+        "checkpoint": "You can do all four traversals iteratively and solve a top-K problem with a heap.",
+        "topics": [
+          "trees",
+          "bst",
+          "heaps",
+          "hashing"
+        ]
       },
       {
         "order": 6,
@@ -88,7 +112,11 @@
           "MST & union-find",
           "Greedy strategies"
         ],
-        "checkpoint": "You can model a word/grid problem as a graph and pick the right traversal."
+        "checkpoint": "You can model a word/grid problem as a graph and pick the right traversal.",
+        "topics": [
+          "greedy",
+          "graphs"
+        ]
       },
       {
         "order": 7,
@@ -103,7 +131,10 @@
           "Grid DP",
           "DP on strings & subsequences"
         ],
-        "checkpoint": "You can take a fresh problem, write the recurrence, and convert it to tabulation."
+        "checkpoint": "You can take a fresh problem, write the recurrence, and convert it to tabulation.",
+        "topics": [
+          "dynamic-programming"
+        ]
       },
       {
         "order": 8,
@@ -117,7 +148,11 @@
           "Timed mock interviews",
           "Company-wise problem sets"
         ],
-        "checkpoint": "You can solve two medium problems in 45 minutes, explaining as you go."
+        "checkpoint": "You can solve two medium problems in 45 minutes, explaining as you go.",
+        "topics": [
+          "tries",
+          "bit-manipulation"
+        ]
       }
     ]
   },

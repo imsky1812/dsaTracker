@@ -62,6 +62,20 @@ const GFG = /^https:\/\/www\.geeksforgeeks\.org\/problems\/[^\s]+$/;
 const TIERS = new Set(['warmup', 'core', 'interview', 'hard']);
 const DIFFICULTIES = new Set(['Easy', 'Medium', 'Hard']);
 
+// Every topic must belong to exactly one phase, or the progress journey either
+// hides a topic or double-counts it.
+const phaseTopics = roadmap.phases.flatMap((p) => p.topics ?? []);
+const topicSlugs = topics.map((t) => t.slug);
+for (const slug of topicSlugs) {
+  if (!phaseTopics.includes(slug)) fail(`topic "${slug}" is not assigned to any roadmap phase`);
+}
+for (const slug of phaseTopics) {
+  if (!topicSlugs.includes(slug)) fail(`roadmap phase references unknown topic "${slug}"`);
+}
+if (phaseTopics.length !== new Set(phaseTopics).size) {
+  fail('a topic is assigned to more than one roadmap phase');
+}
+
 const seenSlugs = new Set();
 // A problem may legitimately appear under several topics (Two Sum is taught in
 // arrays, stl and hashing). Its identity is (name, url) — so the same name must
@@ -78,6 +92,13 @@ for (const t of topics) {
     if (p.platform === 'GFG' && !GFG.test(p.url)) fail(`bad GFG URL: ${where} -> ${p.url}`);
     if (!TIERS.has(p.tier)) fail(`bad tier: ${where} -> ${p.tier}`);
     if (!DIFFICULTIES.has(p.difficulty)) fail(`bad difficulty: ${where} -> ${p.difficulty}`);
+
+    // A curated video is optional, but if present it must be a real YouTube
+    // link — a placeholder here would be exactly the fabricated URL the repo
+    // rules forbid.
+    if (p.video && !/^https:\/\/(www\.youtube\.com\/watch\?v=|youtu\.be\/)[\w-]{11}/.test(p.video)) {
+      fail(`bad video URL: ${where} -> ${p.video}`);
+    }
 
     const prev = urlByName.get(p.name);
     if (prev && prev !== p.url) fail(`problem "${p.name}" has two different URLs: ${prev} vs ${p.url}`);
@@ -111,10 +132,12 @@ lines.push('');
 
 for (const ph of roadmap.phases) {
   lines.push(
-    `insert into roadmap_phases ("order", title, summary, est_weeks, checkpoint, learn) values ` +
-      `(${ph.order}, ${q(ph.title)}, ${q(ph.summary)}, ${q(ph.est_weeks)}, ${q(ph.checkpoint)}, ${q(JSON.stringify(ph.learn))})` +
+    `insert into roadmap_phases ("order", title, summary, est_weeks, checkpoint, learn, topics) values ` +
+      `(${ph.order}, ${q(ph.title)}, ${q(ph.summary)}, ${q(ph.est_weeks)}, ${q(ph.checkpoint)}, ` +
+      `${q(JSON.stringify(ph.learn))}, ${q(JSON.stringify(ph.topics))})` +
       ` on conflict ("order") do update set title = excluded.title, summary = excluded.summary,` +
-      ` est_weeks = excluded.est_weeks, checkpoint = excluded.checkpoint, learn = excluded.learn;`
+      ` est_weeks = excluded.est_weeks, checkpoint = excluded.checkpoint, learn = excluded.learn,` +
+      ` topics = excluded.topics;`
   );
 }
 lines.push('');
@@ -169,11 +192,13 @@ for (const t of topics) {
     // reference this key, so a mismatch would silently orphan someone's data.
     const key = `${t.slug}::${p.name}`;
     lines.push(
-      `insert into problems (topic_id, key, name, url, platform, difficulty, tier) ` +
-        `select id, ${q(key)}, ${q(p.name)}, ${q(p.url)}, ${q(p.platform)}, ${q(p.difficulty)}, ${q(p.tier)} ` +
+      `insert into problems (topic_id, key, name, url, platform, difficulty, tier, video) ` +
+        `select id, ${q(key)}, ${q(p.name)}, ${q(p.url)}, ${q(p.platform)}, ${q(p.difficulty)}, ${q(p.tier)}, ` +
+        `${p.video ? q(p.video) : 'null'} ` +
         `from topics where slug = ${q(t.slug)} ` +
         `on conflict (topic_id, name) do update set key = excluded.key, url = excluded.url,` +
-        ` platform = excluded.platform, difficulty = excluded.difficulty, tier = excluded.tier;`
+        ` platform = excluded.platform, difficulty = excluded.difficulty, tier = excluded.tier,` +
+        ` video = excluded.video;`
     );
   }
 }

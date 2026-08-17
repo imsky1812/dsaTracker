@@ -5,7 +5,8 @@ import { useLocalSearchParams, router } from 'expo-router';
 import { Palette, spacing, radius, type, tierColor, difficultyColor } from '../../src/theme/tokens';
 import { useColors, useThemedStyles } from '../../src/theme/theme';
 import { Card, Pill, Markdown, CodeBlock, Bar, PrimaryButton } from '../../src/components/ui';
-import { plan, problemId } from '../../src/lib/content';
+import { Feather } from '@expo/vector-icons';
+import { plan, problemId, problemVideoUrl } from '../../src/lib/content';
 import { useProgress } from '../../src/store/progress';
 
 type Tab = 'learn' | 'patterns' | 'complexity' | 'code' | 'problems';
@@ -49,7 +50,7 @@ export default function TopicDetail() {
   const statusColor = (st?: string) => (st === 'solved' ? c.easy : st === 'revisit' ? c.medium : c.textFaint);
   const statusGlyph = (st?: string) => (st === 'solved' ? '✓' : st === 'revisit' ? '↺' : '');
 
-  const openProblem = async (url: string, name: string) => {
+  const openLink = async (url: string, name: string) => {
     try {
       await Linking.openURL(url);
     } catch {
@@ -66,7 +67,7 @@ export default function TopicDetail() {
             hitSlop={12}
             style={s.backBtn}
           >
-            <Text style={s.backGlyph}>‹</Text>
+            <Feather name="chevron-left" size={22} color={c.text} />
           </Pressable>
           <Pressable
             onPress={() => toggleTopic(topic.slug)}
@@ -138,7 +139,7 @@ export default function TopicDetail() {
                           <Text style={[s.statusGlyph, { color: c.onAccent }]}>{statusGlyph(st)}</Text>
                         </Pressable>
 
-                        <Pressable style={{ flex: 1 }} onPress={() => void openProblem(p.url, p.name)}>
+                        <Pressable style={{ flex: 1 }} onPress={() => void openLink(p.url, p.name)}>
                           <Text style={s.problemName}>{p.name}</Text>
                           {p.companies.length > 0 && (
                             <Text style={s.problemCompanies}>{p.companies.slice(0, 3).join(' · ')}</Text>
@@ -147,7 +148,15 @@ export default function TopicDetail() {
 
                         <View style={s.problemMeta}>
                           <Pill label={p.difficulty} filled color={difficultyColor(c, p.difficulty)} small />
-                          <Text style={s.platform}>{p.platform}</Text>
+                          {/* Stuck? Go straight to an explanation. */}
+                          <Pressable
+                            onPress={() => void openLink(problemVideoUrl(p, topic.slug), p.name)}
+                            hitSlop={8}
+                            style={s.watchBtn}
+                          >
+                            <Feather name="play" size={11} color={c.accent} />
+                            <Text style={s.watchText}>Watch</Text>
+                          </Pressable>
                         </View>
                       </Card>
                     );
@@ -156,7 +165,8 @@ export default function TopicDetail() {
               );
             })}
             <Text style={s.tapHint}>
-              Tap the circle to cycle: unsolved → solved → revisit. Tap the name to open the problem.
+              Tap the circle to cycle: unsolved → solved → revisit. Tap the name to open the problem,
+              or Watch for an explanation.
             </Text>
           </>
         )}
@@ -198,8 +208,13 @@ const makeStyles = (c: Palette) => StyleSheet.create({
   statusGlyph: { fontSize: 15, fontFamily: type.heading, includeFontPadding: false },
   problemName: { fontFamily: type.heading, fontSize: 15.5, color: c.text, lineHeight: 21 },
   problemCompanies: { fontFamily: type.mono, fontSize: 10, color: c.textFaint, marginTop: 4 },
-  problemMeta: { alignItems: 'flex-end', gap: 6 },
-  platform: { fontFamily: type.mono, fontSize: 10, color: c.textFaint },
+  problemMeta: { alignItems: 'flex-end', gap: 8 },
+  watchBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: 5,
+    backgroundColor: c.accentSoft, borderRadius: radius.pill,
+    paddingVertical: 5, paddingHorizontal: 10,
+  },
+  watchText: { fontFamily: type.mono, fontSize: 10, color: c.accent, textTransform: 'uppercase' },
 
   tapHint: { fontFamily: type.body, fontSize: 12.5, color: c.textFaint, lineHeight: 20, textAlign: 'center' },
 

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, TextInput, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Palette, spacing, radius, type, tabInset } from '../../src/theme/tokens';
-import { useColors, useThemedStyles, useIsLight } from '../../src/theme/theme';
+import { useColors, useThemedStyles } from '../../src/theme/theme';
 import { Card, Eyebrow, Pill, GhostButton } from '../../src/components/ui';
 import { plan } from '../../src/lib/content';
 import { useProgress } from '../../src/store/progress';
@@ -25,7 +25,6 @@ const LANGUAGES = [
 export default function Profile() {
   const c = useColors();
   const s = useThemedStyles(makeStyles);
-  const isLight = useIsLight();
 
   const { language, setLanguage, reminderTime, setReminderTime, githubHandle, setGithubHandle, resetProgress } = useProgress();
   const [handle, setHandle] = useState(githubHandle);
@@ -267,7 +266,7 @@ export default function Profile() {
         <GhostButton label="Reset all progress" tone="accent" onPress={confirmReset} />
 
         <Text style={s.version}>
-          DSA Mastery · v1.0 · {isLight ? 'light' : 'dark'} theme follows your system
+          DSA Mastery · v1.0
         </Text>
       </ScrollView>
     </SafeAreaView>

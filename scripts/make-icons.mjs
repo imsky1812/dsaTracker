@@ -8,7 +8,7 @@
 // that has to compile on every machine and CI runner.
 //
 // The mark is the contribution heatmap — the app's signature element — reduced
-// to a 4x4 grid on the charcoal ground, cells carrying the same red heat ramp
+// to a 4x4 grid on the warm sand ground, cells carrying the same heat ramp
 // as src/theme/tokens.ts. It reads as "practice, day after day", which is the
 // whole point of the app, and it stays legible at 48px.
 
@@ -21,26 +21,16 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const outDir = join(root, 'assets');
 mkdirSync(outDir, { recursive: true });
 
-// ---------- palettes (mirror src/theme/tokens.ts) ----------
-const DARK = {
-  bg: [0x0e, 0x0e, 0x10, 255],
-  heat: [
-    [0x1a, 0x1a, 0x1e, 255], // heat0 — empty day
-    [0x3a, 0x22, 0x24, 255],
-    [0x6e, 0x24, 0x29, 255],
-    [0xa6, 0x26, 0x30, 255],
-    [0xe5, 0x39, 0x3b, 255], // heat4 — best day
-  ],
-};
 
+// Single light palette, mirroring `palette` in src/theme/tokens.ts.
 const LIGHT = {
-  bg: [0xf4, 0xf2, 0xee, 255],
+  bg: [0xf6, 0xf3, 0xed, 255],
   heat: [
-    [0xe7, 0xe3, 0xdb, 255],
-    [0xf3, 0xc9, 0xc4, 255],
-    [0xe3, 0x9a, 0x93, 255],
-    [0xd2, 0x63, 0x5b, 255],
-    [0xc8, 0x36, 0x2f, 255],
+    [0xea, 0xe5, 0xda, 255], // heat0 — empty day
+    [0xf7, 0xd9, 0xcd, 255],
+    [0xed, 0xaf, 0x97, 255],
+    [0xdf, 0x81, 0x63, 255],
+    [0xd2, 0x59, 0x3c, 255], // heat4 — best day
   ],
 };
 
@@ -121,7 +111,7 @@ const inRoundedRect = (x, y, cx, cy, half, r) => {
  *                  by the system and must be transparent outside the mark
  * @param scale     mark size as a fraction of the canvas
  */
-function render(size, { opaqueBg = true, scale = 0.62, palette = DARK } = {}) {
+function render(size, { opaqueBg = true, scale = 0.62, palette = LIGHT } = {}) {
   const BG = palette.bg;
   const HEAT = palette.heat;
   const W = size * SS;
@@ -184,11 +174,8 @@ const outputs = [
   // Android masks this to a circle/squircle and can zoom ~33%, so the mark sits
   // smaller inside the safe zone; the background comes from app.json.
   ['adaptive-icon.png', render(1024, { opaqueBg: false, scale: 0.42 })],
-  // Splash renders with resizeMode "contain". Two variants, because the app
-  // follows the system theme and a charcoal splash into a light UI (or the
-  // reverse) is a jarring flash on every launch.
-  ['splash.png', render(1284, { scale: 0.34, palette: LIGHT })],
-  ['splash-dark.png', render(1284, { scale: 0.34, palette: DARK })],
+  // Splash renders with resizeMode "contain" on the same warm sand.
+  ['splash.png', render(1284, { scale: 0.34 })],
   ['favicon.png', render(48)],
 ];
 
