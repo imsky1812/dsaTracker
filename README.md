@@ -11,20 +11,35 @@ Built with Expo + React Native + TypeScript, backed by Supabase.
 
 ## 📱 Download
 
-**[Install the Android APK](https://expo.dev/artifacts/eas/Nzl8y0px4Xm6T0__cDaqsTYz_ftuk1WtHzNNg9kLAuY.apk)**
+<table>
+<tr>
+<td width="220" align="center">
+<img src="docs/install-qr.png" width="200" alt="QR code linking to the DSA Mastery Android install page">
+<br><sub><b>Scan to install</b></sub>
+</td>
+<td>
 
-Or open the [build page](https://expo.dev/accounts/imsky1812/projects/dsa-mastery/builds/8981ab2b-ee37-4728-8809-07427f74084d)
-on your phone to scan a QR code.
+**[⬇ Download the APK directly](https://expo.dev/artifacts/eas/rYfqo_Vwt9pr9NrXGjmKIDacWBTFb9Eg3XtJFCYWlH8.apk)**
 
-**Installing:** tap the APK, and allow *"Install unknown apps"* for your browser
-when Android prompts. Every build is signed with the same EAS-managed keystore,
-so new versions install straight over the old one.
+or open the **[install page](https://expo.dev/accounts/imsky1812/projects/dsa-mastery/builds/23892b8b-8377-4f16-8850-761692398199)**
+on your phone.
 
-> Direct artifact links are tied to a specific build and are not permanent — the
-> build page is the durable reference. To produce a fresh APK, see
+1. Tap the APK to download it.
+2. Allow *"Install unknown apps"* for your browser when Android asks.
+3. Open the downloaded file and install.
+
+Android only. Every build is signed with the same EAS-managed keystore, so a
+new version installs straight over the old one — no uninstall needed.
+
+</td>
+</tr>
+</table>
+
+> The direct artifact link belongs to one specific build and will not last
+> forever; the install page is the durable reference. To cut a fresh APK, see
 > [Building an APK](#building-an-apk).
 
-iOS builds need an Apple Developer account ($99/yr); the codebase is
+iOS builds need an Apple Developer account ($99/yr). The codebase is
 cross-platform and ready for it.
 
 ---
@@ -35,17 +50,20 @@ The app is the study surface *and* the progress system for someone grinding DSA
 for placements and interviews.
 
 **Learn the material.** An 8-phase roadmap takes you from "still fighting
-syntax" to interview-ready, with a stated checkpoint for each phase so you know
-when to move on. Nineteen topic modules each carry a written explainer, the
-patterns that topic is really about, a complexity table, idiomatic C++, and a
-problem ladder tiered *warmup → core → interview → hard*. A ten-section C++
+syntax" to interview-ready. It reads as a journey rather than a table of
+contents: each stage reports real completion from the topics assigned to it, a
+rail fills in behind you, and exactly one stage is marked **Now** and opens to
+show what's left in it. Nineteen topic modules each carry a written explainer,
+the patterns that topic is really about, a complexity table, idiomatic C++, and
+a problem ladder tiered *warmup → core → interview → hard*. A ten-section C++
 primer covers the language itself.
 
 **Practise deliberately.** All 139 problems in one list, filterable by status,
 difficulty, platform, company, and topic. Every link was verified — no
 fabricated URLs. Tap a problem to open it on LeetCode or GFG; tap its circle to
 cycle *unsolved → solved → revisit*; keep a note per problem for the approach,
-the gotcha, the complexity.
+the gotcha, the complexity. Stuck on one? **Watch** opens a video explanation
+for that exact problem (see [Explanation videos](#explanation-videos)).
 
 **See where you actually are.** A GitHub-style contribution heatmap, streaks
 that respect your local timezone, and breakdowns by difficulty, by topic, and by
@@ -68,7 +86,8 @@ the entire app keeps working with no signal — see [Offline-first](#offline-fir
 | **Accounts** | email/password sign-up, sign-in, password reset — or use it with no account at all |
 | **Sync** | progress mirrors to Supabase and reconciles across devices |
 | **Reminders** | one local daily notification at a time you choose |
-| **Theming** | light and dark, following your phone's setting |
+| **Stuck?** | every problem links straight to a video explanation |
+| **Roadmap** | a progress journey — per-stage completion, one stage marked *Now* |
 
 ---
 
@@ -117,6 +136,7 @@ Only needed for accounts and cross-device sync.
    - `supabase/schema.sql` — tables, row-level security, on-signup trigger
    - `supabase/seed.sql` — the content
    - `supabase/migrations/001_progress_natural_keys.sql`
+   - `supabase/migrations/002_phase_topics_and_video.sql`
 3. Turn **off** Authentication → Providers → Email → *Confirm email* (otherwise
    sign-up returns no session and first login is blocked by an email round-trip).
 4. Wire up your keys:
@@ -156,6 +176,30 @@ newly added problem still needs a manual check before it lands.
 The data model is multi-language from day one — code is keyed by language — so
 adding Java/Python/JS means adding snippets and a primer, never duplicating
 topics or problems.
+
+Each roadmap phase declares the topics that belong to it (`topics` in
+`roadmap.json`). The build script enforces that every topic is assigned to
+**exactly one** phase — unmapped, unknown, or duplicated slugs fail the build —
+because the journey view would otherwise quietly hide or double-count a topic.
+
+### Explanation videos
+
+Every problem has a **Watch** link, but no video ids are hardcoded. A problem
+may carry an optional `video`; when it's absent — which is currently always —
+the app builds a YouTube **search** from the problem name and its topic:
+
+```
+https://www.youtube.com/results?search_query=Two%20Sum%20arrays%20dsa%20explained%20solution
+```
+
+This is deliberate. Hardcoding 139 specific video ids would mean inventing them,
+which is exactly the fabricated URL this repo forbids, and a dead video is worse
+than no video. A search always resolves, needs no maintenance, and improves on
+its own as better explanations get published.
+
+To curate one, set `video` on the problem in `src/data/topics/*.json` and re-run
+`npm run content`. It takes precedence automatically, and the generator rejects
+anything that isn't a real `youtube.com/watch?v=` or `youtu.be/` link.
 
 ---
 
@@ -198,10 +242,23 @@ npx eas-cli build -p android --profile preview
 ```
 
 The `preview` profile emits an installable APK; `production` emits an app bundle
-for Play. Icons and splash screens are generated, not hand-drawn:
+for Play.
+
+After a build, point the README's QR at it:
 
 ```bash
-npm run icons   # writes icon / adaptive-icon / splash (light + dark) / favicon
+npm run qr -- https://expo.dev/accounts/<you>/projects/dsa-mastery/builds/<id>
+```
+
+That regenerates `docs/install-qr.png`, then **decodes the PNG it just wrote**
+and refuses to leave it in place unless it scans back to exactly that URL. A QR
+in a README is a link people follow without being able to read it, so it should
+never be an image nobody has verified.
+
+Icons and splash are generated too:
+
+```bash
+npm run icons   # icon / adaptive-icon / splash / favicon
 ```
 
 `scripts/make-icons.mjs` is a small PNG encoder over `zlib` — deliberately no
@@ -211,21 +268,27 @@ npm run icons   # writes icon / adaptive-icon / splash (light + dark) / favicon
 
 ## Design
 
-Two palettes, one shape language. The app follows your phone's colour scheme.
+Warm, soft and light — one palette, tuned once.
 
-- **Light** is a warm off-white (`#F4F2EE`) rather than pure white — paper, not
-  a spreadsheet — with its own heat ramp so an empty day reads as empty.
-- **Dark** is layered charcoal (`#0E0E10` → `#17171A` → `#202024`).
-- A single red accent, used sparingly.
-- Generous radii; anything interactive is a pill or a circle. The tab bar floats
-  as a pill with a filled circle behind the active icon.
+- The ground is a warm sand (`#F6F3ED`), not white. Paper you'd want to work on
+  for hours, rather than a spreadsheet.
+- A single terracotta accent (`#D2593C`) carries every primary action; a muted
+  sage marks completion and a warm amber marks in-progress. Nothing saturated.
+- Text is a deep warm brown (`#2A2420`) rather than black, so it belongs to the
+  ground instead of punching through it.
+- Generous radii. Cards are soft; anything interactive is a pill or a circle.
+  The tab bar floats as a pill with a filled circle behind the active icon.
 - Type is Archivo (display/heading/body) + JetBrains Mono (code/labels).
-- The contribution heatmap is the signature element.
+- Icons are Feather — a single-weight line set that ships with Expo.
+- The contribution heatmap is the signature element, and the app icon is that
+  same grid.
 
-Shape and typography are deliberately **not** themed — a card has the same
-radius and rhythm in both modes; only colour moves. All tokens live in
-`src/theme/tokens.ts`; screens read them through `useColors()` /
-`useThemedStyles()` in `src/theme/theme.ts`. Never hardcode a hex in a screen.
+There is one palette by decision, not omission: a single set means every
+surface, shadow and contrast pair is actually checked, rather than two
+half-tuned ones. Colour is still read through `useColors()` /
+`useThemedStyles()` (`src/theme/theme.ts`) and styles are built inside
+components rather than at module scope, so adding a second palette later is a
+token change rather than a rewrite. Never hardcode a hex in a screen.
 
 ---
 
@@ -284,7 +347,7 @@ polish, and a shipping Android build.
 | M3 Auth | email/password, route gate, local-only mode |
 | M4 Sync | write-through queue, last-write-wins, offline-safe |
 | M5 Progress | per-company breakdown → filtered practice |
-| M6 Polish | reminders, local-timezone streaks, icon/splash, theming |
+| M6 Polish | reminders, local-timezone streaks, icon/splash, warm light theme |
 | M7 Ship | Android APK via EAS |
 
 ### Known limitations

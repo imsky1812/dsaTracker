@@ -16,7 +16,8 @@
     "test:merge": "node scripts/test-merge.mjs",
     "test:dates": "node scripts/test-dates.mjs",
     "test": "node scripts/test-merge.mjs && node scripts/test-dates.mjs && node scripts/build-content.mjs --check",
-    "icons": "node scripts/make-icons.mjs"
+    "icons": "node scripts/make-icons.mjs",
+    "qr": "node scripts/make-qr.mjs"
   },
   "dependencies": {
     "@expo-google-fonts/archivo": "^0.2.3",
@@ -42,8 +43,11 @@
   },
   "devDependencies": {
     "@babel/core": "^7.24.0",
-    "typescript": "~5.3.0",
-    "@types/react": "~18.2.0"
+    "@types/react": "~18.2.0",
+    "jsqr": "^1.4.0",
+    "pngjs": "^7.0.0",
+    "qrcode": "^1.5.4",
+    "typescript": "~5.3.0"
   },
   "private": true
 }
