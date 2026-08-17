@@ -257,9 +257,13 @@ export default function Profile() {
 
         <GhostButton label="Reset all progress" tone="accent" onPress={confirmReset} />
 
-        <Text style={s.version}>
-          DSA Mastery · v1.0
-        </Text>
+        {/* Footer wordmark. The rule + generous space above it signal the end
+            of the screen rather than a row that got cut off. */}
+        <View style={s.footer}>
+          <View style={s.footerRule} />
+          <Text style={s.footerMark}>SKY</Text>
+          <Text style={s.version}>DSA Mastery · v1.0</Text>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -297,5 +301,15 @@ const makeStyles = (c: Palette) => StyleSheet.create({
     borderRadius: radius.lg, paddingHorizontal: spacing.lg, paddingVertical: 15,
   },
 
-  version: { fontFamily: type.mono, fontSize: 10.5, color: c.textFaint, textAlign: 'center', marginTop: spacing.xl },
+  footer: { alignItems: 'center', marginTop: spacing.xxl },
+  footerRule: { width: 40, height: 2, borderRadius: 1, backgroundColor: c.accent, marginBottom: spacing.lg },
+  footerMark: {
+    fontFamily: type.display,
+    fontSize: 30,
+    color: c.text,
+    letterSpacing: 8,          // wide tracking reads as a wordmark, not a word
+    marginLeft: 8,             // optical centring: letterSpacing pads the right
+    marginBottom: spacing.sm,
+  },
+  version: { fontFamily: type.mono, fontSize: 10.5, color: c.textFaint, textAlign: 'center' },
 });
