@@ -152,6 +152,14 @@ All SQL files are safe to re-run. With `.env` populated, `supabaseEnabled` flips
 true, auth activates, and a **Backend** card on the Profile screen runs the same
 check live in the app.
 
+Re-run `seed.sql` after any content change — it rebuilds `problem_companies`
+and `code_snippets` from scratch, so removed tags and renamed snippets actually
+disappear. It deliberately does **not** delete from `problems` or `topics`:
+`problem_progress` references `problems.key` with `ON DELETE CASCADE`, so
+dropping a problem would take somebody's solved marks and notes with it.
+Removing a problem stays a deliberate manual step; `npm run verify:supabase`
+reports the row-count drift so you notice.
+
 The anon key is a public client-side key and is safe to ship in the binary —
 row-level security is what protects user data. The `service_role` key must never
 appear in `.env` or the repo.

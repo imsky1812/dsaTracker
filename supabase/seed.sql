@@ -386,6 +386,9 @@ Mental model: an integer is a row of light switches (bits). The bitwise operator
 
 Bit operations are constant-time and constant-space — that''s the appeal. Bitmask subset enumeration is exponential in the number of items but each step is O(1).') on conflict (slug) do update set "order" = excluded."order", title = excluded.title, explainer_md = excluded.explainer_md, patterns_md = excluded.patterns_md, complexity_md = excluded.complexity_md;
 
+delete from problem_companies;
+delete from code_snippets;
+
 insert into code_snippets (topic_id, language_id, label, code) select t.id, l.id, 'Right triangle of stars', 'void triangle(int n) {
     for (int i = 1; i <= n; i++) {      // rows
         for (int j = 1; j <= i; j++)     // stars in row i

@@ -188,6 +188,22 @@ for (const t of topics) {
 }
 lines.push('');
 
+// Purely-derived tables are rebuilt rather than upserted.
+//
+// Upserts propagate changed content but NOT deleted content: thinning the
+// Amazon tags removed 125 company links from src/data, and a seed that only
+// inserts left all 125 behind in the database (359 rows where 234 were
+// expected). Same gap applies to a renamed snippet label.
+//
+// These two tables are safe to rebuild: nothing references them, and they hold
+// no user data. problems/topics deliberately are NOT rebuilt — problem_progress
+// references problems.key ON DELETE CASCADE, so deleting a problem would delete
+// somebody's solved marks and notes. Removing a problem stays a manual,
+// deliberate act; `npm run verify:supabase` reports the row-count drift.
+lines.push('delete from problem_companies;');
+lines.push('delete from code_snippets;');
+lines.push('');
+
 // Code snippets are keyed (topic, language, label) so re-running updates in place.
 for (const t of topics) {
   for (const c of t.code) {
