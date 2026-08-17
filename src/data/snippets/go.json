@@ -1,0 +1,116 @@
+{
+  "basics-patterns": [
+    {
+      "label": "Nested loops and fast IO",
+      "code": "// Outer loop = rows, inner loops = what each row prints.\nfunc pyramid(n int) {\n\tfor i := 1; i <= n; i++ {\n\t\tfmt.Print(strings.Repeat(\" \", n-i))\n\t\tfmt.Println(strings.Repeat(\"*\", 2*i-1))\n\t}\n}\n\n// fmt.Scan is slow in loops. bufio.Scanner with a word split is the\n// competitive-programming default in Go.\nfunc newReader() *bufio.Scanner {\n\tsc := bufio.NewScanner(os.Stdin)\n\tsc.Buffer(make([]byte, 1024*1024), 1024*1024)\n\tsc.Split(bufio.ScanWords)\n\treturn sc\n}\n\nfunc readInt(sc *bufio.Scanner) int {\n\tsc.Scan()\n\tn, _ := strconv.Atoi(sc.Text())\n\treturn n\n}"
+    }
+  ],
+  "arrays": [
+    {
+      "label": "Kadane's maximum subarray and prefix sums",
+      "code": "// Go has no generic max for ints before 1.21; since 1.21 `max`/`min` are builtins.\nfunc maxSubArray(nums []int) int {\n\tbest, cur := nums[0], nums[0]\n\tfor _, x := range nums[1:] {\n\t\tcur = max(x, cur+x)\n\t\tbest = max(best, cur)\n\t}\n\treturn best\n}\n\n// Prefix sums: O(1) range queries after O(n) setup.\nfunc prefix(nums []int) []int {\n\tpre := make([]int, len(nums)+1)\n\tfor i, x := range nums {\n\t\tpre[i+1] = pre[i] + x\n\t}\n\treturn pre // sum of nums[l..r] == pre[r+1] - pre[l]\n}\n\n// Slices share backing arrays. append may or may not reallocate, so never\n// assume a slice you handed out is unaffected by your appends.\nb := make([]int, len(a))\ncopy(b, a) // explicit copy when you need independence"
+    }
+  ],
+  "binary-search": [
+    {
+      "label": "sort.SearchInts and binary search on the answer",
+      "code": "// The standard library has it — use this for plain lookups.\ni := sort.SearchInts(a, x) // first index with a[i] >= x (lower_bound)\nfound := i < len(a) && a[i] == x\n\n// sort.Search is the general form: give it a monotonic predicate.\nj := sort.Search(len(a), func(i int) bool { return a[i] >= x })\n\n// Hand-rolled, when the index semantics need to be explicit.\nfunc search(a []int, target int) int {\n\tlo, hi := 0, len(a)-1\n\tfor lo <= hi {\n\t\tmid := lo + (hi-lo)/2 // avoids the overflow (lo+hi)/2 can hit\n\t\tswitch {\n\t\tcase a[mid] == target:\n\t\t\treturn mid\n\t\tcase a[mid] < target:\n\t\t\tlo = mid + 1\n\t\tdefault:\n\t\t\thi = mid - 1\n\t\t}\n\t}\n\treturn -1\n}\n\n// Binary search on the answer: smallest value for which feasible is true.\nfunc minFeasible(lo, hi int, feasible func(int) bool) int {\n\tfor lo < hi {\n\t\tmid := lo + (hi-lo)/2\n\t\tif feasible(mid) {\n\t\t\thi = mid // keep mid as a candidate\n\t\t} else {\n\t\t\tlo = mid + 1\n\t\t}\n\t}\n\treturn lo\n}"
+    }
+  ],
+  "strings": [
+    {
+      "label": "strings.Builder, runes, and byte vs character",
+      "code": "// Strings are immutable byte slices. Concatenating in a loop is O(n^2);\n// use a Builder.\nvar sb strings.Builder\nfor _, r := range s {\n\tif unicode.IsLetter(r) || unicode.IsDigit(r) {\n\t\tsb.WriteRune(unicode.ToLower(r))\n\t}\n}\ncleaned := sb.String()\n\n// The trap: indexing a string gives BYTES, ranging gives RUNES. For ASCII\n// interview input they coincide; for anything else they do not.\nfmt.Println(len(\"héllo\"))          // 6 bytes\nfmt.Println(len([]rune(\"héllo\")))  // 5 characters\n\n// Palindrome over runes, two pointers.\nfunc isPalindrome(s string) bool {\n\tr := []rune(s)\n\tfor i, j := 0, len(r)-1; i < j; i, j = i+1, j-1 {\n\t\tif r[i] != r[j] {\n\t\t\treturn false\n\t\t}\n\t}\n\treturn true\n}\n\n// Anagram: a 26-slot count beats sorting.\nfunc isAnagram(a, b string) bool {\n\tif len(a) != len(b) {\n\t\treturn false\n\t}\n\tvar cnt [26]int\n\tfor i := 0; i < len(a); i++ {\n\t\tcnt[a[i]-'a']++\n\t\tcnt[b[i]-'a']--\n\t}\n\treturn cnt == [26]int{} // arrays are comparable in Go\n}"
+    }
+  ],
+  "stl": [
+    {
+      "label": "Slices, maps and the standard containers",
+      "code": "// Go's containers are slices and maps, plus container/heap and container/list.\ns := []int{3, 1, 2}\ns = append(s, 4)\nslices.Sort(s)                       // Go 1.21+; else sort.Ints\nslices.Reverse(s)\ni, ok := slices.BinarySearch(s, 3)\nslices.Contains(s, 3)\n\n// Maps. The two-value form is how you distinguish absent from zero —\n// m[\"missing\"] returns 0 silently, which is a common bug source.\nm := map[string]int{}\nm[\"a\"]++                             // zero value means no init needed\nv, ok := m[\"b\"]                      // ok is false when absent\ndelete(m, \"a\")\n\n// Map iteration order is RANDOMISED by design. Sort the keys when you need\n// deterministic output.\nkeys := make([]string, 0, len(m))\nfor k := range m {\n\tkeys = append(keys, k)\n}\nslices.Sort(keys)\n\n// Sets are maps to empty structs — struct{} occupies no space.\nseen := map[int]struct{}{}\nseen[42] = struct{}{}\n_, exists := seen[42]\n\n// Stack and queue on a slice.\nstack := []int{}\nstack = append(stack, 1)             // push\ntop := stack[len(stack)-1]           // peek\nstack = stack[:len(stack)-1]         // pop\n\nqueue := []int{1, 2}\nfront := queue[0]                    // O(n) dequeue; use container/list or an\nqueue = queue[1:]                    // index cursor for hot loops"
+    }
+  ],
+  "recursion": [
+    {
+      "label": "Recursion — base case, recurse, combine",
+      "code": "// Go grows goroutine stacks dynamically, so deep recursion is far safer here\n// than in Python or C — but it is still not free.\nfunc fib(n int, memo map[int]int) int {\n\tif n <= 1 {\n\t\treturn n\n\t}\n\tif v, ok := memo[n]; ok {\n\t\treturn v\n\t}\n\tmemo[n] = fib(n-1, memo) + fib(n-2, memo)\n\treturn memo[n]\n}\n\n// Subsets: at each index, take the element or don't.\nfunc subsets(nums []int) [][]int {\n\tvar out [][]int\n\tvar cur []int\n\n\tvar go_ func(i int)\n\tgo_ = func(i int) {\n\t\tif i == len(nums) {\n\t\t\t// MUST copy: cur's backing array is reused as we backtrack.\n\t\t\tout = append(out, append([]int(nil), cur...))\n\t\t\treturn\n\t\t}\n\t\tgo_(i + 1) // skip\n\t\tcur = append(cur, nums[i])\n\t\tgo_(i + 1) // take\n\t\tcur = cur[:len(cur)-1]\n\t}\n\tgo_(0)\n\treturn out\n}"
+    }
+  ],
+  "backtracking": [
+    {
+      "label": "Backtracking template",
+      "code": "// choose -> explore -> un-choose.\nfunc permute(nums []int) [][]int {\n\tvar out [][]int\n\tvar cur []int\n\tused := make([]bool, len(nums))\n\n\tvar rec func()\n\trec = func() {\n\t\tif len(cur) == len(nums) {\n\t\t\tout = append(out, append([]int(nil), cur...)) // copy\n\t\t\treturn\n\t\t}\n\t\tfor i, x := range nums {\n\t\t\tif used[i] {\n\t\t\t\tcontinue\n\t\t\t}\n\t\t\tused[i] = true\n\t\t\tcur = append(cur, x) // choose\n\t\t\trec()                // explore\n\t\t\tcur = cur[:len(cur)-1]\n\t\t\tused[i] = false // un-choose\n\t\t}\n\t}\n\trec()\n\treturn out\n}\n\n// N-Queens pruning: track occupied columns and both diagonals so a conflict\n// is O(1) to test. For cell (r,c): diagonal r+c, anti-diagonal r-c+n.\ncol := make([]bool, n)\ndiag := make([]bool, 2*n)\nanti := make([]bool, 2*n)"
+    }
+  ],
+  "sorting": [
+    {
+      "label": "Sorting, and merge sort by hand",
+      "code": "// Use the standard library: slices.Sort is pdqsort, sort.SliceStable when\n// stability matters.\nslices.Sort(nums)\nslices.SortFunc(people, func(a, b Person) int {\n\tif a.Age != b.Age {\n\t\treturn a.Age - b.Age\n\t}\n\treturn b.Score - a.Score // tie-break: score descending\n})\nsort.SliceStable(xs, func(i, j int) bool { return xs[i].K < xs[j].K })\n\n// Merge sort by hand, to understand divide and conquer.\nfunc mergeSort(a []int) []int {\n\tif len(a) <= 1 {\n\t\treturn a\n\t}\n\tmid := len(a) / 2\n\tl, r := mergeSort(a[:mid]), mergeSort(a[mid:])\n\tout := make([]int, 0, len(a))\n\ti, j := 0, 0\n\tfor i < len(l) && j < len(r) {\n\t\tif l[i] <= r[j] { // <= keeps it stable\n\t\t\tout = append(out, l[i])\n\t\t\ti++\n\t\t} else {\n\t\t\tout = append(out, r[j])\n\t\t\tj++\n\t\t}\n\t}\n\tout = append(out, l[i:]...)\n\tout = append(out, r[j:]...)\n\treturn out\n}"
+    }
+  ],
+  "linked-lists": [
+    {
+      "label": "Reverse, and Floyd's cycle detection",
+      "code": "type ListNode struct {\n\tVal  int\n\tNext *ListNode\n}\n\n// Reverse: rewire each Next backwards while walking forward.\nfunc reverse(head *ListNode) *ListNode {\n\tvar prev *ListNode\n\tfor head != nil {\n\t\thead.Next, prev, head = prev, head, head.Next\n\t}\n\treturn prev\n}\n\n// Floyd: slow moves 1, fast moves 2. Meeting means a cycle; reset one to head\n// and step both by 1 to land on the cycle entry.\nfunc cycleStart(head *ListNode) *ListNode {\n\tslow, fast := head, head\n\tfor fast != nil && fast.Next != nil {\n\t\tslow, fast = slow.Next, fast.Next.Next\n\t\tif slow == fast {\n\t\t\tslow = head\n\t\t\tfor slow != fast {\n\t\t\t\tslow, fast = slow.Next, fast.Next\n\t\t\t}\n\t\t\treturn slow\n\t\t}\n\t}\n\treturn nil\n}\n\n// A dummy head removes the \"is this the first node?\" special case from\n// every insert and delete.\nfunc removeVal(head *ListNode, v int) *ListNode {\n\tdummy := &ListNode{Next: head}\n\tfor cur := dummy; cur.Next != nil; {\n\t\tif cur.Next.Val == v {\n\t\t\tcur.Next = cur.Next.Next\n\t\t} else {\n\t\t\tcur = cur.Next\n\t\t}\n\t}\n\treturn dummy.Next\n}"
+    }
+  ],
+  "stacks-queues": [
+    {
+      "label": "Monotonic stack — next greater element",
+      "code": "// The pattern behind next-greater, largest-rectangle and daily-temperatures.\n// Each index is pushed and popped at most once, so O(n) overall.\nfunc nextGreater(a []int) []int {\n\tres := make([]int, len(a))\n\tfor i := range res {\n\t\tres[i] = -1\n\t}\n\tvar stack []int // indices, values decreasing\n\tfor i, x := range a {\n\t\tfor len(stack) > 0 && a[stack[len(stack)-1]] < x {\n\t\t\tres[stack[len(stack)-1]] = x\n\t\t\tstack = stack[:len(stack)-1]\n\t\t}\n\t\tstack = append(stack, i)\n\t}\n\treturn res\n}\n\n// Sliding window maximum with a deque of indices.\nfunc windowMax(a []int, k int) []int {\n\tvar dq []int // indices; a[dq] decreasing\n\tvar out []int\n\tfor i, x := range a {\n\t\tfor len(dq) > 0 && dq[0] <= i-k {\n\t\t\tdq = dq[1:] // left the window\n\t\t}\n\t\tfor len(dq) > 0 && a[dq[len(dq)-1]] <= x {\n\t\t\tdq = dq[:len(dq)-1] // dominated, can never be the max\n\t\t}\n\t\tdq = append(dq, i)\n\t\tif i >= k-1 {\n\t\t\tout = append(out, a[dq[0]])\n\t\t}\n\t}\n\treturn out\n}"
+    }
+  ],
+  "trees": [
+    {
+      "label": "Traversals — recursive and iterative",
+      "code": "type TreeNode struct {\n\tVal         int\n\tLeft, Right *TreeNode\n}\n\nfunc inorder(root *TreeNode, out *[]int) {\n\tif root == nil {\n\t\treturn\n\t}\n\tinorder(root.Left, out)\n\t*out = append(*out, root.Val)\n\tinorder(root.Right, out)\n}\n\n// Iterative inorder — interviewers ask for this explicitly.\nfunc inorderIter(root *TreeNode) []int {\n\tvar out []int\n\tvar stack []*TreeNode\n\tcur := root\n\tfor cur != nil || len(stack) > 0 {\n\t\tfor cur != nil {\n\t\t\tstack = append(stack, cur)\n\t\t\tcur = cur.Left\n\t\t}\n\t\tcur = stack[len(stack)-1]\n\t\tstack = stack[:len(stack)-1]\n\t\tout = append(out, cur.Val)\n\t\tcur = cur.Right\n\t}\n\treturn out\n}\n\n// Level order (BFS). Capture the level size BEFORE the inner loop or you\n// consume nodes from the next level.\nfunc levelOrder(root *TreeNode) [][]int {\n\tif root == nil {\n\t\treturn nil\n\t}\n\tvar out [][]int\n\tq := []*TreeNode{root}\n\tfor len(q) > 0 {\n\t\tn := len(q)\n\t\tlevel := make([]int, 0, n)\n\t\tfor i := 0; i < n; i++ {\n\t\t\tnode := q[0]\n\t\t\tq = q[1:]\n\t\t\tlevel = append(level, node.Val)\n\t\t\tif node.Left != nil {\n\t\t\t\tq = append(q, node.Left)\n\t\t\t}\n\t\t\tif node.Right != nil {\n\t\t\t\tq = append(q, node.Right)\n\t\t\t}\n\t\t}\n\t\tout = append(out, level)\n\t}\n\treturn out\n}"
+    }
+  ],
+  "bst": [
+    {
+      "label": "BST insert, search, validate",
+      "code": "// BST invariant: everything left < node < everything right, against INHERITED\n// bounds. Comparing only against the parent is the classic wrong answer and\n// it passes small tests.\nfunc isValid(root *TreeNode, lo, hi *int) bool {\n\tif root == nil {\n\t\treturn true\n\t}\n\tif lo != nil && root.Val <= *lo {\n\t\treturn false\n\t}\n\tif hi != nil && root.Val >= *hi {\n\t\treturn false\n\t}\n\treturn isValid(root.Left, lo, &root.Val) && isValid(root.Right, &root.Val, hi)\n}\n\nfunc insert(root *TreeNode, v int) *TreeNode {\n\tif root == nil {\n\t\treturn &TreeNode{Val: v}\n\t}\n\tif v < root.Val {\n\t\troot.Left = insert(root.Left, v)\n\t} else if v > root.Val {\n\t\troot.Right = insert(root.Right, v)\n\t}\n\treturn root\n}\n\n// LCA in a BST: the first node that splits the two values.\nfunc lca(root *TreeNode, p, q int) *TreeNode {\n\tfor root != nil {\n\t\tswitch {\n\t\tcase p < root.Val && q < root.Val:\n\t\t\troot = root.Left\n\t\tcase p > root.Val && q > root.Val:\n\t\t\troot = root.Right\n\t\tdefault:\n\t\t\treturn root\n\t\t}\n\t}\n\treturn nil\n}"
+    }
+  ],
+  "heaps": [
+    {
+      "label": "container/heap — top-K",
+      "code": "// Go has no ready-made priority queue: container/heap gives you the algorithms\n// and you supply the storage by implementing heap.Interface.\ntype IntHeap []int\n\nfunc (h IntHeap) Len() int            { return len(h) }\nfunc (h IntHeap) Less(i, j int) bool  { return h[i] < h[j] } // min-heap; flip for max\nfunc (h IntHeap) Swap(i, j int)       { h[i], h[j] = h[j], h[i] }\nfunc (h *IntHeap) Push(x any)         { *h = append(*h, x.(int)) }\nfunc (h *IntHeap) Pop() any {\n\told := *h\n\tn := len(old)\n\tx := old[n-1]\n\t*h = old[:n-1]\n\treturn x\n}\n\n// Note Push/Pop are the storage hooks — you call heap.Push/heap.Pop, never\n// these directly, or the heap invariant is not maintained.\nfunc kthLargest(nums []int, k int) int {\n\th := &IntHeap{}\n\theap.Init(h)\n\tfor _, x := range nums {\n\t\theap.Push(h, x)\n\t\tif h.Len() > k {\n\t\t\theap.Pop(h) // evict the smallest\n\t\t}\n\t}\n\treturn (*h)[0]\n}"
+    }
+  ],
+  "hashing": [
+    {
+      "label": "Map patterns — complements, counting, prefix sums",
+      "code": "// Two Sum: store what you've seen, look for the complement. One pass, O(n).\nfunc twoSum(nums []int, target int) []int {\n\tseen := make(map[int]int, len(nums)) // value -> index\n\tfor i, x := range nums {\n\t\tif j, ok := seen[target-x]; ok {\n\t\t\treturn []int{j, i}\n\t\t}\n\t\tseen[x] = i\n\t}\n\treturn nil\n}\n\n// Subarray sum equals K. The count[0] = 1 seed accounts for a prefix that is\n// itself the answer; without it you miss every subarray starting at index 0.\nfunc subarraySum(nums []int, k int) int {\n\tcount := map[int]int{0: 1}\n\tsum, res := 0, 0\n\tfor _, x := range nums {\n\t\tsum += x\n\t\tres += count[sum-k] // absent key yields 0 — convenient here\n\t\tcount[sum]++\n\t}\n\treturn res\n}\n\n// Group anagrams: a sorted-letters string is a canonical key.\nfunc groupAnagrams(words []string) [][]string {\n\tgroups := map[string][]string{}\n\tfor _, w := range words {\n\t\tb := []byte(w)\n\t\tslices.Sort(b)\n\t\tgroups[string(b)] = append(groups[string(b)], w)\n\t}\n\tout := make([][]string, 0, len(groups))\n\tfor _, g := range groups {\n\t\tout = append(out, g)\n\t}\n\treturn out\n}"
+    }
+  ],
+  "greedy": [
+    {
+      "label": "Greedy — sort, then take the locally safe choice",
+      "code": "// Activity selection: sort by END time. Sorting by start or by duration both\n// fail; finishing earliest leaves the most room for everything after.\nfunc maxNonOverlapping(intervals [][]int) int {\n\tslices.SortFunc(intervals, func(a, b []int) int { return a[1] - b[1] })\n\tcount, lastEnd := 0, math.MinInt\n\tfor _, iv := range intervals {\n\t\tif iv[0] >= lastEnd {\n\t\t\tcount++\n\t\t\tlastEnd = iv[1]\n\t\t}\n\t}\n\treturn count\n}\n\n// Merge intervals: sort by START, then extend or append.\nfunc merge(intervals [][]int) [][]int {\n\tslices.SortFunc(intervals, func(a, b []int) int { return a[0] - b[0] })\n\tvar out [][]int\n\tfor _, iv := range intervals {\n\t\tif n := len(out); n > 0 && iv[0] <= out[n-1][1] {\n\t\t\tout[n-1][1] = max(out[n-1][1], iv[1])\n\t\t} else {\n\t\t\tout = append(out, []int{iv[0], iv[1]})\n\t\t}\n\t}\n\treturn out\n}\n\n// Jump game: track the furthest reachable index.\nfunc canJump(nums []int) bool {\n\treach := 0\n\tfor i, n := range nums {\n\t\tif i > reach {\n\t\t\treturn false\n\t\t}\n\t\treach = max(reach, i+n)\n\t}\n\treturn true\n}"
+    }
+  ],
+  "graphs": [
+    {
+      "label": "BFS, DFS, topological sort",
+      "code": "// Adjacency list as a slice of slices.\nadj := make([][]int, n)\nadj[u] = append(adj[u], v)\n\n// BFS gives shortest path in an UNWEIGHTED graph. Mark distance on ENQUEUE,\n// not on dequeue, or nodes get queued repeatedly.\nfunc bfs(adj [][]int, src int) []int {\n\tdist := make([]int, len(adj))\n\tfor i := range dist {\n\t\tdist[i] = -1\n\t}\n\tdist[src] = 0\n\tq := []int{src}\n\tfor len(q) > 0 {\n\t\tu := q[0]\n\t\tq = q[1:]\n\t\tfor _, v := range adj[u] {\n\t\t\tif dist[v] == -1 {\n\t\t\t\tdist[v] = dist[u] + 1\n\t\t\t\tq = append(q, v)\n\t\t\t}\n\t\t}\n\t}\n\treturn dist\n}\n\n// Kahn's topological sort. Fewer than n nodes out means there is a cycle.\nfunc topoSort(adj [][]int) []int {\n\tn := len(adj)\n\tindeg := make([]int, n)\n\tfor u := 0; u < n; u++ {\n\t\tfor _, v := range adj[u] {\n\t\t\tindeg[v]++\n\t\t}\n\t}\n\tvar q []int\n\tfor i := 0; i < n; i++ {\n\t\tif indeg[i] == 0 {\n\t\t\tq = append(q, i)\n\t\t}\n\t}\n\tvar order []int\n\tfor len(q) > 0 {\n\t\tu := q[0]\n\t\tq = q[1:]\n\t\torder = append(order, u)\n\t\tfor _, v := range adj[u] {\n\t\t\tindeg[v]--\n\t\t\tif indeg[v] == 0 {\n\t\t\t\tq = append(q, v)\n\t\t\t}\n\t\t}\n\t}\n\tif len(order) != n {\n\t\treturn nil // cycle\n\t}\n\treturn order\n}"
+    }
+  ],
+  "dynamic-programming": [
+    {
+      "label": "Memoisation to tabulation to rolling array",
+      "code": "// 1. Top-down with a memo map (or slice, when the state is a small int).\nfunc robMemo(a []int, i int, memo []int) int {\n\tif i >= len(a) {\n\t\treturn 0\n\t}\n\tif memo[i] != -1 {\n\t\treturn memo[i]\n\t}\n\tmemo[i] = max(a[i]+robMemo(a, i+2, memo), robMemo(a, i+1, memo))\n\treturn memo[i]\n}\n\n// 2. Bottom-up table.\nfunc robTab(a []int) int {\n\tn := len(a)\n\tdp := make([]int, n+2)\n\tfor i := n - 1; i >= 0; i-- {\n\t\tdp[i] = max(a[i]+dp[i+2], dp[i+1])\n\t}\n\treturn dp[0]\n}\n\n// 3. Rolling — only two states are ever read.\nfunc rob(a []int) int {\n\ttake, skip := 0, 0\n\tfor i := len(a) - 1; i >= 0; i-- {\n\t\ttake, skip = max(a[i]+skip, take), take\n\t}\n\treturn take\n}\n\n// 0/1 knapsack, 1-D. Iterate weight DOWNWARD so each item is used once;\n// upward silently becomes the unbounded version.\nfunc knapsack(wt, val []int, cap int) int {\n\tdp := make([]int, cap+1)\n\tfor i := range wt {\n\t\tfor w := cap; w >= wt[i]; w-- {\n\t\t\tdp[w] = max(dp[w], val[i]+dp[w-wt[i]])\n\t\t}\n\t}\n\treturn dp[cap]\n}"
+    }
+  ],
+  "tries": [
+    {
+      "label": "Trie — insert, search, prefix",
+      "code": "// A trie trades memory for prefix queries in O(len), independent of how many\n// words are stored.\ntype Trie struct {\n\tchildren [26]*Trie\n\tend      bool\n}\n\nfunc NewTrie() *Trie { return &Trie{} }\n\nfunc (t *Trie) Insert(word string) {\n\tcur := t\n\tfor i := 0; i < len(word); i++ {\n\t\tc := word[i] - 'a'\n\t\tif cur.children[c] == nil {\n\t\t\tcur.children[c] = &Trie{}\n\t\t}\n\t\tcur = cur.children[c]\n\t}\n\tcur.end = true\n}\n\nfunc (t *Trie) walk(s string) *Trie {\n\tcur := t\n\tfor i := 0; i < len(s); i++ {\n\t\tcur = cur.children[s[i]-'a']\n\t\tif cur == nil {\n\t\t\treturn nil\n\t\t}\n\t}\n\treturn cur\n}\n\nfunc (t *Trie) Search(word string) bool {\n\tn := t.walk(word)\n\treturn n != nil && n.end\n}\n\nfunc (t *Trie) StartsWith(prefix string) bool { return t.walk(prefix) != nil }"
+    }
+  ],
+  "bit-manipulation": [
+    {
+      "label": "Bit tricks worth memorising",
+      "code": "// Go has both signed and unsigned types, and shifts on signed values are\n// arithmetic. Use uint when you want logical shifts.\nx := 0b1011\n\nisSet := x&(1<<k) != 0\nset := x | (1 << k)\nclear := x & ^(1 << k) // Go spells it &^ or & ^\ntoggle := x ^ (1 << k)\n\nisPow2 := x > 0 && x&(x-1) == 0 // only one bit set\nlowest := x & -x                // isolate lowest set bit\ndropLowest := x & (x - 1)       // clear lowest set bit\nbits := bits.OnesCount(uint(x)) // math/bits: popcount\n\n// XOR: a^a == 0 and a^0 == a, so XOR-ing everything leaves the value\n// appearing an odd number of times.\nfunc singleNumber(nums []int) int {\n\tr := 0\n\tfor _, n := range nums {\n\t\tr ^= n\n\t}\n\treturn r\n}\n\n// Iterate every subset of an n-element set.\nfor mask := 0; mask < 1<<n; mask++ {\n\tfor i := 0; i < n; i++ {\n\t\tif mask&(1<<i) != 0 {\n\t\t\t_ = i // i is in this subset\n\t\t}\n\t}\n}"
+    }
+  ]
+}

@@ -2,17 +2,39 @@
   "slug": "bit-manipulation",
   "order": 19,
   "title": "Bit Manipulation",
-  "explainer_md": "Bit manipulation operates directly on the binary representation of integers using AND, OR, XOR, NOT, and shifts. It enables elegant O(1) tricks and compact state representations (bitmasks), and interviewers use it to test whether you understand what's happening beneath the abstraction.\n\nThe operator worth truly internalizing is **XOR**: `a ^ a = 0`, `a ^ 0 = a`, and it's commutative \u2014 so XOR-ing every element of an array where all but one appear twice leaves exactly the unique element. That single insight solves several classic problems in O(1) space.\n\nMental model: an integer is a row of light switches (bits). The bitwise operators flip, combine, and test switches in parallel \u2014 all bits at once, in a single instruction.",
-  "patterns_md": "**XOR cancellation** \u2014 pairs cancel to zero. Finds the single non-duplicated number, the missing number, or swaps without a temp.\n\n**Mask & shift** \u2014 `x & (1 << k)` tests bit k; `x | (1 << k)` sets it; `x & ~(1 << k)` clears it. The vocabulary for reading/writing individual bits.\n\n**Lowest set bit** \u2014 `x & -x` isolates the lowest set bit; `x & (x-1)` clears it (loop this to count set bits \u2014 Brian Kernighan's method).\n\n**Bitmask as state** \u2014 represent a subset of \u2264 ~20 items as an integer's bits. Powers subset enumeration and bitmask DP (e.g. travelling salesman).",
-  "complexity_md": "| Trick | Time |\n|---|---|\n| Any single bit op | O(1) |\n| Count set bits (Kernighan) | O(set bits) |\n| Enumerate all subsets of n items | O(2^n) |\n| XOR whole array | O(n) |\n\nBit operations are constant-time and constant-space \u2014 that's the appeal. Bitmask subset enumeration is exponential in the number of items but each step is O(1).",
+  "explainer_md": "Bit manipulation operates directly on the binary representation of integers using AND, OR, XOR, NOT, and shifts. It enables elegant O(1) tricks and compact state representations (bitmasks), and interviewers use it to test whether you understand what's happening beneath the abstraction.\n\nThe operator worth truly internalizing is **XOR**: `a ^ a = 0`, `a ^ 0 = a`, and it's commutative — so XOR-ing every element of an array where all but one appear twice leaves exactly the unique element. That single insight solves several classic problems in O(1) space.\n\nMental model: an integer is a row of light switches (bits). The bitwise operators flip, combine, and test switches in parallel — all bits at once, in a single instruction.",
+  "patterns_md": "**XOR cancellation** — pairs cancel to zero. Finds the single non-duplicated number, the missing number, or swaps without a temp.\n\n**Mask & shift** — `x & (1 << k)` tests bit k; `x | (1 << k)` sets it; `x & ~(1 << k)` clears it. The vocabulary for reading/writing individual bits.\n\n**Lowest set bit** — `x & -x` isolates the lowest set bit; `x & (x-1)` clears it (loop this to count set bits — Brian Kernighan's method).\n\n**Bitmask as state** — represent a subset of ≤ ~20 items as an integer's bits. Powers subset enumeration and bitmask DP (e.g. travelling salesman).",
+  "complexity_md": "| Trick | Time |\n|---|---|\n| Any single bit op | O(1) |\n| Count set bits (Kernighan) | O(set bits) |\n| Enumerate all subsets of n items | O(2^n) |\n| XOR whole array | O(n) |\n\nBit operations are constant-time and constant-space — that's the appeal. Bitmask subset enumeration is exponential in the number of items but each step is O(1).",
   "code": [
     {
-      "label": "XOR \u2014 single number",
+      "lang": "cpp",
+      "label": "XOR — single number",
       "code": "int singleNumber(vector<int>& nums) {\n    int x = 0;\n    for (int n : nums) x ^= n;   // pairs cancel\n    return x;\n}"
     },
     {
-      "label": "Bit ops \u2014 test, set, clear, count",
+      "lang": "cpp",
+      "label": "Bit ops — test, set, clear, count",
       "code": "bool getBit(int x, int k)  { return (x >> k) & 1; }\nint  setBit(int x, int k)  { return x | (1 << k); }\nint  clearBit(int x, int k){ return x & ~(1 << k); }\nint countBits(int x) {        // Brian Kernighan\n    int c = 0;\n    while (x) { x &= (x - 1); c++; }\n    return c;\n}"
+    },
+    {
+      "lang": "java",
+      "label": "Bit tricks worth memorising",
+      "code": "// Java has no unsigned int. For right shifts on values that may be negative,\n// use >>> (logical) rather than >> (arithmetic, sign-extending).\nint x = 0b1011;\n\nboolean isSet   = (x & (1 << k)) != 0;\nint set         = x | (1 << k);\nint clear       = x & ~(1 << k);\nint toggle      = x ^ (1 << k);\n\nboolean isPow2  = x > 0 && (x & (x - 1)) == 0;   // only one bit set\nint lowestBit   = x & -x;                       // isolate lowest set bit\nint dropLowest  = x & (x - 1);                  // clear lowest set bit\nint bits        = Integer.bitCount(x);          // popcount\n\n// XOR: a ^ a == 0 and a ^ 0 == a, so XOR-ing everything leaves the element\n// that appears an odd number of times.\nstatic int singleNumber(int[] nums) {\n    int r = 0;\n    for (int n : nums) r ^= n;\n    return r;\n}\n\n// Iterate every subset of an n-element set.\nfor (int mask = 0; mask < (1 << n); mask++)\n    for (int i = 0; i < n; i++)\n        if ((mask & (1 << i)) != 0) { /* i is in this subset */ }"
+    },
+    {
+      "lang": "py",
+      "label": "Bit tricks worth memorising",
+      "code": "# Python ints are arbitrary precision and there is no unsigned type, so\n# right-shifting a negative number keeps its sign forever. Mask with\n# & 0xFFFFFFFF when you need 32-bit semantics.\nx = 0b1011\n\nis_set     = bool(x & (1 << k))\nset_bit    = x | (1 << k)\nclear_bit  = x & ~(1 << k)\ntoggle     = x ^ (1 << k)\n\nis_pow2    = x > 0 and x & (x - 1) == 0   # only one bit set\nlowest     = x & -x                       # isolate lowest set bit\ndrop_lowest = x & (x - 1)                 # clear lowest set bit\nbits       = x.bit_count()                # popcount (3.10+); else bin(x).count('1')\n\n# XOR: a ^ a == 0 and a ^ 0 == a, so XOR-ing everything leaves the value that\n# appears an odd number of times.\nfrom functools import reduce\nimport operator\nsingle = reduce(operator.xor, nums, 0)\n\n# Iterate every subset of an n-element set.\nfor mask in range(1 << n):\n    subset = [xs[i] for i in range(n) if mask & (1 << i)]"
+    },
+    {
+      "lang": "c",
+      "label": "Bit tricks, and the undefined behaviour to avoid",
+      "code": "/* C is where bit manipulation is most natural and most dangerous. Use\n   unsigned for anything involving shifts: shifting a signed value left into\n   the sign bit is undefined behaviour, as is shifting by >= the width. */\nunsigned x = 0b1011u;\n\nint isSet      = (x >> k) & 1u;\nunsigned set   = x | (1u << k);      /* 1u, not 1 — 1 << 31 on int is UB */\nunsigned clear = x & ~(1u << k);\nunsigned tog   = x ^ (1u << k);\n\nint isPow2      = x && !(x & (x - 1));   /* only one bit set */\nunsigned lowest = x & -x;                 /* isolate lowest set bit */\nunsigned drop   = x & (x - 1);            /* clear lowest set bit */\n\n/* popcount: __builtin_popcount on GCC/Clang, or count manually. */\nint bits = __builtin_popcount(x);\n\nint popcount(unsigned v) {\n    int c = 0;\n    while (v) { v &= v - 1; c++; }        /* runs once per SET bit */\n    return c;\n}\n\n/* XOR: a^a == 0 and a^0 == a, so XOR-ing everything leaves the value that\n   appears an odd number of times. O(1) space. */\nint singleNumber(const int *nums, int n) {\n    int r = 0;\n    for (int i = 0; i < n; i++) r ^= nums[i];\n    return r;\n}\n\n/* Iterate every subset of an n-element set. */\nfor (unsigned mask = 0; mask < (1u << n); mask++)\n    for (int i = 0; i < n; i++)\n        if (mask & (1u << i)) { /* i is in this subset */ }"
+    },
+    {
+      "lang": "go",
+      "label": "Bit tricks worth memorising",
+      "code": "// Go has both signed and unsigned types, and shifts on signed values are\n// arithmetic. Use uint when you want logical shifts.\nx := 0b1011\n\nisSet := x&(1<<k) != 0\nset := x | (1 << k)\nclear := x & ^(1 << k) // Go spells it &^ or & ^\ntoggle := x ^ (1 << k)\n\nisPow2 := x > 0 && x&(x-1) == 0 // only one bit set\nlowest := x & -x                // isolate lowest set bit\ndropLowest := x & (x - 1)       // clear lowest set bit\nbits := bits.OnesCount(uint(x)) // math/bits: popcount\n\n// XOR: a^a == 0 and a^0 == a, so XOR-ing everything leaves the value\n// appearing an odd number of times.\nfunc singleNumber(nums []int) int {\n\tr := 0\n\tfor _, n := range nums {\n\t\tr ^= n\n\t}\n\treturn r\n}\n\n// Iterate every subset of an n-element set.\nfor mask := 0; mask < 1<<n; mask++ {\n\tfor i := 0; i < n; i++ {\n\t\tif mask&(1<<i) != 0 {\n\t\t\t_ = i // i is in this subset\n\t\t}\n\t}\n}"
     }
   ],
   "problems": [
@@ -22,10 +44,8 @@
       "platform": "LeetCode",
       "difficulty": "Easy",
       "tier": "warmup",
-      "companies": [
-        "Amazon",
-        "Adobe"
-      ]
+      "companies": [],
+      "video": "https://www.youtube.com/watch?v=qMPX1AOa83k"
     },
     {
       "name": "Number of 1 Bits",
@@ -33,10 +53,8 @@
       "platform": "LeetCode",
       "difficulty": "Easy",
       "tier": "warmup",
-      "companies": [
-        "Amazon",
-        "Microsoft"
-      ]
+      "companies": [],
+      "video": "https://www.youtube.com/watch?v=5Km3utixwZs"
     },
     {
       "name": "Counting Bits",
@@ -45,9 +63,9 @@
       "difficulty": "Easy",
       "tier": "core",
       "companies": [
-        "Amazon",
         "Google"
-      ]
+      ],
+      "video": "https://www.youtube.com/watch?v=RyBM56RIWrM"
     },
     {
       "name": "Missing Number",
@@ -56,7 +74,6 @@
       "difficulty": "Easy",
       "tier": "core",
       "companies": [
-        "Amazon",
         "Microsoft"
       ]
     },

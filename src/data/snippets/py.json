@@ -1,0 +1,116 @@
+{
+  "basics-patterns": [
+    {
+      "label": "Nested loops — pyramid pattern",
+      "code": "# Outer loop = rows, inner expressions = what each row prints.\n# Python lets you say this declaratively, but write the loops out first —\n# the point is to make nested iteration automatic.\ndef pyramid(n: int) -> None:\n    for i in range(1, n + 1):\n        print(' ' * (n - i) + '*' * (2 * i - 1))\n\n# Fast IO. input() is slow in loops; sys.stdin is what you want past ~10^5 lines.\nimport sys\ndata = sys.stdin.buffer.read().split()\nn = int(data[0])"
+    }
+  ],
+  "arrays": [
+    {
+      "label": "Kadane's maximum subarray",
+      "code": "# Keep the best sum ending here; restart whenever carrying the prefix\n# forward is worse than starting fresh.\ndef max_subarray(nums: list[int]) -> int:\n    best = cur = nums[0]\n    for x in nums[1:]:\n        cur = max(x, cur + x)\n        best = max(best, cur)\n    return best\n\n# Prefix sums: range sum in O(1) after O(n) setup.\nfrom itertools import accumulate\npre = [0, *accumulate(nums)]\ntotal = pre[r + 1] - pre[l]        # sum of nums[l..r] inclusive\n\n# Two pointers on a sorted array.\ndef two_sum_sorted(a: list[int], target: int) -> tuple[int, int] | None:\n    i, j = 0, len(a) - 1\n    while i < j:\n        s = a[i] + a[j]\n        if s == target:\n            return i, j\n        if s < target:\n            i += 1\n        else:\n            j -= 1\n    return None"
+    }
+  ],
+  "binary-search": [
+    {
+      "label": "bisect, and binary search on the answer",
+      "code": "# Python ships binary search — don't hand-roll it for plain lookups.\nimport bisect\ni = bisect.bisect_left(a, x)    # first index with a[i] >= x  (lower_bound)\nj = bisect.bisect_right(a, x)   # first index with a[j] >  x  (upper_bound)\nfound = i < len(a) and a[i] == x\n\n# Hand-rolled, for when you need the index semantics explicit.\ndef search(a: list[int], target: int) -> int:\n    lo, hi = 0, len(a) - 1\n    while lo <= hi:\n        mid = (lo + hi) // 2        # Python ints are arbitrary precision — no overflow\n        if a[mid] == target:\n            return mid\n        if a[mid] < target:\n            lo = mid + 1\n        else:\n            hi = mid - 1\n    return -1\n\n# Binary search on the answer: smallest value for which feasible() is True.\n# The predicate must be monotonic: False...False, True...True.\ndef min_feasible(lo: int, hi: int) -> int:\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if feasible(mid):\n            hi = mid                # keep mid as a candidate\n        else:\n            lo = mid + 1\n    return lo"
+    }
+  ],
+  "strings": [
+    {
+      "label": "Slicing, Counter, two pointers",
+      "code": "# Strings are immutable, so build with a list + join, not += in a loop.\nparts = [c.lower() for c in s if c.isalnum()]\ncleaned = ''.join(parts)\n\n# Palindrome: slicing is idiomatic and fast, though it allocates.\nis_pal = cleaned == cleaned[::-1]\n\n# Two pointers when you must avoid the copy.\ndef is_palindrome(s: str) -> bool:\n    i, j = 0, len(s) - 1\n    while i < j:\n        if s[i] != s[j]:\n            return False\n        i, j = i + 1, j - 1\n    return True\n\n# Anagram: Counter equality reads better than sorting and is O(n).\nfrom collections import Counter\nis_anagram = Counter(a) == Counter(b)\n\n# Sliding window: longest substring without repeats.\ndef longest_unique(s: str) -> int:\n    last: dict[str, int] = {}\n    start = best = 0\n    for i, c in enumerate(s):\n        if c in last and last[c] >= start:\n            start = last[c] + 1     # jump past the previous occurrence\n        last[c] = i\n        best = max(best, i - start + 1)\n    return best"
+    }
+  ],
+  "stl": [
+    {
+      "label": "The standard containers — collections and heapq",
+      "code": "# Python's answer to the STL is mostly built in, plus `collections`.\nfrom collections import defaultdict, Counter, deque, OrderedDict\nimport heapq\n\nlst = [3, 1, 2]                    # vector\nlst.sort()                         # in place, stable (Timsort)\nnew = sorted(lst, reverse=True)    # returns a copy\nlst.sort(key=len)                  # sort by a key function\n\nd: dict[str, int] = {}             # unordered_map (insertion-ordered since 3.7)\nd.get('missing', 0)\ncounts = defaultdict(int)           # no KeyError on first touch\ncounts['a'] += 1\nfreq = Counter('mississippi')       # counting, done\nfreq.most_common(2)\n\nseen: set[int] = set()             # unordered_set\n\ndq = deque()                       # O(1) at BOTH ends — a list is O(n) at the front\ndq.append(1); dq.appendleft(0)\ndq.pop(); dq.popleft()\n\nheap: list[int] = []               # min-heap\nheapq.heappush(heap, 3)\nsmallest = heapq.heappop(heap)\n# No max-heap: push negated values, or use heapq.nlargest(k, xs)."
+    }
+  ],
+  "recursion": [
+    {
+      "label": "Recursion — base case, recurse, combine",
+      "code": "# Python's default recursion limit is 1000. Deep recursion needs either\n# sys.setrecursionlimit or an iterative rewrite — this bites on tree and\n# graph problems with 10^5 nodes.\nimport sys\nsys.setrecursionlimit(300_000)\n\nfrom functools import cache\n\n@cache                              # memoisation for free\ndef fib(n: int) -> int:\n    if n <= 1:\n        return n\n    return fib(n - 1) + fib(n - 2)\n\n# Subsets: at each index, take the element or don't.\ndef subsets(nums: list[int]) -> list[list[int]]:\n    out: list[list[int]] = []\n\n    def go(i: int, cur: list[int]) -> None:\n        if i == len(nums):\n            out.append(cur[:])      # copy — cur is mutated on the way back up\n            return\n        go(i + 1, cur)              # skip\n        cur.append(nums[i])\n        go(i + 1, cur)              # take\n        cur.pop()                   # undo\n\n    go(0, [])\n    return out"
+    }
+  ],
+  "backtracking": [
+    {
+      "label": "Backtracking template",
+      "code": "# choose -> explore -> un-choose. The un-choose is what makes it backtracking.\ndef permutations(nums: list[int]) -> list[list[int]]:\n    out: list[list[int]] = []\n    used = [False] * len(nums)\n\n    def go(cur: list[int]) -> None:\n        if len(cur) == len(nums):\n            out.append(cur[:])\n            return\n        for i, x in enumerate(nums):\n            if used[i]:\n                continue\n            used[i] = True\n            cur.append(x)           # choose\n            go(cur)                 # explore\n            cur.pop()               # un-choose\n            used[i] = False\n\n    go([])\n    return out\n\n# Combination sum: allow reuse by passing i (not i + 1); prune when over target.\ndef combination_sum(nums: list[int], target: int) -> list[list[int]]:\n    out: list[list[int]] = []\n\n    def go(i: int, remaining: int, cur: list[int]) -> None:\n        if remaining == 0:\n            out.append(cur[:]); return\n        if i == len(nums) or remaining < 0:\n            return\n        cur.append(nums[i])\n        go(i, remaining - nums[i], cur)   # reuse the same element\n        cur.pop()\n        go(i + 1, remaining, cur)         # move on\n\n    go(0, target, [])\n    return out"
+    }
+  ],
+  "sorting": [
+    {
+      "label": "Merge sort, quick sort, and sorting by key",
+      "code": "import random\n\n# In practice use list.sort()/sorted() — Timsort, O(n log n), stable.\n# Write these out to understand divide and conquer, not to use them.\n\ndef merge_sort(a: list[int]) -> list[int]:\n    if len(a) <= 1:\n        return a\n    mid = len(a) // 2\n    left, right = merge_sort(a[:mid]), merge_sort(a[mid:])\n    out, i, j = [], 0, 0\n    while i < len(left) and j < len(right):\n        if left[i] <= right[j]:          # <= keeps it stable\n            out.append(left[i]); i += 1\n        else:\n            out.append(right[j]); j += 1\n    out.extend(left[i:]); out.extend(right[j:])\n    return out\n\ndef quick_sort(a: list[int], lo: int, hi: int) -> None:\n    if lo >= hi:\n        return\n    r = random.randint(lo, hi)                    # randomise to dodge O(n^2)\n    a[hi], a[r] = a[r], a[hi]\n    pivot, i = a[hi], lo - 1\n    for j in range(lo, hi):\n        if a[j] < pivot:\n            i += 1\n            a[i], a[j] = a[j], a[i]\n    a[i + 1], a[hi] = a[hi], a[i + 1]\n    quick_sort(a, lo, i); quick_sort(a, i + 2, hi)\n\n# Multi-key sort: ascending by age, then descending by score.\npeople.sort(key=lambda p: (p.age, -p.score))"
+    }
+  ],
+  "linked-lists": [
+    {
+      "label": "Reverse, and Floyd's cycle detection",
+      "code": "class ListNode:\n    def __init__(self, val: int = 0, nxt: 'ListNode | None' = None):\n        self.val, self.next = val, nxt\n\n# Reverse: rewire each next pointer backwards as you walk forward.\ndef reverse(head: ListNode | None) -> ListNode | None:\n    prev = None\n    while head:\n        head.next, prev, head = prev, head, head.next   # save-rewire-advance\n    return prev\n\n# Floyd: slow moves 1, fast moves 2. Meeting means a cycle. Reset one pointer\n# to head, advance both by 1, and they meet at the cycle entry.\ndef cycle_start(head: ListNode | None) -> ListNode | None:\n    slow = fast = head\n    while fast and fast.next:\n        slow, fast = slow.next, fast.next.next\n        if slow is fast:\n            slow = head\n            while slow is not fast:\n                slow, fast = slow.next, fast.next\n            return slow\n    return None\n\n# Middle of the list — the same fast/slow idea.\ndef middle(head: ListNode | None) -> ListNode | None:\n    slow = fast = head\n    while fast and fast.next:\n        slow, fast = slow.next, fast.next.next\n    return slow"
+    }
+  ],
+  "stacks-queues": [
+    {
+      "label": "Monotonic stack — next greater element",
+      "code": "# The pattern behind next-greater, largest-rectangle, stock-span and\n# daily-temperatures. Each index is pushed and popped once, so O(n).\ndef next_greater(a: list[int]) -> list[int]:\n    res = [-1] * len(a)\n    stack: list[int] = []              # indices, values decreasing\n    for i, x in enumerate(a):\n        while stack and a[stack[-1]] < x:\n            res[stack.pop()] = x\n        stack.append(i)\n    return res\n\n# Sliding window maximum with a deque. Use deque, not list — list.pop(0) is O(n).\nfrom collections import deque\n\ndef window_max(a: list[int], k: int) -> list[int]:\n    dq: deque[int] = deque()           # indices\n    out: list[int] = []\n    for i, x in enumerate(a):\n        while dq and dq[0] <= i - k:\n            dq.popleft()               # fell out of the window\n        while dq and a[dq[-1]] <= x:\n            dq.pop()                   # dominated by x, can never be the max\n        dq.append(i)\n        if i >= k - 1:\n            out.append(a[dq[0]])\n    return out"
+    }
+  ],
+  "trees": [
+    {
+      "label": "Traversals — recursive and iterative",
+      "code": "class TreeNode:\n    def __init__(self, val: int = 0, left=None, right=None):\n        self.val, self.left, self.right = val, left, right\n\ndef inorder(root: TreeNode | None) -> list[int]:\n    if not root:\n        return []\n    return inorder(root.left) + [root.val] + inorder(root.right)\n\n# Iterative inorder — asked for explicitly in interviews.\ndef inorder_iter(root: TreeNode | None) -> list[int]:\n    out, stack, cur = [], [], root\n    while cur or stack:\n        while cur:\n            stack.append(cur)\n            cur = cur.left\n        cur = stack.pop()\n        out.append(cur.val)\n        cur = cur.right\n    return out\n\n# Level order (BFS) — fix the level size before the inner loop, or you will\n# consume nodes belonging to the next level.\nfrom collections import deque\n\ndef level_order(root: TreeNode | None) -> list[list[int]]:\n    if not root:\n        return []\n    out, q = [], deque([root])\n    while q:\n        level = []\n        for _ in range(len(q)):\n            n = q.popleft()\n            level.append(n.val)\n            if n.left:  q.append(n.left)\n            if n.right: q.append(n.right)\n        out.append(level)\n    return out"
+    }
+  ],
+  "bst": [
+    {
+      "label": "BST insert, search, validate",
+      "code": "# BST invariant: everything left < node < everything right — against INHERITED\n# bounds, not just the parent. Comparing only with the parent is the classic\n# wrong answer, and it passes small tests.\ndef is_valid(root: TreeNode | None,\n             lo: float = float('-inf'),\n             hi: float = float('inf')) -> bool:\n    if not root:\n        return True\n    if not (lo < root.val < hi):\n        return False\n    return is_valid(root.left, lo, root.val) and is_valid(root.right, root.val, hi)\n\ndef insert(root: TreeNode | None, v: int) -> TreeNode:\n    if not root:\n        return TreeNode(v)\n    if v < root.val:\n        root.left = insert(root.left, v)\n    elif v > root.val:\n        root.right = insert(root.right, v)\n    return root\n\n# LCA in a BST: the first node that splits the two values.\ndef lca(root: TreeNode | None, p: int, q: int) -> TreeNode | None:\n    while root:\n        if p < root.val and q < root.val:\n            root = root.left\n        elif p > root.val and q > root.val:\n            root = root.right\n        else:\n            return root\n    return None\n\n# An inorder walk of a BST is sorted — that fact solves a lot of problems."
+    }
+  ],
+  "heaps": [
+    {
+      "label": "heapq — top-K and k-way merge",
+      "code": "import heapq\n\n# heapq is a MIN-heap and operates on a plain list, in place.\nheap: list[int] = []\nheapq.heappush(heap, 5)\nsmallest = heapq.heappop(heap)\nheapq.heapify(existing_list)          # O(n), beats n pushes\n\n# Kth largest: min-heap of size k. O(n log k).\ndef kth_largest(nums: list[int], k: int) -> int:\n    h = nums[:k]\n    heapq.heapify(h)\n    for x in nums[k:]:\n        if x > h[0]:\n            heapq.heapreplace(h, x)   # pop+push in one operation\n    return h[0]\n\n# There is no max-heap: negate on the way in and out.\nmax_heap: list[int] = []\nheapq.heappush(max_heap, -x)\nlargest = -heapq.heappop(max_heap)\n\n# Top K frequent, in two lines.\nfrom collections import Counter\ntop = [v for v, _ in Counter(nums).most_common(k)]\n\n# K-way merge of sorted iterables — lazy, memory-efficient.\nmerged = list(heapq.merge(*sorted_lists))"
+    }
+  ],
+  "hashing": [
+    {
+      "label": "dict patterns — complements, counting, prefix sums",
+      "code": "# Two Sum: store what you've seen, look for the complement. One pass, O(n).\ndef two_sum(nums: list[int], target: int) -> tuple[int, int] | None:\n    seen: dict[int, int] = {}          # value -> index\n    for i, x in enumerate(nums):\n        if target - x in seen:\n            return seen[target - x], i\n        seen[x] = i\n    return None\n\n# Subarray sum equals K: count prefix sums as you go.\n# The {0: 1} seed accounts for a prefix that is itself the answer — without it\n# you miss every subarray starting at index 0.\nfrom collections import defaultdict\n\ndef subarray_sum(nums: list[int], k: int) -> int:\n    count = defaultdict(int)\n    count[0] = 1\n    total = res = 0\n    for x in nums:\n        total += x\n        res += count[total - k]\n        count[total] += 1\n    return res\n\n# Group anagrams: a sorted-letters tuple is a canonical key.\ndef group_anagrams(words: list[str]) -> list[list[str]]:\n    groups = defaultdict(list)\n    for w in words:\n        groups[tuple(sorted(w))].append(w)\n    return list(groups.values())"
+    }
+  ],
+  "greedy": [
+    {
+      "label": "Greedy — sort, then take the locally safe choice",
+      "code": "# Activity selection / non-overlapping intervals: sort by END time.\n# Sorting by start or by duration both fail. The argument: finishing earliest\n# leaves the most room for everything that follows.\ndef max_non_overlapping(intervals: list[tuple[int, int]]) -> int:\n    intervals.sort(key=lambda iv: iv[1])\n    count, last_end = 0, float('-inf')\n    for start, end in intervals:\n        if start >= last_end:\n            count += 1\n            last_end = end\n    return count\n\n# Merge intervals: sort by START, then extend or append.\ndef merge(intervals: list[list[int]]) -> list[list[int]]:\n    intervals.sort()\n    out: list[list[int]] = []\n    for iv in intervals:\n        if out and iv[0] <= out[-1][1]:\n            out[-1][1] = max(out[-1][1], iv[1])\n        else:\n            out.append(iv[:])\n    return out\n\n# Jump game: track the furthest index reachable so far.\ndef can_jump(nums: list[int]) -> bool:\n    reach = 0\n    for i, n in enumerate(nums):\n        if i > reach:\n            return False\n        reach = max(reach, i + n)\n    return True"
+    }
+  ],
+  "graphs": [
+    {
+      "label": "BFS, DFS, topological sort",
+      "code": "from collections import defaultdict, deque\n\nadj = defaultdict(list)\nadj[u].append(v)\n\n# BFS gives shortest path in an UNWEIGHTED graph. Mark visited on enqueue,\n# not on dequeue, or a node gets queued many times.\ndef bfs(src: int, n: int) -> list[int]:\n    dist = [-1] * n\n    dist[src] = 0\n    q = deque([src])\n    while q:\n        u = q.popleft()\n        for v in adj[u]:\n            if dist[v] == -1:\n                dist[v] = dist[u] + 1\n                q.append(v)\n    return dist\n\n# Grid BFS — the same thing with implicit neighbours.\nDIRS = ((1, 0), (-1, 0), (0, 1), (0, -1))\n\n# Kahn's topological sort. Fewer than n nodes out means there is a cycle.\ndef topo_sort(n: int) -> list[int]:\n    indeg = [0] * n\n    for u in range(n):\n        for v in adj[u]:\n            indeg[v] += 1\n    q = deque(i for i in range(n) if indeg[i] == 0)\n    order: list[int] = []\n    while q:\n        u = q.popleft()\n        order.append(u)\n        for v in adj[u]:\n            indeg[v] -= 1\n            if indeg[v] == 0:\n                q.append(v)\n    return order if len(order) == n else []      # [] => cycle\n\n# Dijkstra with a heap, for non-negative weights.\nimport heapq\n\ndef dijkstra(src: int, n: int) -> list[float]:\n    dist = [float('inf')] * n\n    dist[src] = 0\n    pq = [(0, src)]\n    while pq:\n        d, u = heapq.heappop(pq)\n        if d > dist[u]:\n            continue                              # stale entry\n        for v, w in adj[u]:\n            if d + w < dist[v]:\n                dist[v] = d + w\n                heapq.heappush(pq, (dist[v], v))\n    return dist"
+    }
+  ],
+  "dynamic-programming": [
+    {
+      "label": "Memoisation to tabulation to rolling array",
+      "code": "from functools import cache\n\n# 1. Top-down. @cache turns naive recursion into memoised DP for free —\n#    the fastest way to get a correct baseline in an interview.\n@cache\ndef rob(i: int) -> int:\n    if i >= len(nums):\n        return 0\n    return max(nums[i] + rob(i + 2), rob(i + 1))\n\n# 2. Bottom-up table.\ndef rob_tab(nums: list[int]) -> int:\n    n = len(nums)\n    dp = [0] * (n + 2)\n    for i in range(n - 1, -1, -1):\n        dp[i] = max(nums[i] + dp[i + 2], dp[i + 1])\n    return dp[0]\n\n# 3. Rolling — only two states are ever read.\ndef rob_rolling(nums: list[int]) -> int:\n    take = skip = 0\n    for x in reversed(nums):\n        take, skip = max(x + skip, take), take\n    return take\n\n# 0/1 knapsack, 1-D. Iterate weight DOWNWARD so each item is used at most once;\n# going upward silently turns it into the unbounded version.\ndef knapsack(wt: list[int], val: list[int], cap: int) -> int:\n    dp = [0] * (cap + 1)\n    for w_i, v_i in zip(wt, val):\n        for w in range(cap, w_i - 1, -1):\n            dp[w] = max(dp[w], v_i + dp[w - w_i])\n    return dp[cap]\n\n# LCS — the template for most string DP.\ndef lcs(a: str, b: str) -> int:\n    dp = [[0] * (len(b) + 1) for _ in range(len(a) + 1)]\n    for i in range(1, len(a) + 1):\n        for j in range(1, len(b) + 1):\n            dp[i][j] = dp[i - 1][j - 1] + 1 if a[i - 1] == b[j - 1] \\\n                       else max(dp[i - 1][j], dp[i][j - 1])\n    return dp[len(a)][len(b)]"
+    }
+  ],
+  "tries": [
+    {
+      "label": "Trie — insert, search, prefix",
+      "code": "# A trie trades memory for prefix queries in O(len) regardless of how many\n# words are stored. A dict per node keeps it simple and handles any alphabet.\nclass Trie:\n    def __init__(self) -> None:\n        self.children: dict[str, 'Trie'] = {}\n        self.end = False\n\n    def insert(self, word: str) -> None:\n        node = self\n        for c in word:\n            node = node.children.setdefault(c, Trie())\n        node.end = True\n\n    def _walk(self, prefix: str) -> 'Trie | None':\n        node = self\n        for c in prefix:\n            node = node.children.get(c)\n            if node is None:\n                return None\n        return node\n\n    def search(self, word: str) -> bool:\n        node = self._walk(word)\n        return node is not None and node.end\n\n    def starts_with(self, prefix: str) -> bool:\n        return self._walk(prefix) is not None"
+    }
+  ],
+  "bit-manipulation": [
+    {
+      "label": "Bit tricks worth memorising",
+      "code": "# Python ints are arbitrary precision and there is no unsigned type, so\n# right-shifting a negative number keeps its sign forever. Mask with\n# & 0xFFFFFFFF when you need 32-bit semantics.\nx = 0b1011\n\nis_set     = bool(x & (1 << k))\nset_bit    = x | (1 << k)\nclear_bit  = x & ~(1 << k)\ntoggle     = x ^ (1 << k)\n\nis_pow2    = x > 0 and x & (x - 1) == 0   # only one bit set\nlowest     = x & -x                       # isolate lowest set bit\ndrop_lowest = x & (x - 1)                 # clear lowest set bit\nbits       = x.bit_count()                # popcount (3.10+); else bin(x).count('1')\n\n# XOR: a ^ a == 0 and a ^ 0 == a, so XOR-ing everything leaves the value that\n# appears an odd number of times.\nfrom functools import reduce\nimport operator\nsingle = reduce(operator.xor, nums, 0)\n\n# Iterate every subset of an n-element set.\nfor mask in range(1 << n):\n    subset = [xs[i] for i in range(n) if mask & (1 << i)]"
+    }
+  ]
+}

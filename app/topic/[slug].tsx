@@ -6,7 +6,7 @@ import { Palette, spacing, radius, type, tierColor, difficultyColor } from '../.
 import { useColors, useThemedStyles } from '../../src/theme/theme';
 import { Card, Pill, Markdown, CodeBlock, Bar, PrimaryButton } from '../../src/components/ui';
 import { Feather } from '@expo/vector-icons';
-import { plan, problemId, problemVideoUrl } from '../../src/lib/content';
+import { plan, problemId, problemVideoUrl, codeFor, langName, Topic } from '../../src/lib/content';
 import { useProgress } from '../../src/store/progress';
 
 type Tab = 'learn' | 'patterns' | 'complexity' | 'code' | 'problems';
@@ -17,7 +17,7 @@ export default function TopicDetail() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const topic = plan.topics.find((t) => t.slug === slug);
   const [tab, setTab] = useState<Tab>('learn');
-  const { topicDone, toggleTopic, problemStatus, cycleProblemStatus } = useProgress();
+  const { topicDone, toggleTopic, problemStatus, cycleProblemStatus, language } = useProgress();
 
   // Returning null here used to render a blank white screen with no clue what
   // went wrong. A missing topic is a routing bug, so say so rather than
@@ -99,13 +99,7 @@ export default function TopicDetail() {
         {tab === 'patterns' && <Card><Markdown text={topic.patterns_md} /></Card>}
         {tab === 'complexity' && <Card><Markdown text={topic.complexity_md} /></Card>}
 
-        {tab === 'code' && (
-          <Card>
-            {topic.code.map((block, i) => (
-              <CodeBlock key={i} label={block.label} code={block.code} />
-            ))}
-          </Card>
-        )}
+        {tab === 'code' && <CodeTab topic={topic} language={language} />}
 
         {tab === 'problems' && (
           <>
@@ -175,8 +169,43 @@ export default function TopicDetail() {
   );
 }
 
+/**
+ * Code tab, scoped to the language chosen on Profile.
+ *
+ * When a language has no snippet for this topic the C++ reference is shown
+ * instead, with a banner saying so — a blank tab would read as a bug, and
+ * silently showing C++ under a "Go" setting would be worse still.
+ */
+function CodeTab({ topic, language }: { topic: Topic; language: string }) {
+  const s = useThemedStyles(makeStyles);
+  const { blocks, fellBack } = codeFor(topic, language);
+
+  return (
+    <Card>
+      <View style={s.langRow}>
+        <Text style={s.langBadge}>{langName(fellBack ? 'cpp' : language)}</Text>
+        {fellBack && (
+          <Text style={s.langNote}>
+            No {langName(language)} snippet for this topic yet — showing the C++ reference.
+          </Text>
+        )}
+      </View>
+      {blocks.map((block, i) => (
+        <CodeBlock key={`${block.lang}-${i}`} label={block.label} code={block.code} />
+      ))}
+    </Card>
+  );
+}
+
 const makeStyles = (c: Palette) => StyleSheet.create({
   safe: { flex: 1, backgroundColor: c.bg },
+  langRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginBottom: spacing.md, flexWrap: 'wrap' },
+  langBadge: {
+    fontFamily: type.mono, fontSize: 11, color: c.onAccent,
+    backgroundColor: c.accent, borderRadius: radius.pill,
+    paddingVertical: 4, paddingHorizontal: 12, overflow: 'hidden',
+  },
+  langNote: { flex: 1, fontFamily: type.body, fontSize: 12, color: c.textFaint, lineHeight: 18 },
   head: { paddingHorizontal: spacing.lg, paddingTop: spacing.sm, paddingBottom: spacing.md },
 
   navRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.md },

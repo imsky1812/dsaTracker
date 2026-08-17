@@ -7,34 +7,180 @@
   "complexity_md": "| Operation | Time | Notes |\n|---|---|---|\n| Access by index | O(1) | The core superpower |\n| Search (unsorted) | O(n) | Must scan |\n| Search (sorted) | O(log n) | Binary search |\n| Insert/remove at end | O(1)* | Amortized for vector |\n| Insert/remove in middle | O(n) | Shift elements |\n| Two-pointer / sliding window scan | O(n) | Single pass |\n| Prefix-sum build | O(n) | Then O(1) per range query |\n\nSpace: O(1) extra for in-place two-pointer work; O(n) for prefix-sum arrays.",
   "code": [
     {
+      "lang": "cpp",
       "label": "Two pointers — reverse in place",
       "code": "void reverse(vector<int>& a) {\n    int l = 0, r = a.size() - 1;\n    while (l < r) {\n        swap(a[l], a[r]);\n        l++; r--;\n    }\n}"
     },
     {
+      "lang": "cpp",
       "label": "Sliding window — max sum of size k",
       "code": "int maxSum(vector<int>& a, int k) {\n    int sum = 0;\n    for (int i = 0; i < k; i++) sum += a[i];\n    int best = sum;\n    for (int i = k; i < (int)a.size(); i++) {\n        sum += a[i] - a[i - k];   // slide: add new, drop old\n        best = max(best, sum);\n    }\n    return best;\n}"
     },
     {
+      "lang": "cpp",
       "label": "Prefix sum — O(1) range queries",
       "code": "vector<long long> buildPrefix(vector<int>& a) {\n    int n = a.size();\n    vector<long long> pre(n + 1, 0);\n    for (int i = 0; i < n; i++) pre[i + 1] = pre[i] + a[i];\n    return pre;   // sum(l..r) = pre[r+1] - pre[l]\n}"
     },
     {
+      "lang": "cpp",
       "label": "Kadane — maximum subarray sum",
       "code": "int maxSubArray(vector<int>& a) {\n    int best = a[0], cur = a[0];\n    for (int i = 1; i < (int)a.size(); i++) {\n        cur = max(a[i], cur + a[i]);\n        best = max(best, cur);\n    }\n    return best;\n}"
+    },
+    {
+      "lang": "java",
+      "label": "Kadane's maximum subarray",
+      "code": "// Keep the best sum ending here; restart whenever carrying the prefix\n// forward is worse than starting fresh.\nstatic int maxSubArray(int[] nums) {\n    int best = nums[0], cur = nums[0];\n    for (int i = 1; i < nums.length; i++) {\n        cur = Math.max(nums[i], cur + nums[i]);\n        best = Math.max(best, cur);\n    }\n    return best;\n}\n\n// Prefix sums: range sum in O(1) after O(n) setup.\nint[] pre = new int[nums.length + 1];\nfor (int i = 0; i < nums.length; i++) pre[i + 1] = pre[i] + nums[i];\n// sum of nums[l..r] inclusive:\nint sum = pre[r + 1] - pre[l];"
+    },
+    {
+      "lang": "py",
+      "label": "Kadane's maximum subarray",
+      "code": "# Keep the best sum ending here; restart whenever carrying the prefix\n# forward is worse than starting fresh.\ndef max_subarray(nums: list[int]) -> int:\n    best = cur = nums[0]\n    for x in nums[1:]:\n        cur = max(x, cur + x)\n        best = max(best, cur)\n    return best\n\n# Prefix sums: range sum in O(1) after O(n) setup.\nfrom itertools import accumulate\npre = [0, *accumulate(nums)]\ntotal = pre[r + 1] - pre[l]        # sum of nums[l..r] inclusive\n\n# Two pointers on a sorted array.\ndef two_sum_sorted(a: list[int], target: int) -> tuple[int, int] | None:\n    i, j = 0, len(a) - 1\n    while i < j:\n        s = a[i] + a[j]\n        if s == target:\n            return i, j\n        if s < target:\n            i += 1\n        else:\n            j -= 1\n    return None"
+    },
+    {
+      "lang": "c",
+      "label": "Kadane's maximum subarray and prefix sums",
+      "code": "#include <limits.h>\n\n/* C passes arrays as bare pointers — sizeof() gives you the POINTER size\n   inside a function, not the array length. Always pass the length. */\nint maxSubArray(const int *a, int n) {\n    int best = a[0], cur = a[0];\n    for (int i = 1; i < n; i++) {\n        cur = (a[i] > cur + a[i]) ? a[i] : cur + a[i];\n        if (cur > best) best = cur;\n    }\n    return best;\n}\n\n/* Prefix sums. Use long long: int sums overflow at ~2.1e9, silently. */\nvoid prefix(const int *a, int n, long long *pre) {\n    pre[0] = 0;\n    for (int i = 0; i < n; i++) pre[i + 1] = pre[i] + a[i];\n    /* sum of a[l..r] == pre[r + 1] - pre[l] */\n}\n\n/* Two pointers on a sorted array. */\nint twoSumSorted(const int *a, int n, int target, int *i_out, int *j_out) {\n    int i = 0, j = n - 1;\n    while (i < j) {\n        int s = a[i] + a[j];\n        if (s == target) { *i_out = i; *j_out = j; return 1; }\n        if (s < target) i++; else j--;\n    }\n    return 0;\n}"
+    },
+    {
+      "lang": "go",
+      "label": "Kadane's maximum subarray and prefix sums",
+      "code": "// Go has no generic max for ints before 1.21; since 1.21 `max`/`min` are builtins.\nfunc maxSubArray(nums []int) int {\n\tbest, cur := nums[0], nums[0]\n\tfor _, x := range nums[1:] {\n\t\tcur = max(x, cur+x)\n\t\tbest = max(best, cur)\n\t}\n\treturn best\n}\n\n// Prefix sums: O(1) range queries after O(n) setup.\nfunc prefix(nums []int) []int {\n\tpre := make([]int, len(nums)+1)\n\tfor i, x := range nums {\n\t\tpre[i+1] = pre[i] + x\n\t}\n\treturn pre // sum of nums[l..r] == pre[r+1] - pre[l]\n}\n\n// Slices share backing arrays. append may or may not reallocate, so never\n// assume a slice you handed out is unaffected by your appends.\nb := make([]int, len(a))\ncopy(b, a) // explicit copy when you need independence"
     }
   ],
   "problems": [
-    {"name": "Two Sum", "url": "https://leetcode.com/problems/two-sum/", "platform": "LeetCode", "difficulty": "Easy", "tier": "warmup", "companies": ["Amazon", "Google", "Microsoft", "Adobe"]},
-    {"name": "Best Time to Buy and Sell Stock", "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/", "platform": "LeetCode", "difficulty": "Easy", "tier": "warmup", "companies": ["Amazon", "Microsoft", "Meta"]},
-    {"name": "Move Zeroes", "url": "https://leetcode.com/problems/move-zeroes/", "platform": "LeetCode", "difficulty": "Easy", "tier": "warmup", "companies": ["Meta", "Amazon"]},
-    {"name": "Maximum Subarray (Kadane)", "url": "https://leetcode.com/problems/maximum-subarray/", "platform": "LeetCode", "difficulty": "Medium", "tier": "core", "companies": ["Amazon", "Microsoft", "LinkedIn"]},
-    {"name": "Container With Most Water", "url": "https://leetcode.com/problems/container-with-most-water/", "platform": "LeetCode", "difficulty": "Medium", "tier": "core", "companies": ["Amazon", "Google", "Adobe"]},
-    {"name": "3Sum", "url": "https://leetcode.com/problems/3sum/", "platform": "LeetCode", "difficulty": "Medium", "tier": "interview", "companies": ["Amazon", "Google", "Meta", "Adobe"]},
-    {"name": "Product of Array Except Self", "url": "https://leetcode.com/problems/product-of-array-except-self/", "platform": "LeetCode", "difficulty": "Medium", "tier": "interview", "companies": ["Amazon", "Meta", "Microsoft"]},
-    {"name": "Sort Colors (Dutch flag)", "url": "https://leetcode.com/problems/sort-colors/", "platform": "LeetCode", "difficulty": "Medium", "tier": "interview", "companies": ["Microsoft", "Amazon"]},
-    {"name": "Subarray Sum Equals K", "url": "https://leetcode.com/problems/subarray-sum-equals-k/", "platform": "LeetCode", "difficulty": "Medium", "tier": "interview", "companies": ["Amazon", "Google", "Meta"]},
-    {"name": "Maximum Product Subarray", "url": "https://leetcode.com/problems/maximum-product-subarray/", "platform": "LeetCode", "difficulty": "Medium", "tier": "interview", "companies": ["Amazon", "Microsoft"]},
-    {"name": "Trapping Rain Water", "url": "https://leetcode.com/problems/trapping-rain-water/", "platform": "LeetCode", "difficulty": "Hard", "tier": "hard", "companies": ["Amazon", "Google", "Microsoft", "Adobe"]},
-    {"name": "First Missing Positive", "url": "https://leetcode.com/problems/first-missing-positive/", "platform": "LeetCode", "difficulty": "Hard", "tier": "hard", "companies": ["Amazon", "Microsoft"]}
+    {
+      "name": "Two Sum",
+      "url": "https://leetcode.com/problems/two-sum/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [],
+      "video": "https://www.youtube.com/watch?v=KLlXCFG5TnA"
+    },
+    {
+      "name": "Best Time to Buy and Sell Stock",
+      "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [],
+      "video": "https://www.youtube.com/watch?v=1pkOgXD63yU"
+    },
+    {
+      "name": "Move Zeroes",
+      "url": "https://leetcode.com/problems/move-zeroes/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": []
+    },
+    {
+      "name": "Maximum Subarray (Kadane)",
+      "url": "https://leetcode.com/problems/maximum-subarray/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "Microsoft",
+        "LinkedIn"
+      ]
+    },
+    {
+      "name": "Container With Most Water",
+      "url": "https://leetcode.com/problems/container-with-most-water/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "Google",
+        "Adobe"
+      ],
+      "video": "https://www.youtube.com/watch?v=UuiTKBwPgAo"
+    },
+    {
+      "name": "3Sum",
+      "url": "https://leetcode.com/problems/3sum/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Meta",
+        "Adobe"
+      ]
+    },
+    {
+      "name": "Product of Array Except Self",
+      "url": "https://leetcode.com/problems/product-of-array-except-self/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Amazon",
+        "Meta",
+        "Microsoft"
+      ],
+      "video": "https://www.youtube.com/watch?v=bNvIQI2wAjk"
+    },
+    {
+      "name": "Sort Colors (Dutch flag)",
+      "url": "https://leetcode.com/problems/sort-colors/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Microsoft",
+        "Amazon"
+      ]
+    },
+    {
+      "name": "Subarray Sum Equals K",
+      "url": "https://leetcode.com/problems/subarray-sum-equals-k/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Meta"
+      ]
+    },
+    {
+      "name": "Maximum Product Subarray",
+      "url": "https://leetcode.com/problems/maximum-product-subarray/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Amazon",
+        "Microsoft"
+      ]
+    },
+    {
+      "name": "Trapping Rain Water",
+      "url": "https://leetcode.com/problems/trapping-rain-water/",
+      "platform": "LeetCode",
+      "difficulty": "Hard",
+      "tier": "hard",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Microsoft",
+        "Adobe"
+      ],
+      "video": "https://www.youtube.com/watch?v=ZI2z5pq0TqA"
+    },
+    {
+      "name": "First Missing Positive",
+      "url": "https://leetcode.com/problems/first-missing-positive/",
+      "platform": "LeetCode",
+      "difficulty": "Hard",
+      "tier": "hard",
+      "companies": [
+        "Amazon",
+        "Microsoft"
+      ]
+    }
   ]
 }

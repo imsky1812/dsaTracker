@@ -1,0 +1,116 @@
+{
+  "basics-patterns": [
+    {
+      "label": "Nested loops — pyramid pattern",
+      "code": "// Outer loop = rows, inner loops = what each row prints.\n// Internalise this and matrices, DP tables and brute-force scans stop\n// feeling intimidating.\nstatic void pyramid(int n) {\n    for (int i = 1; i <= n; i++) {\n        for (int s = 0; s < n - i; s++) System.out.print(\" \");\n        for (int k = 0; k < 2 * i - 1; k++) System.out.print(\"*\");\n        System.out.println();\n    }\n}\n\n// Fast IO for competitive input sizes — Scanner is far too slow past ~10^5.\nBufferedReader br = new BufferedReader(new InputStreamReader(System.in));\nint n = Integer.parseInt(br.readLine().trim());"
+    }
+  ],
+  "arrays": [
+    {
+      "label": "Kadane's maximum subarray",
+      "code": "// Keep the best sum ending here; restart whenever carrying the prefix\n// forward is worse than starting fresh.\nstatic int maxSubArray(int[] nums) {\n    int best = nums[0], cur = nums[0];\n    for (int i = 1; i < nums.length; i++) {\n        cur = Math.max(nums[i], cur + nums[i]);\n        best = Math.max(best, cur);\n    }\n    return best;\n}\n\n// Prefix sums: range sum in O(1) after O(n) setup.\nint[] pre = new int[nums.length + 1];\nfor (int i = 0; i < nums.length; i++) pre[i + 1] = pre[i] + nums[i];\n// sum of nums[l..r] inclusive:\nint sum = pre[r + 1] - pre[l];"
+    }
+  ],
+  "binary-search": [
+    {
+      "label": "Binary search and binary search on the answer",
+      "code": "// lo + (hi - lo) / 2 avoids the overflow that (lo + hi) / 2 can hit.\nstatic int search(int[] a, int target) {\n    int lo = 0, hi = a.length - 1;\n    while (lo <= hi) {\n        int mid = lo + (hi - lo) / 2;\n        if (a[mid] == target) return mid;\n        if (a[mid] < target) lo = mid + 1;\n        else hi = mid - 1;\n    }\n    return -1;\n}\n\n// Binary search on the answer: find the smallest capacity that works.\n// The predicate must be monotonic — false...false,true...true.\nstatic int minCapacity(int lo, int hi) {\n    while (lo < hi) {\n        int mid = lo + (hi - lo) / 2;\n        if (feasible(mid)) hi = mid;   // keep mid as a candidate\n        else lo = mid + 1;\n    }\n    return lo;\n}"
+    }
+  ],
+  "strings": [
+    {
+      "label": "StringBuilder, two pointers, frequency counts",
+      "code": "// Java Strings are immutable: building with += inside a loop is O(n^2).\nStringBuilder sb = new StringBuilder();\nfor (char c : s.toCharArray()) if (Character.isLetterOrDigit(c)) sb.append(Character.toLowerCase(c));\nString cleaned = sb.toString();\n\n// Palindrome check with two pointers — no extra allocation.\nstatic boolean isPalindrome(String s) {\n    int i = 0, j = s.length() - 1;\n    while (i < j) {\n        if (s.charAt(i) != s.charAt(j)) return false;\n        i++; j--;\n    }\n    return true;\n}\n\n// Anagram check: 26-slot count beats sorting (O(n) vs O(n log n)).\nstatic boolean isAnagram(String a, String b) {\n    if (a.length() != b.length()) return false;\n    int[] cnt = new int[26];\n    for (int i = 0; i < a.length(); i++) { cnt[a.charAt(i) - 'a']++; cnt[b.charAt(i) - 'a']--; }\n    for (int c : cnt) if (c != 0) return false;\n    return true;\n}"
+    }
+  ],
+  "stl": [
+    {
+      "label": "Collections framework — the containers you actually need",
+      "code": "// Java's equivalent of the STL. Note the interface-typed declarations:\n// program to List/Map/Set, not to the implementation.\nList<Integer> list = new ArrayList<>();       // vector\nlist.add(3); list.get(0); list.size();\n\nDeque<Integer> stack = new ArrayDeque<>();    // prefer over legacy Stack\nstack.push(1); stack.peek(); stack.pop();\n\nQueue<Integer> queue = new ArrayDeque<>();\nqueue.offer(1); queue.peek(); queue.poll();\n\nMap<String, Integer> map = new HashMap<>();   // unordered_map\nmap.put(\"a\", 1);\nmap.getOrDefault(\"b\", 0);\nmap.merge(\"a\", 1, Integer::sum);              // idiomatic counting\n\nMap<String, Integer> sorted = new TreeMap<>();// map (ordered, O(log n))\nSet<Integer> seen = new HashSet<>();          // unordered_set\n\n// Sorting: Arrays.sort on primitives is dual-pivot quicksort (no stability\n// guarantee); on objects it's a stable merge sort.\nint[] a = {3, 1, 2};\nArrays.sort(a);\nlist.sort(Comparator.reverseOrder());\nlist.sort(Comparator.comparingInt(String::length));"
+    }
+  ],
+  "recursion": [
+    {
+      "label": "Recursion — base case, recurse, combine",
+      "code": "// Every recursion needs: a base case, a strictly smaller subproblem,\n// and a way to combine. Draw the recursion tree before coding.\nstatic int fib(int n, int[] memo) {\n    if (n <= 1) return n;\n    if (memo[n] != 0) return memo[n];\n    return memo[n] = fib(n - 1, memo) + fib(n - 2, memo);\n}\n\n// Subsets: at each index, either take the element or don't.\nstatic void subsets(int[] nums, int i, List<Integer> cur, List<List<Integer>> out) {\n    if (i == nums.length) { out.add(new ArrayList<>(cur)); return; }\n    subsets(nums, i + 1, cur, out);          // skip\n    cur.add(nums[i]);\n    subsets(nums, i + 1, cur, out);          // take\n    cur.remove(cur.size() - 1);              // undo — this is the backtrack\n}"
+    }
+  ],
+  "backtracking": [
+    {
+      "label": "Backtracking template",
+      "code": "// choose -> explore -> un-choose. The un-choose is what makes it\n// backtracking rather than plain recursion.\nstatic void permute(int[] nums, boolean[] used, List<Integer> cur, List<List<Integer>> out) {\n    if (cur.size() == nums.length) { out.add(new ArrayList<>(cur)); return; }\n    for (int i = 0; i < nums.length; i++) {\n        if (used[i]) continue;\n        used[i] = true; cur.add(nums[i]);        // choose\n        permute(nums, used, cur, out);           // explore\n        cur.remove(cur.size() - 1); used[i] = false; // un-choose\n    }\n}\n\n// N-Queens: the pruning is the whole algorithm. Track occupied columns and\n// both diagonals so a conflict is O(1) to detect.\nboolean[] col = new boolean[n], diag = new boolean[2 * n], anti = new boolean[2 * n];\n// for cell (r, c): diag index r + c, anti index r - c + n"
+    }
+  ],
+  "sorting": [
+    {
+      "label": "Merge sort and quick sort",
+      "code": "// Merge sort: O(n log n) always, stable, needs O(n) extra space.\nstatic void mergeSort(int[] a, int lo, int hi) {\n    if (lo >= hi) return;\n    int mid = lo + (hi - lo) / 2;\n    mergeSort(a, lo, mid);\n    mergeSort(a, mid + 1, hi);\n    int[] tmp = new int[hi - lo + 1];\n    int i = lo, j = mid + 1, k = 0;\n    while (i <= mid && j <= hi) tmp[k++] = a[i] <= a[j] ? a[i++] : a[j++];\n    while (i <= mid) tmp[k++] = a[i++];\n    while (j <= hi)  tmp[k++] = a[j++];\n    System.arraycopy(tmp, 0, a, lo, tmp.length);\n}\n\n// Quick sort: O(n log n) average, O(n^2) worst on already-sorted input\n// unless you randomise the pivot. In-place.\nstatic int partition(int[] a, int lo, int hi) {\n    int pivot = a[hi], i = lo - 1;\n    for (int j = lo; j < hi; j++) if (a[j] < pivot) { i++; swap(a, i, j); }\n    swap(a, i + 1, hi);\n    return i + 1;\n}"
+    }
+  ],
+  "linked-lists": [
+    {
+      "label": "Reverse, and Floyd's cycle detection",
+      "code": "static class ListNode { int val; ListNode next; ListNode(int v) { val = v; } }\n\n// Reverse: walk forward rewiring each next pointer backwards.\nstatic ListNode reverse(ListNode head) {\n    ListNode prev = null;\n    while (head != null) {\n        ListNode next = head.next;   // save before clobbering\n        head.next = prev;\n        prev = head;\n        head = next;\n    }\n    return prev;\n}\n\n// Floyd: slow moves 1, fast moves 2. If they meet there is a cycle.\n// Reset one to head and advance both by 1 to find the cycle entry.\nstatic ListNode cycleStart(ListNode head) {\n    ListNode slow = head, fast = head;\n    while (fast != null && fast.next != null) {\n        slow = slow.next; fast = fast.next.next;\n        if (slow == fast) {\n            slow = head;\n            while (slow != fast) { slow = slow.next; fast = fast.next; }\n            return slow;\n        }\n    }\n    return null;\n}"
+    }
+  ],
+  "stacks-queues": [
+    {
+      "label": "Monotonic stack — next greater element",
+      "code": "// The pattern behind next-greater, largest-rectangle, stock-span and\n// daily-temperatures. Each index is pushed and popped at most once, so O(n).\nstatic int[] nextGreater(int[] a) {\n    int n = a.length;\n    int[] res = new int[n];\n    Arrays.fill(res, -1);\n    Deque<Integer> st = new ArrayDeque<>();   // holds indices, values decreasing\n    for (int i = 0; i < n; i++) {\n        while (!st.isEmpty() && a[st.peek()] < a[i]) res[st.pop()] = a[i];\n        st.push(i);\n    }\n    return res;\n}\n\n// Sliding window maximum with a deque: front holds the current max.\nDeque<Integer> dq = new ArrayDeque<>();\nfor (int i = 0; i < a.length; i++) {\n    while (!dq.isEmpty() && dq.peekFirst() <= i - k) dq.pollFirst();   // out of window\n    while (!dq.isEmpty() && a[dq.peekLast()] <= a[i]) dq.pollLast();   // dominated\n    dq.offerLast(i);\n    if (i >= k - 1) System.out.println(a[dq.peekFirst()]);\n}"
+    }
+  ],
+  "trees": [
+    {
+      "label": "Traversals — recursive and iterative",
+      "code": "static class TreeNode { int val; TreeNode left, right; TreeNode(int v) { val = v; } }\n\n// Inorder, recursive.\nstatic void inorder(TreeNode r, List<Integer> out) {\n    if (r == null) return;\n    inorder(r.left, out); out.add(r.val); inorder(r.right, out);\n}\n\n// Inorder, iterative — worth knowing; interviewers ask for it.\nstatic List<Integer> inorderIter(TreeNode root) {\n    List<Integer> out = new ArrayList<>();\n    Deque<TreeNode> st = new ArrayDeque<>();\n    TreeNode cur = root;\n    while (cur != null || !st.isEmpty()) {\n        while (cur != null) { st.push(cur); cur = cur.left; }\n        cur = st.pop();\n        out.add(cur.val);\n        cur = cur.right;\n    }\n    return out;\n}\n\n// Level order (BFS) — the basis of every \"views\" problem.\nQueue<TreeNode> q = new ArrayDeque<>();\nif (root != null) q.offer(root);\nwhile (!q.isEmpty()) {\n    int size = q.size();                 // fix the level boundary first\n    for (int i = 0; i < size; i++) {\n        TreeNode n = q.poll();\n        if (n.left != null) q.offer(n.left);\n        if (n.right != null) q.offer(n.right);\n    }\n}"
+    }
+  ],
+  "bst": [
+    {
+      "label": "BST insert, search, validate",
+      "code": "// BST invariant: everything left < node < everything right — and that must\n// hold against inherited bounds, not just the immediate parent. Checking\n// only the parent is the classic wrong answer.\nstatic boolean isValid(TreeNode r, Long lo, Long hi) {\n    if (r == null) return true;\n    if (lo != null && r.val <= lo) return false;\n    if (hi != null && r.val >= hi) return false;\n    return isValid(r.left, lo, (long) r.val) && isValid(r.right, (long) r.val, hi);\n}\n\nstatic TreeNode insert(TreeNode r, int v) {\n    if (r == null) return new TreeNode(v);\n    if (v < r.val) r.left = insert(r.left, v);\n    else if (v > r.val) r.right = insert(r.right, v);\n    return r;\n}\n\n// LCA in a BST: the first node that splits the two values.\nstatic TreeNode lca(TreeNode r, int p, int q) {\n    while (r != null) {\n        if (p < r.val && q < r.val) r = r.left;\n        else if (p > r.val && q > r.val) r = r.right;\n        else return r;\n    }\n    return null;\n}"
+    }
+  ],
+  "heaps": [
+    {
+      "label": "PriorityQueue — top-K and k-way merge",
+      "code": "// Java's PriorityQueue is a MIN-heap by default (C++ priority_queue is a max-heap).\nPriorityQueue<Integer> minHeap = new PriorityQueue<>();\nPriorityQueue<Integer> maxHeap = new PriorityQueue<>(Comparator.reverseOrder());\n\n// Kth largest: keep a min-heap of size k. O(n log k), better than sorting.\nstatic int kthLargest(int[] nums, int k) {\n    PriorityQueue<Integer> pq = new PriorityQueue<>();\n    for (int n : nums) {\n        pq.offer(n);\n        if (pq.size() > k) pq.poll();   // evict the smallest\n    }\n    return pq.peek();\n}\n\n// Top K frequent: count, then heap by frequency.\nMap<Integer, Integer> freq = new HashMap<>();\nfor (int n : nums) freq.merge(n, 1, Integer::sum);\nPriorityQueue<int[]> pq = new PriorityQueue<>((x, y) -> x[1] - y[1]);\nfor (var e : freq.entrySet()) {\n    pq.offer(new int[]{e.getKey(), e.getValue()});\n    if (pq.size() > k) pq.poll();\n}"
+    }
+  ],
+  "hashing": [
+    {
+      "label": "HashMap patterns — complements, counting, prefix sums",
+      "code": "// Two Sum: store what you've seen, look for the complement. One pass, O(n).\nstatic int[] twoSum(int[] nums, int target) {\n    Map<Integer, Integer> seen = new HashMap<>();   // value -> index\n    for (int i = 0; i < nums.length; i++) {\n        Integer j = seen.get(target - nums[i]);\n        if (j != null) return new int[]{j, i};\n        seen.put(nums[i], i);\n    }\n    return new int[]{-1, -1};\n}\n\n// Subarray sum equals K: count prefix sums seen so far.\n// The seed count.put(0, 1) accounts for a prefix that is itself the answer.\nstatic int subarraySum(int[] nums, int k) {\n    Map<Integer, Integer> count = new HashMap<>();\n    count.put(0, 1);\n    int sum = 0, res = 0;\n    for (int n : nums) {\n        sum += n;\n        res += count.getOrDefault(sum - k, 0);\n        count.merge(sum, 1, Integer::sum);\n    }\n    return res;\n}"
+    }
+  ],
+  "greedy": [
+    {
+      "label": "Greedy — sort, then take the locally safe choice",
+      "code": "// Activity selection / non-overlapping intervals: sort by END time.\n// Sorting by start or by duration both fail — the proof is that finishing\n// earliest leaves the most room for everything after it.\nstatic int maxNonOverlapping(int[][] intervals) {\n    Arrays.sort(intervals, Comparator.comparingInt(x -> x[1]));\n    int count = 0, lastEnd = Integer.MIN_VALUE;\n    for (int[] iv : intervals) {\n        if (iv[0] >= lastEnd) { count++; lastEnd = iv[1]; }\n    }\n    return count;\n}\n\n// Jump game: track the furthest index reachable so far.\nstatic boolean canJump(int[] nums) {\n    int reach = 0;\n    for (int i = 0; i < nums.length; i++) {\n        if (i > reach) return false;\n        reach = Math.max(reach, i + nums[i]);\n    }\n    return true;\n}"
+    }
+  ],
+  "graphs": [
+    {
+      "label": "BFS, DFS, topological sort",
+      "code": "// Adjacency list. For n nodes, prefer List<List<Integer>> over a map.\nList<List<Integer>> adj = new ArrayList<>();\nfor (int i = 0; i < n; i++) adj.add(new ArrayList<>());\nadj.get(u).add(v);\n\n// BFS gives shortest path in an UNWEIGHTED graph. Mark visited on enqueue,\n// not on dequeue, or nodes get queued many times.\nstatic int[] bfs(List<List<Integer>> adj, int src, int n) {\n    int[] dist = new int[n];\n    Arrays.fill(dist, -1);\n    Queue<Integer> q = new ArrayDeque<>();\n    dist[src] = 0; q.offer(src);\n    while (!q.isEmpty()) {\n        int u = q.poll();\n        for (int v : adj.get(u)) if (dist[v] == -1) { dist[v] = dist[u] + 1; q.offer(v); }\n    }\n    return dist;\n}\n\n// Kahn's topological sort. If fewer than n nodes come out, there is a cycle.\nstatic List<Integer> topoSort(List<List<Integer>> adj, int n) {\n    int[] indeg = new int[n];\n    for (int u = 0; u < n; u++) for (int v : adj.get(u)) indeg[v]++;\n    Queue<Integer> q = new ArrayDeque<>();\n    for (int i = 0; i < n; i++) if (indeg[i] == 0) q.offer(i);\n    List<Integer> order = new ArrayList<>();\n    while (!q.isEmpty()) {\n        int u = q.poll(); order.add(u);\n        for (int v : adj.get(u)) if (--indeg[v] == 0) q.offer(v);\n    }\n    return order.size() == n ? order : List.of();   // empty => cycle\n}"
+    }
+  ],
+  "dynamic-programming": [
+    {
+      "label": "Memoisation to tabulation to rolling array",
+      "code": "// The progression to practise on every DP: recursion -> memo -> table -> O(1) space.\n\n// 1. Top-down (memoised recursion).\nstatic int robMemo(int[] a, int i, Integer[] memo) {\n    if (i >= a.length) return 0;\n    if (memo[i] != null) return memo[i];\n    return memo[i] = Math.max(a[i] + robMemo(a, i + 2, memo), robMemo(a, i + 1, memo));\n}\n\n// 2. Bottom-up table.\nstatic int robTab(int[] a) {\n    int n = a.length;\n    int[] dp = new int[n + 2];\n    for (int i = n - 1; i >= 0; i--) dp[i] = Math.max(a[i] + dp[i + 2], dp[i + 1]);\n    return dp[0];\n}\n\n// 3. Rolling — only the last two states are ever read.\nstatic int rob(int[] a) {\n    int take = 0, skip = 0;\n    for (int i = a.length - 1; i >= 0; i--) {\n        int cur = Math.max(a[i] + skip, take);\n        skip = take; take = cur;\n    }\n    return take;\n}\n\n// 0/1 knapsack, 1-D. Iterate weight DOWNWARD so each item is used once.\nint[] dp = new int[cap + 1];\nfor (int i = 0; i < n; i++)\n    for (int w = cap; w >= wt[i]; w--)\n        dp[w] = Math.max(dp[w], val[i] + dp[w - wt[i]]);"
+    }
+  ],
+  "tries": [
+    {
+      "label": "Trie — insert, search, prefix",
+      "code": "// A trie trades memory for prefix queries in O(length) regardless of how\n// many words are stored.\nstatic class Trie {\n    private final Trie[] next = new Trie[26];\n    private boolean end;\n\n    void insert(String w) {\n        Trie cur = this;\n        for (char c : w.toCharArray()) {\n            int i = c - 'a';\n            if (cur.next[i] == null) cur.next[i] = new Trie();\n            cur = cur.next[i];\n        }\n        cur.end = true;\n    }\n\n    private Trie walk(String w) {\n        Trie cur = this;\n        for (char c : w.toCharArray()) {\n            cur = cur.next[c - 'a'];\n            if (cur == null) return null;\n        }\n        return cur;\n    }\n\n    boolean search(String w)     { Trie n = walk(w); return n != null && n.end; }\n    boolean startsWith(String p) { return walk(p) != null; }\n}"
+    }
+  ],
+  "bit-manipulation": [
+    {
+      "label": "Bit tricks worth memorising",
+      "code": "// Java has no unsigned int. For right shifts on values that may be negative,\n// use >>> (logical) rather than >> (arithmetic, sign-extending).\nint x = 0b1011;\n\nboolean isSet   = (x & (1 << k)) != 0;\nint set         = x | (1 << k);\nint clear       = x & ~(1 << k);\nint toggle      = x ^ (1 << k);\n\nboolean isPow2  = x > 0 && (x & (x - 1)) == 0;   // only one bit set\nint lowestBit   = x & -x;                       // isolate lowest set bit\nint dropLowest  = x & (x - 1);                  // clear lowest set bit\nint bits        = Integer.bitCount(x);          // popcount\n\n// XOR: a ^ a == 0 and a ^ 0 == a, so XOR-ing everything leaves the element\n// that appears an odd number of times.\nstatic int singleNumber(int[] nums) {\n    int r = 0;\n    for (int n : nums) r ^= n;\n    return r;\n}\n\n// Iterate every subset of an n-element set.\nfor (int mask = 0; mask < (1 << n); mask++)\n    for (int i = 0; i < n; i++)\n        if ((mask & (1 << i)) != 0) { /* i is in this subset */ }"
+    }
+  ]
+}

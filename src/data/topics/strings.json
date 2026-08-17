@@ -2,21 +2,44 @@
   "slug": "strings",
   "order": 4,
   "title": "Strings",
-  "explainer_md": "A string is an array of characters \u2014 so every array pattern applies \u2014 but with its own idioms. In C++, `std::string` is a dynamic array of `char` with convenient operations (`+`, `substr`, `find`). Because strings are sequences, the two-pointer and sliding-window patterns dominate here just as in arrays.\n\nThe recurring interview themes are: character frequency (usually a 26-length array or a hash map), in-place manipulation with two pointers, and window-based substring problems. A frequency array indexed by `c - 'a'` is one of the most reused tricks in the whole subject.\n\nMental model: a string is a row of letter-tiles you can count, slide a window over, or walk from both ends inward.",
-  "patterns_md": "**Frequency counting** \u2014 map each character to a count using `int freq[26]` (lowercase) or `unordered_map<char,int>`. Powers anagrams, permutation checks, and 'first unique character'.\n\n**Two pointers** \u2014 walk from both ends for palindrome checks and reversals, or same-direction for compaction.\n\n**Sliding window** \u2014 the key pattern for substring problems: 'longest substring without repeating characters', 'minimum window substring', 'longest repeating character replacement'. Expand the right edge, shrink the left when a constraint breaks.\n\n**Hashing / sorting for grouping** \u2014 sort a string's characters or use a frequency signature as a map key to group anagrams.",
-  "complexity_md": "| Operation | Time | Notes |\n|---|---|---|\n| Access char by index | O(1) | It's an array |\n| Concatenation (`+`) | O(n+m) | Copies both |\n| substr(i, len) | O(len) | Copies |\n| find / search (naive) | O(n\u00b7m) | Use KMP for O(n+m) |\n| Frequency count | O(n) | Single pass |\n| Sliding window scan | O(n) | Each char enters/leaves once |\n\nSpace: O(1) for a fixed 26-letter frequency array; O(k) for a window's character set.",
+  "explainer_md": "A string is an array of characters — so every array pattern applies — but with its own idioms. In C++, `std::string` is a dynamic array of `char` with convenient operations (`+`, `substr`, `find`). Because strings are sequences, the two-pointer and sliding-window patterns dominate here just as in arrays.\n\nThe recurring interview themes are: character frequency (usually a 26-length array or a hash map), in-place manipulation with two pointers, and window-based substring problems. A frequency array indexed by `c - 'a'` is one of the most reused tricks in the whole subject.\n\nMental model: a string is a row of letter-tiles you can count, slide a window over, or walk from both ends inward.",
+  "patterns_md": "**Frequency counting** — map each character to a count using `int freq[26]` (lowercase) or `unordered_map<char,int>`. Powers anagrams, permutation checks, and 'first unique character'.\n\n**Two pointers** — walk from both ends for palindrome checks and reversals, or same-direction for compaction.\n\n**Sliding window** — the key pattern for substring problems: 'longest substring without repeating characters', 'minimum window substring', 'longest repeating character replacement'. Expand the right edge, shrink the left when a constraint breaks.\n\n**Hashing / sorting for grouping** — sort a string's characters or use a frequency signature as a map key to group anagrams.",
+  "complexity_md": "| Operation | Time | Notes |\n|---|---|---|\n| Access char by index | O(1) | It's an array |\n| Concatenation (`+`) | O(n+m) | Copies both |\n| substr(i, len) | O(len) | Copies |\n| find / search (naive) | O(n·m) | Use KMP for O(n+m) |\n| Frequency count | O(n) | Single pass |\n| Sliding window scan | O(n) | Each char enters/leaves once |\n\nSpace: O(1) for a fixed 26-letter frequency array; O(k) for a window's character set.",
   "code": [
     {
-      "label": "Frequency array \u2014 anagram check",
+      "lang": "cpp",
+      "label": "Frequency array — anagram check",
       "code": "bool isAnagram(string s, string t) {\n    if (s.size() != t.size()) return false;\n    int freq[26] = {0};\n    for (char c : s) freq[c - 'a']++;\n    for (char c : t) if (--freq[c - 'a'] < 0) return false;\n    return true;\n}"
     },
     {
-      "label": "Two pointers \u2014 valid palindrome",
+      "lang": "cpp",
+      "label": "Two pointers — valid palindrome",
       "code": "bool isPalindrome(string s) {\n    int l = 0, r = s.size() - 1;\n    while (l < r) {\n        while (l < r && !isalnum(s[l])) l++;\n        while (l < r && !isalnum(s[r])) r--;\n        if (tolower(s[l]) != tolower(s[r])) return false;\n        l++; r--;\n    }\n    return true;\n}"
     },
     {
-      "label": "Sliding window \u2014 longest substring w/o repeat",
+      "lang": "cpp",
+      "label": "Sliding window — longest substring w/o repeat",
       "code": "int lengthOfLongest(string s) {\n    vector<int> last(128, -1);\n    int l = 0, best = 0;\n    for (int r = 0; r < (int)s.size(); r++) {\n        if (last[s[r]] >= l) l = last[s[r]] + 1;\n        last[s[r]] = r;\n        best = max(best, r - l + 1);\n    }\n    return best;\n}"
+    },
+    {
+      "lang": "java",
+      "label": "StringBuilder, two pointers, frequency counts",
+      "code": "// Java Strings are immutable: building with += inside a loop is O(n^2).\nStringBuilder sb = new StringBuilder();\nfor (char c : s.toCharArray()) if (Character.isLetterOrDigit(c)) sb.append(Character.toLowerCase(c));\nString cleaned = sb.toString();\n\n// Palindrome check with two pointers — no extra allocation.\nstatic boolean isPalindrome(String s) {\n    int i = 0, j = s.length() - 1;\n    while (i < j) {\n        if (s.charAt(i) != s.charAt(j)) return false;\n        i++; j--;\n    }\n    return true;\n}\n\n// Anagram check: 26-slot count beats sorting (O(n) vs O(n log n)).\nstatic boolean isAnagram(String a, String b) {\n    if (a.length() != b.length()) return false;\n    int[] cnt = new int[26];\n    for (int i = 0; i < a.length(); i++) { cnt[a.charAt(i) - 'a']++; cnt[b.charAt(i) - 'a']--; }\n    for (int c : cnt) if (c != 0) return false;\n    return true;\n}"
+    },
+    {
+      "lang": "py",
+      "label": "Slicing, Counter, two pointers",
+      "code": "# Strings are immutable, so build with a list + join, not += in a loop.\nparts = [c.lower() for c in s if c.isalnum()]\ncleaned = ''.join(parts)\n\n# Palindrome: slicing is idiomatic and fast, though it allocates.\nis_pal = cleaned == cleaned[::-1]\n\n# Two pointers when you must avoid the copy.\ndef is_palindrome(s: str) -> bool:\n    i, j = 0, len(s) - 1\n    while i < j:\n        if s[i] != s[j]:\n            return False\n        i, j = i + 1, j - 1\n    return True\n\n# Anagram: Counter equality reads better than sorting and is O(n).\nfrom collections import Counter\nis_anagram = Counter(a) == Counter(b)\n\n# Sliding window: longest substring without repeats.\ndef longest_unique(s: str) -> int:\n    last: dict[str, int] = {}\n    start = best = 0\n    for i, c in enumerate(s):\n        if c in last and last[c] >= start:\n            start = last[c] + 1     # jump past the previous occurrence\n        last[c] = i\n        best = max(best, i - start + 1)\n    return best"
+    },
+    {
+      "lang": "c",
+      "label": "char arrays, and the NUL terminator",
+      "code": "#include <string.h>\n#include <ctype.h>\n\n/* A C string is a char array ending in '\\0'. strlen walks to find that\n   terminator, so calling it inside a loop condition makes the loop O(n^2). */\nsize_t n = strlen(s);          /* compute ONCE */\nfor (size_t i = 0; i < n; i++) { /* ... */ }\n\n/* Palindrome, two pointers, skipping non-alphanumerics. */\nint isPalindrome(const char *s) {\n    int i = 0, j = (int) strlen(s) - 1;\n    while (i < j) {\n        while (i < j && !isalnum((unsigned char) s[i])) i++;\n        while (i < j && !isalnum((unsigned char) s[j])) j--;\n        if (tolower((unsigned char) s[i]) != tolower((unsigned char) s[j])) return 0;\n        i++; j--;\n    }\n    return 1;\n}\n\n/* Anagram via a 26-slot count. Cast to unsigned char before ctype calls:\n   passing a negative char is undefined behaviour. */\nint isAnagram(const char *a, const char *b) {\n    if (strlen(a) != strlen(b)) return 0;\n    int cnt[26] = {0};\n    for (int i = 0; a[i]; i++) { cnt[a[i] - 'a']++; cnt[b[i] - 'a']--; }\n    for (int i = 0; i < 26; i++) if (cnt[i]) return 0;\n    return 1;\n}\n\n/* strcpy does not bound-check. Prefer snprintf, which always terminates. */\nchar buf[64];\nsnprintf(buf, sizeof buf, \"%s\", s);"
+    },
+    {
+      "lang": "go",
+      "label": "strings.Builder, runes, and byte vs character",
+      "code": "// Strings are immutable byte slices. Concatenating in a loop is O(n^2);\n// use a Builder.\nvar sb strings.Builder\nfor _, r := range s {\n\tif unicode.IsLetter(r) || unicode.IsDigit(r) {\n\t\tsb.WriteRune(unicode.ToLower(r))\n\t}\n}\ncleaned := sb.String()\n\n// The trap: indexing a string gives BYTES, ranging gives RUNES. For ASCII\n// interview input they coincide; for anything else they do not.\nfmt.Println(len(\"héllo\"))          // 6 bytes\nfmt.Println(len([]rune(\"héllo\")))  // 5 characters\n\n// Palindrome over runes, two pointers.\nfunc isPalindrome(s string) bool {\n\tr := []rune(s)\n\tfor i, j := 0, len(r)-1; i < j; i, j = i+1, j-1 {\n\t\tif r[i] != r[j] {\n\t\t\treturn false\n\t\t}\n\t}\n\treturn true\n}\n\n// Anagram: a 26-slot count beats sorting.\nfunc isAnagram(a, b string) bool {\n\tif len(a) != len(b) {\n\t\treturn false\n\t}\n\tvar cnt [26]int\n\tfor i := 0; i < len(a); i++ {\n\t\tcnt[a[i]-'a']++\n\t\tcnt[b[i]-'a']--\n\t}\n\treturn cnt == [26]int{} // arrays are comparable in Go\n}"
     }
   ],
   "problems": [
@@ -26,10 +49,8 @@
       "platform": "LeetCode",
       "difficulty": "Easy",
       "tier": "warmup",
-      "companies": [
-        "Amazon",
-        "Adobe"
-      ]
+      "companies": [],
+      "video": "https://www.youtube.com/watch?v=9UtInBqnCgA"
     },
     {
       "name": "Valid Palindrome",
@@ -37,10 +58,8 @@
       "platform": "LeetCode",
       "difficulty": "Easy",
       "tier": "warmup",
-      "companies": [
-        "Meta",
-        "Amazon"
-      ]
+      "companies": [],
+      "video": "https://www.youtube.com/watch?v=jJXJ16kPFWg"
     },
     {
       "name": "Longest Common Prefix",
@@ -48,10 +67,7 @@
       "platform": "LeetCode",
       "difficulty": "Easy",
       "tier": "warmup",
-      "companies": [
-        "Adobe",
-        "Amazon"
-      ]
+      "companies": []
     },
     {
       "name": "Longest Substring Without Repeating Characters",
@@ -60,11 +76,11 @@
       "difficulty": "Medium",
       "tier": "core",
       "companies": [
-        "Amazon",
         "Google",
         "Meta",
         "Adobe"
-      ]
+      ],
+      "video": "https://www.youtube.com/watch?v=wiGpQwVHdE0"
     },
     {
       "name": "Group Anagrams",
@@ -73,10 +89,10 @@
       "difficulty": "Medium",
       "tier": "core",
       "companies": [
-        "Amazon",
         "Google",
         "Uber"
-      ]
+      ],
+      "video": "https://www.youtube.com/watch?v=vzdNOK2oB2E"
     },
     {
       "name": "Longest Palindromic Substring",

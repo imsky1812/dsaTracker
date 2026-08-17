@@ -2,17 +2,39 @@
   "slug": "hashing",
   "order": 14,
   "title": "Hashing",
-  "explainer_md": "Hashing maps keys to array indices via a hash function, giving **average O(1)** insert, delete, and lookup. It's the single most useful optimization in interviews: any time you catch yourself scanning to check 'have I seen this before?' or 'what's the count of X?', a hash map turns an O(n\u00b2) solution into O(n).\n\nIn C++, `unordered_map` and `unordered_set` are your hash containers; `map`/`set` are their sorted (tree-based, O(log n)) cousins. The trade-off: hash containers are faster but unordered and have O(n) worst case under adversarial collisions.\n\nMental model: a coat-check. You hand over a coat (key), get a ticket (hash), and the attendant stores it in a numbered slot \u2014 retrieval is instant because the ticket tells you exactly where to look.",
-  "patterns_md": "**Seen-set / complement lookup** \u2014 store what you've encountered; check membership in O(1). Two Sum stores `target - x`; 'contains duplicate' stores seen values.\n\n**Frequency map** \u2014 count occurrences with `unordered_map<T,int>`. Powers anagrams, majority element, top-K, and 'first unique'.\n\n**Prefix-sum + hashmap** \u2014 store cumulative sums seen so far to count subarrays with a target sum in O(n) ('subarray sum equals k').\n\n**Grouping by signature** \u2014 map a canonical key (sorted string, shape hash) to a bucket of items ('group anagrams').",
+  "explainer_md": "Hashing maps keys to array indices via a hash function, giving **average O(1)** insert, delete, and lookup. It's the single most useful optimization in interviews: any time you catch yourself scanning to check 'have I seen this before?' or 'what's the count of X?', a hash map turns an O(n²) solution into O(n).\n\nIn C++, `unordered_map` and `unordered_set` are your hash containers; `map`/`set` are their sorted (tree-based, O(log n)) cousins. The trade-off: hash containers are faster but unordered and have O(n) worst case under adversarial collisions.\n\nMental model: a coat-check. You hand over a coat (key), get a ticket (hash), and the attendant stores it in a numbered slot — retrieval is instant because the ticket tells you exactly where to look.",
+  "patterns_md": "**Seen-set / complement lookup** — store what you've encountered; check membership in O(1). Two Sum stores `target - x`; 'contains duplicate' stores seen values.\n\n**Frequency map** — count occurrences with `unordered_map<T,int>`. Powers anagrams, majority element, top-K, and 'first unique'.\n\n**Prefix-sum + hashmap** — store cumulative sums seen so far to count subarrays with a target sum in O(n) ('subarray sum equals k').\n\n**Grouping by signature** — map a canonical key (sorted string, shape hash) to a bucket of items ('group anagrams').",
   "complexity_md": "| Operation | Average | Worst |\n|---|---|---|\n| Insert | O(1) | O(n) |\n| Lookup | O(1) | O(n) |\n| Delete | O(1) | O(n) |\n| Iteration | O(n) | O(n) |\n\nWorst case arises from many hash collisions; in practice with a good hash it's effectively O(1). Space is O(n) for the stored keys. Use `map`/`set` instead when you need sorted order or worst-case guarantees.",
   "code": [
     {
-      "label": "Complement lookup \u2014 Two Sum",
+      "lang": "cpp",
+      "label": "Complement lookup — Two Sum",
       "code": "vector<int> twoSum(vector<int>& nums, int target) {\n    unordered_map<int,int> seen;   // value -> index\n    for (int i = 0; i < (int)nums.size(); i++) {\n        int need = target - nums[i];\n        if (seen.count(need)) return {seen[need], i};\n        seen[nums[i]] = i;\n    }\n    return {};\n}"
     },
     {
-      "label": "Prefix sum + map \u2014 subarrays summing to k",
+      "lang": "cpp",
+      "label": "Prefix sum + map — subarrays summing to k",
       "code": "int subarraySum(vector<int>& nums, int k) {\n    unordered_map<int,int> cnt{{0,1}};\n    int sum = 0, res = 0;\n    for (int x : nums) {\n        sum += x;\n        res += cnt[sum - k];   // seen a prefix that completes k\n        cnt[sum]++;\n    }\n    return res;\n}"
+    },
+    {
+      "lang": "java",
+      "label": "HashMap patterns — complements, counting, prefix sums",
+      "code": "// Two Sum: store what you've seen, look for the complement. One pass, O(n).\nstatic int[] twoSum(int[] nums, int target) {\n    Map<Integer, Integer> seen = new HashMap<>();   // value -> index\n    for (int i = 0; i < nums.length; i++) {\n        Integer j = seen.get(target - nums[i]);\n        if (j != null) return new int[]{j, i};\n        seen.put(nums[i], i);\n    }\n    return new int[]{-1, -1};\n}\n\n// Subarray sum equals K: count prefix sums seen so far.\n// The seed count.put(0, 1) accounts for a prefix that is itself the answer.\nstatic int subarraySum(int[] nums, int k) {\n    Map<Integer, Integer> count = new HashMap<>();\n    count.put(0, 1);\n    int sum = 0, res = 0;\n    for (int n : nums) {\n        sum += n;\n        res += count.getOrDefault(sum - k, 0);\n        count.merge(sum, 1, Integer::sum);\n    }\n    return res;\n}"
+    },
+    {
+      "lang": "py",
+      "label": "dict patterns — complements, counting, prefix sums",
+      "code": "# Two Sum: store what you've seen, look for the complement. One pass, O(n).\ndef two_sum(nums: list[int], target: int) -> tuple[int, int] | None:\n    seen: dict[int, int] = {}          # value -> index\n    for i, x in enumerate(nums):\n        if target - x in seen:\n            return seen[target - x], i\n        seen[x] = i\n    return None\n\n# Subarray sum equals K: count prefix sums as you go.\n# The {0: 1} seed accounts for a prefix that is itself the answer — without it\n# you miss every subarray starting at index 0.\nfrom collections import defaultdict\n\ndef subarray_sum(nums: list[int], k: int) -> int:\n    count = defaultdict(int)\n    count[0] = 1\n    total = res = 0\n    for x in nums:\n        total += x\n        res += count[total - k]\n        count[total] += 1\n    return res\n\n# Group anagrams: a sorted-letters tuple is a canonical key.\ndef group_anagrams(words: list[str]) -> list[list[str]]:\n    groups = defaultdict(list)\n    for w in words:\n        groups[tuple(sorted(w))].append(w)\n    return list(groups.values())"
+    },
+    {
+      "lang": "c",
+      "label": "Hash table by open addressing",
+      "code": "#include <stdlib.h>\n#include <string.h>\n\n/* No unordered_map. For interview-sized input, a fixed-capacity open-address\n   table is enough and easy to reason about. Keep the load factor under ~0.7\n   or linear probing degrades badly. */\n#define CAP 2053                    /* prime */\n\ntypedef struct { int key, val; char used; } Slot;\nstatic Slot table[CAP];\n\nstatic unsigned hash(int k) {\n    unsigned x = (unsigned) k;\n    x = ((x >> 16) ^ x) * 0x45d9f3b; /* cheap integer mix — sequential keys\n                                        otherwise cluster badly */\n    x = ((x >> 16) ^ x) * 0x45d9f3b;\n    return (x >> 16) ^ x;\n}\n\nint *map_get(int key) {\n    unsigned h = hash(key) % CAP;\n    while (table[h].used) {\n        if (table[h].key == key) return &table[h].val;\n        h = (h + 1) % CAP;           /* linear probe */\n    }\n    return NULL;\n}\n\nvoid map_put(int key, int val) {\n    unsigned h = hash(key) % CAP;\n    while (table[h].used && table[h].key != key) h = (h + 1) % CAP;\n    table[h].key = key; table[h].val = val; table[h].used = 1;\n}\n\n/* Two Sum with it: store seen values, look for the complement. */\nint twoSum(const int *nums, int n, int target, int *out) {\n    memset(table, 0, sizeof table);\n    for (int i = 0; i < n; i++) {\n        int *j = map_get(target - nums[i]);\n        if (j) { out[0] = *j; out[1] = i; return 1; }\n        map_put(nums[i], i);\n    }\n    return 0;\n}"
+    },
+    {
+      "lang": "go",
+      "label": "Map patterns — complements, counting, prefix sums",
+      "code": "// Two Sum: store what you've seen, look for the complement. One pass, O(n).\nfunc twoSum(nums []int, target int) []int {\n\tseen := make(map[int]int, len(nums)) // value -> index\n\tfor i, x := range nums {\n\t\tif j, ok := seen[target-x]; ok {\n\t\t\treturn []int{j, i}\n\t\t}\n\t\tseen[x] = i\n\t}\n\treturn nil\n}\n\n// Subarray sum equals K. The count[0] = 1 seed accounts for a prefix that is\n// itself the answer; without it you miss every subarray starting at index 0.\nfunc subarraySum(nums []int, k int) int {\n\tcount := map[int]int{0: 1}\n\tsum, res := 0, 0\n\tfor _, x := range nums {\n\t\tsum += x\n\t\tres += count[sum-k] // absent key yields 0 — convenient here\n\t\tcount[sum]++\n\t}\n\treturn res\n}\n\n// Group anagrams: a sorted-letters string is a canonical key.\nfunc groupAnagrams(words []string) [][]string {\n\tgroups := map[string][]string{}\n\tfor _, w := range words {\n\t\tb := []byte(w)\n\t\tslices.Sort(b)\n\t\tgroups[string(b)] = append(groups[string(b)], w)\n\t}\n\tout := make([][]string, 0, len(groups))\n\tfor _, g := range groups {\n\t\tout = append(out, g)\n\t}\n\treturn out\n}"
     }
   ],
   "problems": [
@@ -22,10 +44,8 @@
       "platform": "LeetCode",
       "difficulty": "Easy",
       "tier": "warmup",
-      "companies": [
-        "Amazon",
-        "Adobe"
-      ]
+      "companies": [],
+      "video": "https://www.youtube.com/watch?v=3OamzN90kPg"
     },
     {
       "name": "Valid Anagram",
@@ -33,10 +53,8 @@
       "platform": "LeetCode",
       "difficulty": "Easy",
       "tier": "warmup",
-      "companies": [
-        "Amazon",
-        "Adobe"
-      ]
+      "companies": [],
+      "video": "https://www.youtube.com/watch?v=9UtInBqnCgA"
     },
     {
       "name": "Two Sum",
@@ -44,11 +62,8 @@
       "platform": "LeetCode",
       "difficulty": "Easy",
       "tier": "warmup",
-      "companies": [
-        "Amazon",
-        "Google",
-        "Microsoft"
-      ]
+      "companies": [],
+      "video": "https://www.youtube.com/watch?v=KLlXCFG5TnA"
     },
     {
       "name": "Group Anagrams",
@@ -57,10 +72,10 @@
       "difficulty": "Medium",
       "tier": "core",
       "companies": [
-        "Amazon",
         "Google",
         "Uber"
-      ]
+      ],
+      "video": "https://www.youtube.com/watch?v=vzdNOK2oB2E"
     },
     {
       "name": "Subarray Sum Equals K",
@@ -69,7 +84,6 @@
       "difficulty": "Medium",
       "tier": "core",
       "companies": [
-        "Amazon",
         "Google",
         "Meta"
       ]

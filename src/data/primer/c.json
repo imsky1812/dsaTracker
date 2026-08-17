@@ -1,0 +1,68 @@
+{
+  "language": "c",
+  "language_name": "C",
+  "tagline": "Nothing is hidden, nothing is provided.",
+  "intro": "C gives you no containers, no bounds checking and no memory management — which is exactly why it teaches data structures better than any other language. You cannot use a hash map without building one, so you learn what one is. It is a poor choice for timed interviews (you will out-type yourself in C++ or Python) but an excellent one for understanding what those languages are doing for you.",
+  "sections": [
+    {
+      "order": 1,
+      "title": "Setup & Program Skeleton",
+      "body_md": "Use GCC or Clang and always compile with warnings on — `-Wall -Wextra` catches a large share of beginner bugs at compile time rather than as a mysterious crash. Add `-fsanitize=address,undefined` while learning: it turns silent memory corruption into a clear error message with a line number, which is the single most useful thing you can do for yourself in C.",
+      "code": "#include <stdio.h>\n\nint main(void) {          /* (void), not () — it means 'takes no arguments' */\n    printf(\"Hello\\n\");\n    return 0;\n}\n\n/* Compile like this while learning:\n     gcc -std=c17 -Wall -Wextra -g -fsanitize=address,undefined main.c -o main\n   The sanitizers turn undefined behaviour into a readable error instead of\n   a wrong answer that only fails on the judge. */"
+    },
+    {
+      "order": 2,
+      "title": "Input / Output",
+      "body_md": "`scanf`/`printf` are format-string based, and getting the specifier wrong is undefined behaviour rather than a type error. `scanf` returns the number of items it successfully read — check it. For large inputs, character-level parsing with `getchar` is dramatically faster than `scanf`.",
+      "code": "int n;\nif (scanf(\"%d\", &n) != 1) return 1;    /* ALWAYS check the return value */\n\nlong long big;\nscanf(\"%lld\", &big);                    /* %lld for long long, not %d */\ndouble d;\nscanf(\"%lf\", &d);                       /* %lf to READ, %f to print */\n\nchar buf[128];\nscanf(\"%127s\", buf);                    /* bound it, or you overflow */\n\n/* Reading a whole line: fgets keeps the '\\n', so strip it. */\nif (fgets(buf, sizeof buf, stdin)) {\n    buf[strcspn(buf, \"\\n\")] = '\\0';\n}\n\n/* Fast integer reader for large inputs. */\nint readInt(void) {\n    int c = getchar(), sign = 1, x = 0;\n    while (c == ' ' || c == '\\n' || c == '\\r') c = getchar();\n    if (c == '-') { sign = -1; c = getchar(); }\n    while (c >= '0' && c <= '9') { x = x * 10 + (c - '0'); c = getchar(); }\n    return x * sign;\n}"
+    },
+    {
+      "order": 3,
+      "title": "Types, Overflow & Undefined Behaviour",
+      "body_md": "Signed integer overflow in C is *undefined behaviour*, not wraparound — the compiler is permitted to assume it never happens and optimise accordingly, so the symptom can be far stranger than a wrong number. Use `long long` for anything that might exceed ~2.1e9, and prefer `unsigned` for bit manipulation, where wraparound IS defined.",
+      "code": "#include <stdint.h>\n#include <limits.h>\n\nint i = 42;\nlong long big = 1000000007LL;\nunsigned u = 0u;\ndouble d = 3.14;\nchar c = 'a';\n\n/* Fixed-width types when size matters. */\nint32_t exact32;\nint64_t exact64;\n\n/* Overflow: promote BEFORE multiplying. */\nint a = 100000, b = 100000;\nlong long ok = (long long) a * b;      /* correct */\n/* int bad = a * b;  <- UNDEFINED behaviour, not just wrong */\n\nprintf(\"%d\\n\", INT_MAX);               /* 2147483647 */\n\n/* Integer division truncates toward zero (unlike Python's floor). */\nprintf(\"%d\\n\", -7 / 2);                /* -3 */\nprintf(\"%d\\n\", -7 % 2);                /* -1 */\n\n/* sizeof yields size_t — print it with %zu. */\nprintf(\"%zu\\n\", sizeof(int));"
+    },
+    {
+      "order": 4,
+      "title": "Control Flow",
+      "body_md": "Standard C-family control flow. The classic traps: `switch` falls through unless you `break`, an `if` without braces controls only the next statement, and assignment inside a condition (`if (x = 5)`) compiles happily. Turn on `-Wall` and it warns about most of these.",
+      "code": "for (int i = 0; i < n; i++) { }\nwhile (cond) { }\ndo { } while (cond);\n\n/* switch falls through — deliberate here, a bug otherwise. */\nswitch (op) {\n    case '+': r = a + b; break;\n    case '-': r = a - b; break;\n    case 'x':\n    case '*': r = a * b; break;    /* intentional fall-through */\n    default:  r = 0;\n}\n\n/* Always brace your bodies. Without braces only ONE statement is guarded. */\nif (cond) {\n    doThis();\n    doThat();          /* without braces this runs unconditionally */\n}\n\n/* goto is genuinely idiomatic in C for breaking out of nested loops\n   and for centralised cleanup. */\nfor (int r = 0; r < rows; r++)\n    for (int col = 0; col < cols; col++)\n        if (grid[r][col] == target) goto found;\nfound:;"
+    },
+    {
+      "order": 5,
+      "title": "Pointers & Functions",
+      "body_md": "A pointer holds an address. `*p` reads through it, `&x` takes the address of `x`. C is strictly pass-by-value, so to let a function modify your variable you pass its address. Arrays decay to pointers when passed, which means the function has no idea how long the array is — you must pass the length too.",
+      "code": "int x = 5;\nint *p = &x;      /* p points at x */\n*p = 10;          /* x is now 10 */\n\n/* Pass by address to mutate the caller's variable. */\nvoid increment(int *v) { (*v)++; }\nincrement(&x);\n\nvoid swap(int *a, int *b) { int t = *a; *a = *b; *b = t; }\n\n/* Arrays decay to pointers: sizeof(a) inside the function is the POINTER\n   size, not the array size. Always pass n. */\nint sum(const int *a, int n) {\n    int s = 0;\n    for (int i = 0; i < n; i++) s += a[i];\n    return s;\n}\n\n/* const says 'I will not modify this' — use it; it documents and it catches\n   mistakes at compile time. */\n\n/* Function pointers — how qsort takes a comparator. */\nint cmp(const void *p, const void *q) {\n    int a = *(const int *) p, b = *(const int *) q;\n    return (a > b) - (a < b);   /* not a - b: that can overflow */\n}"
+    },
+    {
+      "order": 6,
+      "title": "Arrays & 2-D Arrays",
+      "body_md": "Arrays are contiguous and have no length field, and there is no bounds checking whatsoever — reading `a[n]` is undefined behaviour that usually appears to work, which is why bugs surface far from their cause. For 2-D data, prefer one flat block with your own index arithmetic: it is one allocation and it is cache-friendly.",
+      "code": "int a[5] = {0};              /* all zeros */\nint b[] = {3, 1, 2};         /* size inferred: 3 */\nint n = (int) (sizeof b / sizeof b[0]);   /* works only in this scope */\n\n/* NO bounds checking. This is UB and may silently 'work'. */\n/* printf(\"%d\", b[10]); */\n\n/* Fixed 2-D array — rows are contiguous. */\nint grid[3][4] = {{0}};\ngrid[1][2] = 7;\n\n/* Dynamic 2-D: one flat block plus a macro. Preferred. */\n#include <stdlib.h>\nint rows = 3, cols = 4;\nint *flat = calloc((size_t) rows * cols, sizeof *flat);   /* calloc zeroes */\n#define AT(i, j) flat[(size_t)(i) * cols + (j)]\nAT(1, 2) = 7;\nfree(flat);\n\n/* Variable-length arrays exist (C99) but live on the stack — a large one\n   overflows it. Use malloc for anything big or input-sized. */"
+    },
+    {
+      "order": 7,
+      "title": "Strings & the NUL Terminator",
+      "body_md": "A C string is just a `char` array whose end is marked by a `'\\0'` byte. Everything follows from that: `strlen` walks the whole string to find the terminator (so never call it in a loop condition), a buffer must have room for the terminator as well as the characters, and forgetting to write it produces a string with no end.",
+      "code": "#include <string.h>\n\nchar s[] = \"hello\";        /* 6 bytes: 5 chars + '\\0' */\nchar *lit = \"hello\";        /* points at read-only memory — do NOT modify */\n\nsize_t n = strlen(s);       /* O(n): compute ONCE, not per iteration */\n\nstrcpy(dst, src);           /* no bounds check — overflows silently */\nsnprintf(dst, sizeof dst, \"%s\", src);   /* bounded and always terminated */\n\nstrcmp(a, b) == 0;          /* equality: strcmp returns 0 when EQUAL */\nstrchr(s, 'l');\nstrstr(s, \"ell\");\n\n/* Building a string manually — remember the terminator. */\nchar buf[16];\nint k = 0;\nfor (int i = 0; i < 5; i++) buf[k++] = 'a' + i;\nbuf[k] = '\\0';              /* forget this and you have no string */\n\n/* ctype functions take an int and must receive an unsigned char —\n   passing a negative char is undefined behaviour. */\n#include <ctype.h>\nif (isalpha((unsigned char) s[0])) { }"
+    },
+    {
+      "order": 8,
+      "title": "Dynamic Memory",
+      "body_md": "`malloc` gives you uninitialised bytes, `calloc` gives you zeroed bytes, `realloc` grows a block and may move it. Every allocation is yours to `free` exactly once. The three classic failures are: using memory after freeing it, freeing twice, and losing the only pointer to a block (a leak). Address Sanitizer catches all three.",
+      "code": "#include <stdlib.h>\n\nint *a = malloc((size_t) n * sizeof *a);   /* sizeof *a, not sizeof(int) —\n                                             survives a type change */\nif (!a) { /* malloc CAN fail; handle it */ return 1; }\n/* a[i] is uninitialised garbage here */\n\nint *z = calloc((size_t) n, sizeof *z);   /* zeroed — what DP tables want */\n\n/* realloc may move the block. Assign to a TEMP: on failure it returns NULL\n   and the original pointer is still valid — 'a = realloc(a, ...)' leaks it. */\nint *grown = realloc(a, (size_t) (2 * n) * sizeof *a);\nif (!grown) { free(a); return 1; }\na = grown;\n\nfree(a);\na = NULL;                  /* defensive: double-free of NULL is a no-op */\n\n/* Never return a pointer to a local — its stack frame is gone. */\nint *broken(void) { int x = 5; return &x; }        /* dangling */\nint *fine(void)   { int *p = malloc(sizeof *p); *p = 5; return p; }"
+    },
+    {
+      "order": 9,
+      "title": "Structs & Building Containers",
+      "body_md": "`struct` groups fields; `typedef` saves you writing `struct` everywhere. Since C ships no containers, a struct plus a few functions IS your container. Growable arrays, stacks, queues, hash tables and tries are all a few dozen lines — and writing them once teaches you more than using them a hundred times elsewhere.",
+      "code": "#include <stdlib.h>\n\ntypedef struct { int x, y; } Point;\n\nPoint p = {1, 2};\nPoint q = {.x = 1, .y = 2};      /* designated initialisers, clearer */\np.x = 5;\n\n/* Through a pointer, use -> */\nPoint *pp = &p;\npp->x = 7;                       /* same as (*pp).x */\n\n/* Self-referential structs need the tag name. */\ntypedef struct Node {\n    int val;\n    struct Node *next;           /* 'Node *next' is not yet valid here */\n} Node;\n\n/* A growable array — the vector you don't get. */\ntypedef struct { int *data; size_t len, cap; } Vec;\n\nvoid vec_push(Vec *v, int x) {\n    if (v->len == v->cap) {\n        v->cap = v->cap ? v->cap * 2 : 4;    /* double: amortised O(1) */\n        int *g = realloc(v->data, v->cap * sizeof *v->data);\n        if (!g) { free(v->data); exit(1); }\n        v->data = g;\n    }\n    v->data[v->len++] = x;\n}"
+    },
+    {
+      "order": 10,
+      "title": "Common Gotchas",
+      "body_md": "C's failure mode is that mistakes usually *appear to work*. Out-of-bounds reads return plausible garbage, use-after-free often returns the old value, and uninitialised variables are frequently zero by luck. This is why the sanitizers are not optional while learning: they convert 'works on my machine' into a precise error.",
+      "code": "/* 1. Uninitialised memory is garbage, not zero. malloc does NOT clear. */\nint *dp = calloc(n, sizeof *dp);        /* use calloc for tables */\n\n/* 2. sizeof on a parameter gives the pointer size. */\nvoid f(int a[]) { /* sizeof a == 8, not the array length */ }\n\n/* 3. = vs ==. This assigns and is always true. */\nif (x == 5) { }                         /* compare */\n\n/* 4. Comparing strings with == compares ADDRESSES. */\nif (strcmp(a, b) == 0) { }\n\n/* 5. Off-by-one on the terminator: a 5-char string needs 6 bytes. */\nchar buf[6];\nsnprintf(buf, sizeof buf, \"hello\");\n\n/* 6. %d for a long long, or %f to read a double — both UB.\n      -Wall catches format mismatches; leave it on. */\n\n/* 7. Signed overflow is UB. Use unsigned for bit twiddling. */\nunsigned mask = 1u << 31;               /* 1 << 31 on int is UB */\n\n/* 8. Modifying a string literal is UB, even though it compiles. */\nchar *lit = \"hello\";\n/* lit[0] = 'H';   <- crashes on most platforms */\nchar mut[] = \"hello\";\nmut[0] = 'H';                           /* fine: this is an array */"
+    }
+  ]
+}

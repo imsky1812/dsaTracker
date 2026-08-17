@@ -15,9 +15,12 @@
     "verify:sync": "node scripts/verify-sync.mjs",
     "test:merge": "node scripts/test-merge.mjs",
     "test:dates": "node scripts/test-dates.mjs",
-    "test": "node scripts/test-merge.mjs && node scripts/test-dates.mjs && node scripts/build-content.mjs --check",
+    "test": "node scripts/test-merge.mjs && node scripts/test-dates.mjs && node scripts/check-snippets.mjs && node scripts/build-content.mjs --check",
     "icons": "node scripts/make-icons.mjs",
-    "qr": "node scripts/make-qr.mjs"
+    "qr": "node scripts/make-qr.mjs",
+    "snippets": "node scripts/merge-snippets.mjs",
+    "check:snippets": "node scripts/check-snippets.mjs",
+    "videos": "node scripts/curate-videos.mjs"
   },
   "dependencies": {
     "@expo-google-fonts/archivo": "^0.2.3",

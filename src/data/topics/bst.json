@@ -2,17 +2,39 @@
   "slug": "bst",
   "order": 12,
   "title": "Binary Search Trees",
-  "explainer_md": "A binary search tree is a binary tree with an ordering invariant: for every node, all values in its left subtree are smaller and all in its right subtree are larger. That invariant means search, insert, and delete each follow a single root-to-leaf path \u2014 O(h) time, which is O(log n) when the tree stays balanced.\n\nThe single most important BST fact: an **inorder traversal yields the values in sorted order**. A huge fraction of BST problems are solved by exploiting this \u2014 validating a BST, finding the k-th smallest, finding the closest value, or spotting a swapped pair all lean on inorder order.\n\nMental model: a decision tree for 'guess the number' \u2014 at each node you go left (smaller) or right (larger), halving the search space when balanced.",
-  "patterns_md": "**Ordered navigation** \u2014 to find/insert/delete, compare with the current node and go left or right. One path, O(h).\n\n**Inorder = sorted** \u2014 leverage it for k-th smallest (inorder and stop at k), validate BST (inorder must be strictly increasing), or find two swapped nodes.\n\n**Range exploitation** \u2014 pass down `(low, high)` bounds to validate or to prune search to a value range.\n\n**Balanced-tree awareness** \u2014 a naive BST degrades to O(n) if inserted in sorted order. Self-balancing variants (AVL, Red-Black) keep O(log n); `std::set`/`std::map` are Red-Black trees under the hood.",
-  "complexity_md": "| Operation | Balanced | Worst (skewed) |\n|---|---|---|\n| Search | O(log n) | O(n) |\n| Insert | O(log n) | O(n) |\n| Delete | O(log n) | O(n) |\n| Inorder traversal | O(n) | O(n) |\n| k-th smallest | O(h + k) | O(n) |\n\nEverything hinges on height. Balanced \u21d2 O(log n); a sorted-order insertion sequence makes it a linked list \u21d2 O(n).",
+  "explainer_md": "A binary search tree is a binary tree with an ordering invariant: for every node, all values in its left subtree are smaller and all in its right subtree are larger. That invariant means search, insert, and delete each follow a single root-to-leaf path — O(h) time, which is O(log n) when the tree stays balanced.\n\nThe single most important BST fact: an **inorder traversal yields the values in sorted order**. A huge fraction of BST problems are solved by exploiting this — validating a BST, finding the k-th smallest, finding the closest value, or spotting a swapped pair all lean on inorder order.\n\nMental model: a decision tree for 'guess the number' — at each node you go left (smaller) or right (larger), halving the search space when balanced.",
+  "patterns_md": "**Ordered navigation** — to find/insert/delete, compare with the current node and go left or right. One path, O(h).\n\n**Inorder = sorted** — leverage it for k-th smallest (inorder and stop at k), validate BST (inorder must be strictly increasing), or find two swapped nodes.\n\n**Range exploitation** — pass down `(low, high)` bounds to validate or to prune search to a value range.\n\n**Balanced-tree awareness** — a naive BST degrades to O(n) if inserted in sorted order. Self-balancing variants (AVL, Red-Black) keep O(log n); `std::set`/`std::map` are Red-Black trees under the hood.",
+  "complexity_md": "| Operation | Balanced | Worst (skewed) |\n|---|---|---|\n| Search | O(log n) | O(n) |\n| Insert | O(log n) | O(n) |\n| Delete | O(log n) | O(n) |\n| Inorder traversal | O(n) | O(n) |\n| k-th smallest | O(h + k) | O(n) |\n\nEverything hinges on height. Balanced ⇒ O(log n); a sorted-order insertion sequence makes it a linked list ⇒ O(n).",
   "code": [
     {
+      "lang": "cpp",
       "label": "Search & insert",
       "code": "TreeNode* insert(TreeNode* root, int val) {\n    if (!root) return new TreeNode(val);\n    if (val < root->val) root->left = insert(root->left, val);\n    else root->right = insert(root->right, val);\n    return root;\n}\nbool search(TreeNode* root, int val) {\n    while (root) {\n        if (root->val == val) return true;\n        root = val < root->val ? root->left : root->right;\n    }\n    return false;\n}"
     },
     {
-      "label": "Validate BST \u2014 range bounds",
+      "lang": "cpp",
+      "label": "Validate BST — range bounds",
       "code": "bool valid(TreeNode* root, long lo, long hi) {\n    if (!root) return true;\n    if (root->val <= lo || root->val >= hi) return false;\n    return valid(root->left, lo, root->val) &&\n           valid(root->right, root->val, hi);\n}\n// call: valid(root, LONG_MIN, LONG_MAX)"
+    },
+    {
+      "lang": "java",
+      "label": "BST insert, search, validate",
+      "code": "// BST invariant: everything left < node < everything right — and that must\n// hold against inherited bounds, not just the immediate parent. Checking\n// only the parent is the classic wrong answer.\nstatic boolean isValid(TreeNode r, Long lo, Long hi) {\n    if (r == null) return true;\n    if (lo != null && r.val <= lo) return false;\n    if (hi != null && r.val >= hi) return false;\n    return isValid(r.left, lo, (long) r.val) && isValid(r.right, (long) r.val, hi);\n}\n\nstatic TreeNode insert(TreeNode r, int v) {\n    if (r == null) return new TreeNode(v);\n    if (v < r.val) r.left = insert(r.left, v);\n    else if (v > r.val) r.right = insert(r.right, v);\n    return r;\n}\n\n// LCA in a BST: the first node that splits the two values.\nstatic TreeNode lca(TreeNode r, int p, int q) {\n    while (r != null) {\n        if (p < r.val && q < r.val) r = r.left;\n        else if (p > r.val && q > r.val) r = r.right;\n        else return r;\n    }\n    return null;\n}"
+    },
+    {
+      "lang": "py",
+      "label": "BST insert, search, validate",
+      "code": "# BST invariant: everything left < node < everything right — against INHERITED\n# bounds, not just the parent. Comparing only with the parent is the classic\n# wrong answer, and it passes small tests.\ndef is_valid(root: TreeNode | None,\n             lo: float = float('-inf'),\n             hi: float = float('inf')) -> bool:\n    if not root:\n        return True\n    if not (lo < root.val < hi):\n        return False\n    return is_valid(root.left, lo, root.val) and is_valid(root.right, root.val, hi)\n\ndef insert(root: TreeNode | None, v: int) -> TreeNode:\n    if not root:\n        return TreeNode(v)\n    if v < root.val:\n        root.left = insert(root.left, v)\n    elif v > root.val:\n        root.right = insert(root.right, v)\n    return root\n\n# LCA in a BST: the first node that splits the two values.\ndef lca(root: TreeNode | None, p: int, q: int) -> TreeNode | None:\n    while root:\n        if p < root.val and q < root.val:\n            root = root.left\n        elif p > root.val and q > root.val:\n            root = root.right\n        else:\n            return root\n    return None\n\n# An inorder walk of a BST is sorted — that fact solves a lot of problems."
+    },
+    {
+      "lang": "c",
+      "label": "BST insert, search, validate",
+      "code": "#include <limits.h>\n\n/* BST invariant: everything left < node < everything right, against\n   INHERITED bounds. Comparing only with the parent is the classic wrong\n   answer and it passes small tests. */\nint isValid(TreeNode *r, long lo, long hi) {\n    if (!r) return 1;\n    if (r->val <= lo || r->val >= hi) return 0;\n    return isValid(r->left, lo, r->val) && isValid(r->right, r->val, hi);\n}\n/* call as isValid(root, LONG_MIN, LONG_MAX) — a long avoids the edge case\n   where a node legitimately holds INT_MIN or INT_MAX */\n\nTreeNode *insert(TreeNode *r, int v) {\n    if (!r) {\n        TreeNode *n = malloc(sizeof *n);\n        if (!n) exit(1);\n        n->val = v; n->left = n->right = NULL;\n        return n;\n    }\n    if (v < r->val) r->left = insert(r->left, v);\n    else if (v > r->val) r->right = insert(r->right, v);\n    return r;\n}\n\n/* LCA in a BST: the first node that splits the two values. */\nTreeNode *lca(TreeNode *r, int p, int q) {\n    while (r) {\n        if (p < r->val && q < r->val) r = r->left;\n        else if (p > r->val && q > r->val) r = r->right;\n        else return r;\n    }\n    return NULL;\n}"
+    },
+    {
+      "lang": "go",
+      "label": "BST insert, search, validate",
+      "code": "// BST invariant: everything left < node < everything right, against INHERITED\n// bounds. Comparing only against the parent is the classic wrong answer and\n// it passes small tests.\nfunc isValid(root *TreeNode, lo, hi *int) bool {\n\tif root == nil {\n\t\treturn true\n\t}\n\tif lo != nil && root.Val <= *lo {\n\t\treturn false\n\t}\n\tif hi != nil && root.Val >= *hi {\n\t\treturn false\n\t}\n\treturn isValid(root.Left, lo, &root.Val) && isValid(root.Right, &root.Val, hi)\n}\n\nfunc insert(root *TreeNode, v int) *TreeNode {\n\tif root == nil {\n\t\treturn &TreeNode{Val: v}\n\t}\n\tif v < root.Val {\n\t\troot.Left = insert(root.Left, v)\n\t} else if v > root.Val {\n\t\troot.Right = insert(root.Right, v)\n\t}\n\treturn root\n}\n\n// LCA in a BST: the first node that splits the two values.\nfunc lca(root *TreeNode, p, q int) *TreeNode {\n\tfor root != nil {\n\t\tswitch {\n\t\tcase p < root.Val && q < root.Val:\n\t\t\troot = root.Left\n\t\tcase p > root.Val && q > root.Val:\n\t\t\troot = root.Right\n\t\tdefault:\n\t\t\treturn root\n\t\t}\n\t}\n\treturn nil\n}"
     }
   ],
   "problems": [
@@ -22,9 +44,7 @@
       "platform": "LeetCode",
       "difficulty": "Easy",
       "tier": "warmup",
-      "companies": [
-        "Amazon"
-      ]
+      "companies": []
     },
     {
       "name": "Insert into a Binary Search Tree",
@@ -32,10 +52,7 @@
       "platform": "LeetCode",
       "difficulty": "Medium",
       "tier": "warmup",
-      "companies": [
-        "Amazon",
-        "Microsoft"
-      ]
+      "companies": []
     },
     {
       "name": "Validate Binary Search Tree",
@@ -44,11 +61,11 @@
       "difficulty": "Medium",
       "tier": "core",
       "companies": [
-        "Amazon",
         "Meta",
         "Microsoft",
         "Adobe"
-      ]
+      ],
+      "video": "https://www.youtube.com/watch?v=s6ATEkipzow"
     },
     {
       "name": "Kth Smallest Element in a BST",
@@ -57,7 +74,6 @@
       "difficulty": "Medium",
       "tier": "core",
       "companies": [
-        "Amazon",
         "Google",
         "Uber"
       ]
@@ -72,7 +88,8 @@
         "Amazon",
         "Microsoft",
         "Meta"
-      ]
+      ],
+      "video": "https://www.youtube.com/watch?v=gs2LMfuOR9k"
     },
     {
       "name": "Convert Sorted Array to BST",

@@ -76,6 +76,15 @@ if (phaseTopics.length !== new Set(phaseTopics).size) {
   fail('a topic is assigned to more than one roadmap phase');
 }
 
+// Snippets are per-language; an unknown code would silently drop the snippet
+// from the seed (the SQL joins on languages.code).
+const KNOWN_LANGS = new Set(['cpp', 'java', 'py', 'c', 'go']);
+for (const t of topics) {
+  for (const c of t.code ?? []) {
+    if (!KNOWN_LANGS.has(c.lang)) fail(`unknown snippet lang: ${t.slug} / ${c.label} -> ${c.lang}`);
+  }
+}
+
 const seenSlugs = new Set();
 // A problem may legitimately appear under several topics (Two Sum is taught in
 // arrays, stl and hashing). Its identity is (name, url) — so the same name must
@@ -98,6 +107,27 @@ for (const t of topics) {
     // rules forbid.
     if (p.video && !/^https:\/\/(www\.youtube\.com\/watch\?v=|youtu\.be\/)[\w-]{11}/.test(p.video)) {
       fail(`bad video URL: ${where} -> ${p.video}`);
+    }
+
+    // Company-tag discipline. Amazon was once on 137 of 139 problems, which
+    // made the filter useless — a tag on everything carries no information.
+    // Two rules keep it meaningful, and they are enforced here so the tags
+    // cannot drift back:
+    //   - warmup problems carry no BIG-TECH tags. FizzBuzz and plain binary
+    //     search are learning scaffolds, not a FAANG interview signature.
+    //     Service-company tags (TCS/Infosys/Wipro) DO belong there: for those
+    //     firms a warmup-level question is a representative one, so dropping
+    //     them would have deleted those companies from the app entirely.
+    //   - Amazon only appears on the interview/hard tiers, where "company X
+    //     asks this" is a claim worth making.
+    // These are editorial rules about tiers, not sourced interview data.
+    const SERVICE_COMPANIES = new Set(['TCS', 'Infosys', 'Wipro']);
+    const warmupBigTech = (p.companies ?? []).filter((n) => !SERVICE_COMPANIES.has(n));
+    if (p.tier === 'warmup' && warmupBigTech.length > 0) {
+      fail(`warmup problems carry no big-tech company tags: ${where} -> ${warmupBigTech.join(', ')}`);
+    }
+    if (p.companies?.includes('Amazon') && !['interview', 'hard'].includes(p.tier)) {
+      fail(`Amazon tag only belongs on interview/hard tiers: ${where} (tier=${p.tier})`);
     }
 
     const prev = urlByName.get(p.name);
@@ -164,7 +194,7 @@ for (const t of topics) {
     lines.push(
       `insert into code_snippets (topic_id, language_id, label, code) ` +
         `select t.id, l.id, ${q(c.label)}, ${q(c.code)} from topics t, languages l ` +
-        `where t.slug = ${q(t.slug)} and l.code = 'cpp' ` +
+        `where t.slug = ${q(t.slug)} and l.code = ${q(c.lang)} ` +
         `on conflict (topic_id, language_id, label) do update set code = excluded.code;`
     );
   }
@@ -246,8 +276,13 @@ if (check) {
   console.log(`wrote assets/data/plan.json and supabase/seed.sql`);
 }
 
+const byLang = {};
+for (const t of topics) for (const c of t.code ?? []) byLang[c.lang] = (byLang[c.lang] ?? 0) + 1;
+const langSummary = Object.entries(byLang).map(([k, v]) => `${k}:${v}`).join(' ');
+
 console.log(
   `  ${roadmap.phases.length} phases · ${topics.length} topics · ${plan.meta.problemCount} problems · ` +
-    `${topics.reduce((n, t) => n + t.code.length, 0)} snippets · ${companies.length} companies · ` +
+    `${topics.reduce((n, t) => n + t.code.length, 0)} snippets (${langSummary}) · ` +
+    `${Object.keys(primers).length} primers · ${companies.length} companies · ` +
     `${linkCount} problem-company links`
 );

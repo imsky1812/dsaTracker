@@ -1,0 +1,68 @@
+{
+  "language": "py",
+  "language_name": "Python",
+  "tagline": "Least code between you and the idea.",
+  "intro": "Python lets you write a solution almost as fast as you can think of it, which is exactly what you want while learning patterns. The trade-off is speed: it is roughly 30-100x slower than C++, so a solution that is algorithmically correct can still time out. That is not a reason to avoid it — it is a reason to learn which built-ins are implemented in C, and to reach for them.",
+  "sections": [
+    {
+      "order": 1,
+      "title": "Setup & Program Skeleton",
+      "body_md": "Install CPython 3.11 or newer (`python3 --version`) — 3.11 was a large performance release and 3.12+ improves error messages further. There is no boilerplate: a bare script runs top to bottom. The `if __name__ == '__main__'` guard matters when a file might be imported; for judge submissions it is optional but harmless.",
+      "code": "def solve() -> None:\n    print(\"Hello\")\n\nif __name__ == '__main__':\n    solve()\n\n# Type hints are optional and ignored at runtime, but they make interview\n# code much easier to read — and force you to say what you mean.\ndef two_sum(nums: list[int], target: int) -> tuple[int, int] | None:\n    ..."
+    },
+    {
+      "order": 2,
+      "title": "Fast Input / Output",
+      "body_md": "`input()` is slow because it handles prompts and line editing. For competitive input, read the whole of stdin at once and split it. Likewise, `print` per line flushes often — collect lines and join them. This single change is frequently the difference between TLE and accepted.",
+      "code": "import sys\n\ninput = sys.stdin.readline          # cheap upgrade; note it KEEPS the '\\n'\nn = int(input())\na = list(map(int, input().split()))\n\n# Fastest: consume everything, then walk a token list.\ndata = sys.stdin.buffer.read().split()\nn = int(data[0])\nnums = list(map(int, data[1:1 + n]))\n\n# Buffered output.\nout = []\nfor x in nums:\n    out.append(str(x))\nsys.stdout.write('\\n'.join(out) + '\\n')"
+    },
+    {
+      "order": 3,
+      "title": "Types, Variables & Operators",
+      "body_md": "Integers are arbitrary precision — there is no overflow, ever, which removes a whole class of bug that C++ and Java suffer from. The trap is division: `/` always produces a float, so use `//` for integer division. And `//` floors toward negative infinity, so `-7 // 2` is `-4`, not `-3` as in C++ or Java.",
+      "code": "i = 42\nbig = 2 ** 200                    # no overflow, arbitrary precision\nd = 3.14\ns = 'text'\nflag = True                        # capital T\nnothing = None\n\nprint(7 / 2)                       # 3.5   — always float\nprint(7 // 2)                      # 3     — floor division\nprint(-7 // 2)                     # -4    — FLOORS, unlike C++/Java (-3)\nprint(-7 % 2)                      # 1     — result takes the divisor's sign\nprint(divmod(7, 2))                # (3, 1)\n\n# Chained comparison and multiple assignment.\nif 0 <= i < 100:\n    pass\na, b = b, a                        # swap, no temp\n\n# Truthiness: empty containers, 0, '' and None are all falsy.\nif not nums:\n    return 0"
+    },
+    {
+      "order": 4,
+      "title": "Control Flow",
+      "body_md": "Indentation is the block structure — four spaces, consistently. `range(a, b, step)` is half-open. `enumerate` gives index and value together, `zip` walks several sequences in lockstep, and `for ... else` runs the `else` only if the loop finished without `break`, which is occasionally exactly what you want.",
+      "code": "for i in range(n):                 # 0 .. n-1\n    pass\nfor i in range(n - 1, -1, -1):     # countdown to 0\n    pass\nfor i, x in enumerate(nums):\n    pass\nfor x, y in zip(xs, ys):\n    pass\n\nwhile cond:\n    pass\n\n# for/else — else runs only if no break happened.\nfor p in primes:\n    if n % p == 0:\n        break\nelse:\n    print('no factor found')\n\n# match (3.10+), for when a chain of elifs gets unreadable.\nmatch op:\n    case '+': r = a + b\n    case '-': r = a - b\n    case _:   r = 0"
+    },
+    {
+      "order": 5,
+      "title": "Functions, Closures & Mutable Defaults",
+      "body_md": "Nested functions can read enclosing variables, which makes recursive helpers inside a solution function very natural. Two traps: a mutable default argument is created ONCE and shared across all calls, and assigning to a name inside a function makes it local unless you declare `nonlocal`.",
+      "code": "def outer(nums: list[int]) -> int:\n    best = 0\n\n    def helper(i: int) -> None:\n        nonlocal best              # without this, 'best = ...' makes a LOCAL\n        best = max(best, nums[i])\n\n    for i in range(len(nums)):\n        helper(i)\n    return best\n\n# Mutable default trap — the list is created once, at definition time.\ndef bad(x, acc=[]):               # DON'T\n    acc.append(x)\n    return acc\n\ndef good(x, acc=None):            # DO\n    if acc is None:\n        acc = []\n    acc.append(x)\n    return acc\n\n# Memoisation for free.\nfrom functools import cache\n\n@cache\ndef fib(n: int) -> int:\n    return n if n <= 1 else fib(n - 1) + fib(n - 2)"
+    },
+    {
+      "order": 6,
+      "title": "Lists & Slicing",
+      "body_md": "A list is a dynamic array: O(1) append and pop from the END, but O(n) insert or pop at the front — use `collections.deque` when you need both ends. Slicing always COPIES, which is why `a[:]` is a quick clone and why slicing inside a loop can turn an O(n) algorithm into O(n^2).",
+      "code": "a = [3, 1, 2]\na.append(4)\na.pop()                            # from the end, O(1)\na.pop(0)                           # from the front, O(n) — prefer deque\na.insert(0, 9)                     # O(n)\na.extend([5, 6])\n\na[1:3]                             # [1, 3) — a COPY\na[::-1]                            # reversed copy\na[::2]                             # every other element\nb = a[:]                           # shallow clone\n\nlen(a); sum(a); max(a); min(a)\nsorted(a); sorted(a, reverse=True)\na.sort()                           # in place\n\n# Comprehensions — the idiomatic map/filter.\nsquares = [x * x for x in a]\nevens = [x for x in a if x % 2 == 0]\ngrid = [[0] * cols for _ in range(rows)]\n\n# 2-D trap: [[0] * cols] * rows shares ONE row object.\nbad = [[0] * 3] * 3\nbad[0][0] = 1                      # every row now starts with 1"
+    },
+    {
+      "order": 7,
+      "title": "Strings",
+      "body_md": "Strings are immutable sequences, so `+=` in a loop is O(n^2) — build a list and `join`. Otherwise they behave like lists: index, slice, and iterate. `str` methods cover most of what interview problems need, and f-strings are the modern way to format.",
+      "code": "s = 'hello world'\ns[0]; s[-1]; s[1:4]\ns.upper(); s.lower()\ns.split()                          # on whitespace\ns.split(',')\n', '.join(['a', 'b'])\ns.strip(); s.replace('l', 'L')\ns.startswith('he'); s.find('lo')   # find returns -1 when absent\ns.isalnum(); s.isdigit()\nord('a'); chr(97)\n\n# Build with join, not +=.\nparts = [c.upper() for c in s if c.isalpha()]\nresult = ''.join(parts)\n\n# f-strings.\nprint(f'{n} items, {ratio:.2f} ratio')\n\n# Frequency counting.\nfrom collections import Counter\nfreq = Counter(s)\nfreq.most_common(3)"
+    },
+    {
+      "order": 8,
+      "title": "Dicts, Sets & collections",
+      "body_md": "`dict` and `set` are hash tables with average O(1) lookup, and dicts have preserved insertion order since 3.7. `collections` adds the three types you will reach for constantly: `defaultdict` (no KeyError on first touch), `Counter` (counting, done) and `deque` (O(1) at both ends).",
+      "code": "d = {'a': 1}\nd['b'] = 2\nd.get('c', 0)                      # default instead of KeyError\nd.setdefault('c', [])\nd.keys(); d.values(); d.items()\n'a' in d                           # O(1)\ndel d['a']\n\nseen = {1, 2, 3}                   # set literal\nempty = set()                      # {} is an empty DICT, not a set\nseen.add(4); seen.discard(9)       # discard won't raise\nseen & other; seen | other; seen - other\n\nfrom collections import defaultdict, Counter, deque\n\ng = defaultdict(list)              # adjacency list in one line\ng[u].append(v)\n\ncnt = defaultdict(int)\ncnt[x] += 1                        # no initialisation needed\n\nfreq = Counter(nums)\n\ndq = deque([1, 2, 3])\ndq.appendleft(0); dq.popleft()      # both O(1)"
+    },
+    {
+      "order": 9,
+      "title": "Sorting, heapq & bisect",
+      "body_md": "`sorted`/`list.sort` are Timsort: O(n log n), stable, and implemented in C so they are genuinely fast. The `key` function is how you sort by anything; return a tuple for multi-key ordering. `heapq` gives a min-heap over a plain list, and `bisect` gives binary search — reach for these rather than hand-rolling.",
+      "code": "nums.sort()\nnums.sort(reverse=True)\nwords.sort(key=len)\n# Multi-key: age ascending, then score descending.\npeople.sort(key=lambda p: (p.age, -p.score))\n\n# Sorting a dict by value.\ntop = sorted(freq.items(), key=lambda kv: kv[1], reverse=True)\n\nimport heapq\nheap = []\nheapq.heappush(heap, 3)\nheapq.heappop(heap)                # smallest\nheapq.heapify(xs)                  # O(n), in place\nheapq.nlargest(3, xs)\n# No max-heap: negate on the way in and out.\n\nimport bisect\ni = bisect.bisect_left(sorted_xs, x)    # lower_bound\nj = bisect.bisect_right(sorted_xs, x)   # upper_bound\nbisect.insort(sorted_xs, x)             # insert keeping order (O(n) move)"
+    },
+    {
+      "order": 10,
+      "title": "Common Gotchas",
+      "body_md": "The ones that bite in interviews: the default recursion limit of 1000, `[[0]*c]*r` sharing rows, mutable default arguments, `//` flooring on negatives, and mutating a list while iterating it. Also: Python is slow enough that you should prefer built-ins (`sum`, `max`, `sorted`, `any`) over hand-written loops, since those run in C.",
+      "code": "# 1. Recursion depth — trees and graphs with 10^5 nodes will blow the stack.\nimport sys\nsys.setrecursionlimit(300_000)\n\n# 2. 2-D grids: build rows independently.\ngrid = [[0] * cols for _ in range(rows)]     # correct\n# grid = [[0] * cols] * rows                 # WRONG — one shared row\n\n# 3. Don't mutate while iterating; build a new list.\nnums = [x for x in nums if x > 0]\n\n# 4. Floor division on negatives.\nprint(-7 // 2)                    # -4, not -3\nimport math\nprint(int(-7 / 2))                # -3, if you wanted truncation\nprint(math.ceil(7 / 2))           # 4\n\n# 5. Copying: assignment aliases, it does not copy.\nb = a                             # same list\nb = a[:]                          # shallow copy\nimport copy\nb = copy.deepcopy(nested)         # independent nested structure\n\n# 6. Prefer built-ins — they run in C.\ntotal = sum(nums)                 # much faster than a Python loop\nif any(x < 0 for x in nums):\n    pass"
+    }
+  ]
+}

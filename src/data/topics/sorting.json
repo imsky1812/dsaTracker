@@ -2,17 +2,39 @@
   "slug": "sorting",
   "order": 8,
   "title": "Sorting & Divide and Conquer",
-  "explainer_md": "Sorting arranges elements in order, and the *good* sorts (merge, quick, heap) all achieve O(n log n) by a divide-and-conquer strategy: split the problem, solve the halves, combine. Understanding *why* they're O(n log n) \u2014 log n levels of splitting, O(n) work per level \u2014 is more valuable than memorizing them, because that same recursion-tree analysis applies to countless other problems.\n\nIn practice you'll call `std::sort` (an introsort \u2014 quicksort with heapsort fallback). But interviews still probe merge sort (stable, predictable, powers 'count inversions') and quicksort (in-place, powers 'quickselect' for k-th element). Divide-and-conquer as a *mindset* \u2014 not just for sorting \u2014 is the real lesson.\n\nMental model: to sort a messy pile, split it in half, get each half sorted, then zip the two sorted halves together.",
-  "patterns_md": "**Merge sort** \u2014 split to single elements, merge sorted halves. Stable, O(n log n) guaranteed, O(n) extra space. The merge step also counts inversions and merges sorted lists.\n\n**Quick sort / quickselect** \u2014 partition around a pivot; recurse on the relevant side. In-place; average O(n log n). Quickselect finds the k-th smallest in O(n) average without full sorting.\n\n**Counting / bucket sort** \u2014 when values are bounded integers, sort in O(n) by counting occurrences. Beats the O(n log n) comparison lower bound by not comparing.\n\n**Sort-then-scan** \u2014 many problems become trivial after sorting (meeting rooms, merge intervals, closest pairs). Sorting as a preprocessing step is a pattern in itself.",
-  "complexity_md": "| Algorithm | Best | Average | Worst | Space | Stable |\n|---|---|---|---|---|---|\n| Bubble/Insertion | O(n) | O(n\u00b2) | O(n\u00b2) | O(1) | yes |\n| Merge sort | O(n log n) | O(n log n) | O(n log n) | O(n) | yes |\n| Quick sort | O(n log n) | O(n log n) | O(n\u00b2) | O(log n) | no |\n| Heap sort | O(n log n) | O(n log n) | O(n log n) | O(1) | no |\n| Counting sort | O(n+k) | O(n+k) | O(n+k) | O(k) | yes |\n\nComparison sorts can't beat O(n log n) in the worst case \u2014 that's a proven lower bound.",
+  "explainer_md": "Sorting arranges elements in order, and the *good* sorts (merge, quick, heap) all achieve O(n log n) by a divide-and-conquer strategy: split the problem, solve the halves, combine. Understanding *why* they're O(n log n) — log n levels of splitting, O(n) work per level — is more valuable than memorizing them, because that same recursion-tree analysis applies to countless other problems.\n\nIn practice you'll call `std::sort` (an introsort — quicksort with heapsort fallback). But interviews still probe merge sort (stable, predictable, powers 'count inversions') and quicksort (in-place, powers 'quickselect' for k-th element). Divide-and-conquer as a *mindset* — not just for sorting — is the real lesson.\n\nMental model: to sort a messy pile, split it in half, get each half sorted, then zip the two sorted halves together.",
+  "patterns_md": "**Merge sort** — split to single elements, merge sorted halves. Stable, O(n log n) guaranteed, O(n) extra space. The merge step also counts inversions and merges sorted lists.\n\n**Quick sort / quickselect** — partition around a pivot; recurse on the relevant side. In-place; average O(n log n). Quickselect finds the k-th smallest in O(n) average without full sorting.\n\n**Counting / bucket sort** — when values are bounded integers, sort in O(n) by counting occurrences. Beats the O(n log n) comparison lower bound by not comparing.\n\n**Sort-then-scan** — many problems become trivial after sorting (meeting rooms, merge intervals, closest pairs). Sorting as a preprocessing step is a pattern in itself.",
+  "complexity_md": "| Algorithm | Best | Average | Worst | Space | Stable |\n|---|---|---|---|---|---|\n| Bubble/Insertion | O(n) | O(n²) | O(n²) | O(1) | yes |\n| Merge sort | O(n log n) | O(n log n) | O(n log n) | O(n) | yes |\n| Quick sort | O(n log n) | O(n log n) | O(n²) | O(log n) | no |\n| Heap sort | O(n log n) | O(n log n) | O(n log n) | O(1) | no |\n| Counting sort | O(n+k) | O(n+k) | O(n+k) | O(k) | yes |\n\nComparison sorts can't beat O(n log n) in the worst case — that's a proven lower bound.",
   "code": [
     {
+      "lang": "cpp",
       "label": "Merge sort",
       "code": "void merge(vector<int>& a, int l, int m, int r) {\n    vector<int> tmp;\n    int i = l, j = m + 1;\n    while (i <= m && j <= r)\n        tmp.push_back(a[i] <= a[j] ? a[i++] : a[j++]);\n    while (i <= m) tmp.push_back(a[i++]);\n    while (j <= r) tmp.push_back(a[j++]);\n    for (int k = 0; k < (int)tmp.size(); k++) a[l + k] = tmp[k];\n}\nvoid mergeSort(vector<int>& a, int l, int r) {\n    if (l >= r) return;\n    int m = l + (r - l) / 2;\n    mergeSort(a, l, m); mergeSort(a, m + 1, r);\n    merge(a, l, m, r);\n}"
     },
     {
-      "label": "Quickselect \u2014 k-th smallest, O(n) avg",
+      "lang": "cpp",
+      "label": "Quickselect — k-th smallest, O(n) avg",
       "code": "int partition(vector<int>& a, int l, int r) {\n    int pivot = a[r], i = l;\n    for (int j = l; j < r; j++)\n        if (a[j] < pivot) swap(a[i++], a[j]);\n    swap(a[i], a[r]);\n    return i;\n}\nint quickselect(vector<int>& a, int l, int r, int k) {\n    int p = partition(a, l, r);\n    if (p == k) return a[p];\n    return p < k ? quickselect(a, p+1, r, k)\n                 : quickselect(a, l, p-1, k);\n}"
+    },
+    {
+      "lang": "java",
+      "label": "Merge sort and quick sort",
+      "code": "// Merge sort: O(n log n) always, stable, needs O(n) extra space.\nstatic void mergeSort(int[] a, int lo, int hi) {\n    if (lo >= hi) return;\n    int mid = lo + (hi - lo) / 2;\n    mergeSort(a, lo, mid);\n    mergeSort(a, mid + 1, hi);\n    int[] tmp = new int[hi - lo + 1];\n    int i = lo, j = mid + 1, k = 0;\n    while (i <= mid && j <= hi) tmp[k++] = a[i] <= a[j] ? a[i++] : a[j++];\n    while (i <= mid) tmp[k++] = a[i++];\n    while (j <= hi)  tmp[k++] = a[j++];\n    System.arraycopy(tmp, 0, a, lo, tmp.length);\n}\n\n// Quick sort: O(n log n) average, O(n^2) worst on already-sorted input\n// unless you randomise the pivot. In-place.\nstatic int partition(int[] a, int lo, int hi) {\n    int pivot = a[hi], i = lo - 1;\n    for (int j = lo; j < hi; j++) if (a[j] < pivot) { i++; swap(a, i, j); }\n    swap(a, i + 1, hi);\n    return i + 1;\n}"
+    },
+    {
+      "lang": "py",
+      "label": "Merge sort, quick sort, and sorting by key",
+      "code": "import random\n\n# In practice use list.sort()/sorted() — Timsort, O(n log n), stable.\n# Write these out to understand divide and conquer, not to use them.\n\ndef merge_sort(a: list[int]) -> list[int]:\n    if len(a) <= 1:\n        return a\n    mid = len(a) // 2\n    left, right = merge_sort(a[:mid]), merge_sort(a[mid:])\n    out, i, j = [], 0, 0\n    while i < len(left) and j < len(right):\n        if left[i] <= right[j]:          # <= keeps it stable\n            out.append(left[i]); i += 1\n        else:\n            out.append(right[j]); j += 1\n    out.extend(left[i:]); out.extend(right[j:])\n    return out\n\ndef quick_sort(a: list[int], lo: int, hi: int) -> None:\n    if lo >= hi:\n        return\n    r = random.randint(lo, hi)                    # randomise to dodge O(n^2)\n    a[hi], a[r] = a[r], a[hi]\n    pivot, i = a[hi], lo - 1\n    for j in range(lo, hi):\n        if a[j] < pivot:\n            i += 1\n            a[i], a[j] = a[j], a[i]\n    a[i + 1], a[hi] = a[hi], a[i + 1]\n    quick_sort(a, lo, i); quick_sort(a, i + 2, hi)\n\n# Multi-key sort: ascending by age, then descending by score.\npeople.sort(key=lambda p: (p.age, -p.score))"
+    },
+    {
+      "lang": "c",
+      "label": "Merge sort, quick sort, and qsort",
+      "code": "#include <stdlib.h>\n\n/* Merge sort: O(n log n) always, stable, needs a scratch buffer. */\nvoid mergeSort(int *a, int lo, int hi, int *tmp) {\n    if (lo >= hi) return;\n    int mid = lo + (hi - lo) / 2;\n    mergeSort(a, lo, mid, tmp);\n    mergeSort(a, mid + 1, hi, tmp);\n    int i = lo, j = mid + 1, k = lo;\n    while (i <= mid && j <= hi) tmp[k++] = (a[i] <= a[j]) ? a[i++] : a[j++];\n    while (i <= mid) tmp[k++] = a[i++];\n    while (j <= hi)  tmp[k++] = a[j++];\n    for (int t = lo; t <= hi; t++) a[t] = tmp[t];\n}\n\n/* Quick sort, Lomuto partition. O(n^2) on sorted input unless the pivot is\n   randomised — and sorted input is exactly what test suites feed you. */\nstatic void swap(int *x, int *y) { int t = *x; *x = *y; *y = t; }\n\nint partition(int *a, int lo, int hi) {\n    swap(&a[lo + rand() % (hi - lo + 1)], &a[hi]);   /* randomise the pivot */\n    int pivot = a[hi], i = lo - 1;\n    for (int j = lo; j < hi; j++) if (a[j] < pivot) swap(&a[++i], &a[j]);\n    swap(&a[i + 1], &a[hi]);\n    return i + 1;\n}\n\nvoid quickSort(int *a, int lo, int hi) {\n    if (lo >= hi) return;\n    int p = partition(a, lo, hi);\n    quickSort(a, lo, p - 1);\n    quickSort(a, p + 1, hi);\n}"
+    },
+    {
+      "lang": "go",
+      "label": "Sorting, and merge sort by hand",
+      "code": "// Use the standard library: slices.Sort is pdqsort, sort.SliceStable when\n// stability matters.\nslices.Sort(nums)\nslices.SortFunc(people, func(a, b Person) int {\n\tif a.Age != b.Age {\n\t\treturn a.Age - b.Age\n\t}\n\treturn b.Score - a.Score // tie-break: score descending\n})\nsort.SliceStable(xs, func(i, j int) bool { return xs[i].K < xs[j].K })\n\n// Merge sort by hand, to understand divide and conquer.\nfunc mergeSort(a []int) []int {\n\tif len(a) <= 1 {\n\t\treturn a\n\t}\n\tmid := len(a) / 2\n\tl, r := mergeSort(a[:mid]), mergeSort(a[mid:])\n\tout := make([]int, 0, len(a))\n\ti, j := 0, 0\n\tfor i < len(l) && j < len(r) {\n\t\tif l[i] <= r[j] { // <= keeps it stable\n\t\t\tout = append(out, l[i])\n\t\t\ti++\n\t\t} else {\n\t\t\tout = append(out, r[j])\n\t\t\tj++\n\t\t}\n\t}\n\tout = append(out, l[i:]...)\n\tout = append(out, r[j:]...)\n\treturn out\n}"
     }
   ],
   "problems": [
@@ -22,9 +44,7 @@
       "platform": "LeetCode",
       "difficulty": "Medium",
       "tier": "warmup",
-      "companies": [
-        "Amazon"
-      ]
+      "companies": []
     },
     {
       "name": "Merge Intervals",
@@ -33,7 +53,6 @@
       "difficulty": "Medium",
       "tier": "core",
       "companies": [
-        "Amazon",
         "Google",
         "Meta",
         "Microsoft"
@@ -46,9 +65,9 @@
       "difficulty": "Medium",
       "tier": "core",
       "companies": [
-        "Amazon",
         "Meta"
-      ]
+      ],
+      "video": "https://www.youtube.com/watch?v=XEmy13g1Qxc"
     },
     {
       "name": "Sort Colors",

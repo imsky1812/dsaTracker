@@ -2,21 +2,44 @@
   "slug": "recursion",
   "order": 6,
   "title": "Recursion",
-  "explainer_md": "Recursion is a function calling itself on a smaller input until it hits a **base case**. It's the conceptual foundation for backtracking, trees, and dynamic programming \u2014 which is why it's worth over-investing in until it feels natural.\n\nEvery correct recursion has two parts: a base case that stops the descent, and a recursive case that makes progress toward it. The magic is the **call stack** \u2014 each call pauses, waits for its sub-call to return, then resumes. Drawing the recursion tree (what calls what, what each returns) is the single best debugging and design tool.\n\nMental model: recursion is delegation. 'I'll solve the tiny version myself; for anything bigger, I'll ask a slightly-smaller copy of me and combine its answer with one step of work.'",
-  "patterns_md": "**Base case first** \u2014 always define when to stop before writing the recursive step. Missing or wrong base cases cause stack overflow.\n\n**Pick-or-skip (subsequences)** \u2014 at each element, branch into 'include it' and 'exclude it'. This binary choice generates all subsets and underlies knapsack DP.\n\n**Recursion tree thinking** \u2014 for any recursive function, sketch the tree of calls. The number of leaves often reveals the time complexity (e.g. 2^n for pick-or-skip).\n\n**Return vs. accumulate** \u2014 decide whether each call *returns* a value up the stack, or *mutates* a shared accumulator (passed by reference). Both are valid; be deliberate.",
-  "complexity_md": "| Aspect | Cost |\n|---|---|\n| Time | (number of nodes in recursion tree) \u00d7 (work per node) |\n| Space | O(depth of recursion) for the call stack |\n| Subsets / pick-skip | O(2^n) time |\n| Permutations | O(n! \u00b7 n) time |\n\nRecursion depth matters: deep recursion (e.g. O(n) on a 10^6 input) can overflow the stack. Convert to iteration or increase stack limits when needed.",
+  "explainer_md": "Recursion is a function calling itself on a smaller input until it hits a **base case**. It's the conceptual foundation for backtracking, trees, and dynamic programming — which is why it's worth over-investing in until it feels natural.\n\nEvery correct recursion has two parts: a base case that stops the descent, and a recursive case that makes progress toward it. The magic is the **call stack** — each call pauses, waits for its sub-call to return, then resumes. Drawing the recursion tree (what calls what, what each returns) is the single best debugging and design tool.\n\nMental model: recursion is delegation. 'I'll solve the tiny version myself; for anything bigger, I'll ask a slightly-smaller copy of me and combine its answer with one step of work.'",
+  "patterns_md": "**Base case first** — always define when to stop before writing the recursive step. Missing or wrong base cases cause stack overflow.\n\n**Pick-or-skip (subsequences)** — at each element, branch into 'include it' and 'exclude it'. This binary choice generates all subsets and underlies knapsack DP.\n\n**Recursion tree thinking** — for any recursive function, sketch the tree of calls. The number of leaves often reveals the time complexity (e.g. 2^n for pick-or-skip).\n\n**Return vs. accumulate** — decide whether each call *returns* a value up the stack, or *mutates* a shared accumulator (passed by reference). Both are valid; be deliberate.",
+  "complexity_md": "| Aspect | Cost |\n|---|---|\n| Time | (number of nodes in recursion tree) × (work per node) |\n| Space | O(depth of recursion) for the call stack |\n| Subsets / pick-skip | O(2^n) time |\n| Permutations | O(n! · n) time |\n\nRecursion depth matters: deep recursion (e.g. O(n) on a 10^6 input) can overflow the stack. Convert to iteration or increase stack limits when needed.",
   "code": [
     {
-      "label": "Base + recursive case \u2014 factorial",
+      "lang": "cpp",
+      "label": "Base + recursive case — factorial",
       "code": "long long fact(int n) {\n    if (n <= 1) return 1;        // base case\n    return n * fact(n - 1);      // recursive case\n}"
     },
     {
-      "label": "Pick or skip \u2014 all subsequences",
+      "lang": "cpp",
+      "label": "Pick or skip — all subsequences",
       "code": "void subseq(vector<int>& a, int i, vector<int>& cur, vector<vector<int>>& out) {\n    if (i == (int)a.size()) { out.push_back(cur); return; }\n    cur.push_back(a[i]);          // pick\n    subseq(a, i + 1, cur, out);\n    cur.pop_back();               // skip (backtrack)\n    subseq(a, i + 1, cur, out);\n}"
     },
     {
-      "label": "Fast exponentiation \u2014 divide & conquer",
+      "lang": "cpp",
+      "label": "Fast exponentiation — divide & conquer",
       "code": "long long power(long long x, long long n) {\n    if (n == 0) return 1;\n    long long half = power(x, n / 2);\n    return (n % 2) ? half * half * x : half * half;\n}"
+    },
+    {
+      "lang": "java",
+      "label": "Recursion — base case, recurse, combine",
+      "code": "// Every recursion needs: a base case, a strictly smaller subproblem,\n// and a way to combine. Draw the recursion tree before coding.\nstatic int fib(int n, int[] memo) {\n    if (n <= 1) return n;\n    if (memo[n] != 0) return memo[n];\n    return memo[n] = fib(n - 1, memo) + fib(n - 2, memo);\n}\n\n// Subsets: at each index, either take the element or don't.\nstatic void subsets(int[] nums, int i, List<Integer> cur, List<List<Integer>> out) {\n    if (i == nums.length) { out.add(new ArrayList<>(cur)); return; }\n    subsets(nums, i + 1, cur, out);          // skip\n    cur.add(nums[i]);\n    subsets(nums, i + 1, cur, out);          // take\n    cur.remove(cur.size() - 1);              // undo — this is the backtrack\n}"
+    },
+    {
+      "lang": "py",
+      "label": "Recursion — base case, recurse, combine",
+      "code": "# Python's default recursion limit is 1000. Deep recursion needs either\n# sys.setrecursionlimit or an iterative rewrite — this bites on tree and\n# graph problems with 10^5 nodes.\nimport sys\nsys.setrecursionlimit(300_000)\n\nfrom functools import cache\n\n@cache                              # memoisation for free\ndef fib(n: int) -> int:\n    if n <= 1:\n        return n\n    return fib(n - 1) + fib(n - 2)\n\n# Subsets: at each index, take the element or don't.\ndef subsets(nums: list[int]) -> list[list[int]]:\n    out: list[list[int]] = []\n\n    def go(i: int, cur: list[int]) -> None:\n        if i == len(nums):\n            out.append(cur[:])      # copy — cur is mutated on the way back up\n            return\n        go(i + 1, cur)              # skip\n        cur.append(nums[i])\n        go(i + 1, cur)              # take\n        cur.pop()                   # undo\n\n    go(0, [])\n    return out"
+    },
+    {
+      "lang": "c",
+      "label": "Recursion — base case, recurse, combine",
+      "code": "/* C has no default recursion guard and stacks are typically 1-8 MB, so deep\n   recursion segfaults rather than raising an error. Prefer iteration when the\n   depth can reach 10^5. */\nlong long fib(int n, long long *memo) {\n    if (n <= 1) return n;\n    if (memo[n]) return memo[n];\n    return memo[n] = fib(n - 1, memo) + fib(n - 2, memo);\n}\n\n/* Subsets: at each index, take the element or don't. The caller owns the\n   buffers — there is no container to return. */\nvoid subsets(const int *nums, int n, int i, int *cur, int curLen,\n             void (*emit)(const int *, int)) {\n    if (i == n) { emit(cur, curLen); return; }\n    subsets(nums, n, i + 1, cur, curLen, emit);           /* skip */\n    cur[curLen] = nums[i];\n    subsets(nums, n, i + 1, cur, curLen + 1, emit);       /* take */\n    /* nothing to undo: curLen is passed by value, which IS the backtrack */\n}\n\n/* Tail-recursive shapes are often clearer as loops in C — the compiler may\n   or may not eliminate the call. */\nint gcd(int a, int b) { while (b) { int t = a % b; a = b; b = t; } return a; }"
+    },
+    {
+      "lang": "go",
+      "label": "Recursion — base case, recurse, combine",
+      "code": "// Go grows goroutine stacks dynamically, so deep recursion is far safer here\n// than in Python or C — but it is still not free.\nfunc fib(n int, memo map[int]int) int {\n\tif n <= 1 {\n\t\treturn n\n\t}\n\tif v, ok := memo[n]; ok {\n\t\treturn v\n\t}\n\tmemo[n] = fib(n-1, memo) + fib(n-2, memo)\n\treturn memo[n]\n}\n\n// Subsets: at each index, take the element or don't.\nfunc subsets(nums []int) [][]int {\n\tvar out [][]int\n\tvar cur []int\n\n\tvar go_ func(i int)\n\tgo_ = func(i int) {\n\t\tif i == len(nums) {\n\t\t\t// MUST copy: cur's backing array is reused as we backtrack.\n\t\t\tout = append(out, append([]int(nil), cur...))\n\t\t\treturn\n\t\t}\n\t\tgo_(i + 1) // skip\n\t\tcur = append(cur, nums[i])\n\t\tgo_(i + 1) // take\n\t\tcur = cur[:len(cur)-1]\n\t}\n\tgo_(0)\n\treturn out\n}"
     }
   ],
   "problems": [
@@ -26,9 +49,7 @@
       "platform": "LeetCode",
       "difficulty": "Easy",
       "tier": "warmup",
-      "companies": [
-        "Amazon"
-      ]
+      "companies": []
     },
     {
       "name": "Pow(x, n)",
@@ -36,11 +57,7 @@
       "platform": "LeetCode",
       "difficulty": "Medium",
       "tier": "warmup",
-      "companies": [
-        "Google",
-        "Amazon",
-        "Meta"
-      ]
+      "companies": []
     },
     {
       "name": "Subsets",
@@ -49,10 +66,10 @@
       "difficulty": "Medium",
       "tier": "core",
       "companies": [
-        "Amazon",
         "Meta",
         "Google"
-      ]
+      ],
+      "video": "https://www.youtube.com/watch?v=REOH22Xwdkk"
     },
     {
       "name": "Combination Sum",
@@ -61,9 +78,9 @@
       "difficulty": "Medium",
       "tier": "core",
       "companies": [
-        "Amazon",
         "Adobe"
-      ]
+      ],
+      "video": "https://www.youtube.com/watch?v=GBKI9VSKdGg"
     },
     {
       "name": "Permutations",
@@ -75,7 +92,8 @@
         "Amazon",
         "Microsoft",
         "Meta"
-      ]
+      ],
+      "video": "https://www.youtube.com/watch?v=s7AvT7cGdSo"
     },
     {
       "name": "Generate Parentheses",

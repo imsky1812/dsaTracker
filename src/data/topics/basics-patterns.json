@@ -6,14 +6,85 @@
   "patterns_md": "**Outer = rows, inner = columns** — the universal structure. The inner loop's bound is written in terms of the outer loop variable to create shapes.\n\n**Relate content to indices** — spaces before a pyramid = `n - i`; stars = `2i - 1`. Deriving these relationships is the whole exercise.\n\n**Build up complexity** — solid square → right triangle → pyramid → diamond → hollow shapes. Each adds one idea (variable inner bound, leading spaces, conditional printing).\n\n**Number/character patterns** — same loops, but print `j`, `i`, or `'A'+j` instead of a fixed star. Reinforces index-to-value thinking.",
   "complexity_md": "| Pattern | Time | Space |\n|---|---|---|\n| Any n-row pattern | O(n²) | O(1) |\n| Printing a full grid | O(rows · cols) | O(1) |\n\nMost pattern problems are O(n²) because you print roughly n characters across n rows. Space is O(1) — you print directly without storing. The value is conceptual, not algorithmic: fluency with nested loops.",
   "code": [
-    {"label": "Right triangle of stars", "code": "void triangle(int n) {\n    for (int i = 1; i <= n; i++) {      // rows\n        for (int j = 1; j <= i; j++)     // stars in row i\n            cout << \"* \";\n        cout << \"\\n\";\n    }\n}"},
-    {"label": "Centered pyramid", "code": "void pyramid(int n) {\n    for (int i = 1; i <= n; i++) {\n        for (int s = 0; s < n - i; s++) cout << \" \";   // leading spaces\n        for (int j = 0; j < 2*i - 1; j++) cout << \"*\"; // 2i-1 stars\n        cout << \"\\n\";\n    }\n}"}
+    {
+      "lang": "cpp",
+      "label": "Right triangle of stars",
+      "code": "void triangle(int n) {\n    for (int i = 1; i <= n; i++) {      // rows\n        for (int j = 1; j <= i; j++)     // stars in row i\n            cout << \"* \";\n        cout << \"\\n\";\n    }\n}"
+    },
+    {
+      "lang": "cpp",
+      "label": "Centered pyramid",
+      "code": "void pyramid(int n) {\n    for (int i = 1; i <= n; i++) {\n        for (int s = 0; s < n - i; s++) cout << \" \";   // leading spaces\n        for (int j = 0; j < 2*i - 1; j++) cout << \"*\"; // 2i-1 stars\n        cout << \"\\n\";\n    }\n}"
+    },
+    {
+      "lang": "java",
+      "label": "Nested loops — pyramid pattern",
+      "code": "// Outer loop = rows, inner loops = what each row prints.\n// Internalise this and matrices, DP tables and brute-force scans stop\n// feeling intimidating.\nstatic void pyramid(int n) {\n    for (int i = 1; i <= n; i++) {\n        for (int s = 0; s < n - i; s++) System.out.print(\" \");\n        for (int k = 0; k < 2 * i - 1; k++) System.out.print(\"*\");\n        System.out.println();\n    }\n}\n\n// Fast IO for competitive input sizes — Scanner is far too slow past ~10^5.\nBufferedReader br = new BufferedReader(new InputStreamReader(System.in));\nint n = Integer.parseInt(br.readLine().trim());"
+    },
+    {
+      "lang": "py",
+      "label": "Nested loops — pyramid pattern",
+      "code": "# Outer loop = rows, inner expressions = what each row prints.\n# Python lets you say this declaratively, but write the loops out first —\n# the point is to make nested iteration automatic.\ndef pyramid(n: int) -> None:\n    for i in range(1, n + 1):\n        print(' ' * (n - i) + '*' * (2 * i - 1))\n\n# Fast IO. input() is slow in loops; sys.stdin is what you want past ~10^5 lines.\nimport sys\ndata = sys.stdin.buffer.read().split()\nn = int(data[0])"
+    },
+    {
+      "lang": "c",
+      "label": "Nested loops and fast IO",
+      "code": "#include <stdio.h>\n\n/* Outer loop = rows, inner loops = what each row prints. */\nvoid pyramid(int n) {\n    for (int i = 1; i <= n; i++) {\n        for (int s = 0; s < n - i; s++) putchar(' ');\n        for (int k = 0; k < 2 * i - 1; k++) putchar('*');\n        putchar('\\n');\n    }\n}\n\n/* scanf is fine, but getchar_unlocked-style manual parsing is much faster\n   when input runs to 10^6 numbers. */\nint readInt(void) {\n    int c = getchar(), sign = 1, x = 0;\n    while (c == ' ' || c == '\\n' || c == '\\r') c = getchar();\n    if (c == '-') { sign = -1; c = getchar(); }\n    while (c >= '0' && c <= '9') { x = x * 10 + (c - '0'); c = getchar(); }\n    return x * sign;\n}"
+    },
+    {
+      "lang": "go",
+      "label": "Nested loops and fast IO",
+      "code": "// Outer loop = rows, inner loops = what each row prints.\nfunc pyramid(n int) {\n\tfor i := 1; i <= n; i++ {\n\t\tfmt.Print(strings.Repeat(\" \", n-i))\n\t\tfmt.Println(strings.Repeat(\"*\", 2*i-1))\n\t}\n}\n\n// fmt.Scan is slow in loops. bufio.Scanner with a word split is the\n// competitive-programming default in Go.\nfunc newReader() *bufio.Scanner {\n\tsc := bufio.NewScanner(os.Stdin)\n\tsc.Buffer(make([]byte, 1024*1024), 1024*1024)\n\tsc.Split(bufio.ScanWords)\n\treturn sc\n}\n\nfunc readInt(sc *bufio.Scanner) int {\n\tsc.Scan()\n\tn, _ := strconv.Atoi(sc.Text())\n\treturn n\n}"
+    }
   ],
   "problems": [
-    {"name": "Pattern Printing (collection)", "url": "https://www.geeksforgeeks.org/problems/print-the-pattern-1587115620/1", "platform": "GFG", "difficulty": "Easy", "tier": "warmup", "companies": ["TCS", "Infosys", "Wipro"]},
-    {"name": "FizzBuzz", "url": "https://leetcode.com/problems/fizz-buzz/", "platform": "LeetCode", "difficulty": "Easy", "tier": "warmup", "companies": ["Amazon", "Microsoft"]},
-    {"name": "Number of Steps to Reduce a Number to Zero", "url": "https://leetcode.com/problems/number-of-steps-to-reduce-a-number-to-zero/", "platform": "LeetCode", "difficulty": "Easy", "tier": "warmup", "companies": ["Amazon"]},
-    {"name": "Count Primes", "url": "https://leetcode.com/problems/count-primes/", "platform": "LeetCode", "difficulty": "Medium", "tier": "core", "companies": ["Amazon", "Microsoft"]},
-    {"name": "Palindrome Number", "url": "https://leetcode.com/problems/palindrome-number/", "platform": "LeetCode", "difficulty": "Easy", "tier": "core", "companies": ["Amazon", "Adobe"]}
+    {
+      "name": "Pattern Printing (collection)",
+      "url": "https://www.geeksforgeeks.org/problems/print-the-pattern-1587115620/1",
+      "platform": "GFG",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [
+        "TCS",
+        "Infosys",
+        "Wipro"
+      ]
+    },
+    {
+      "name": "FizzBuzz",
+      "url": "https://leetcode.com/problems/fizz-buzz/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": []
+    },
+    {
+      "name": "Number of Steps to Reduce a Number to Zero",
+      "url": "https://leetcode.com/problems/number-of-steps-to-reduce-a-number-to-zero/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": []
+    },
+    {
+      "name": "Count Primes",
+      "url": "https://leetcode.com/problems/count-primes/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "Microsoft"
+      ]
+    },
+    {
+      "name": "Palindrome Number",
+      "url": "https://leetcode.com/problems/palindrome-number/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "core",
+      "companies": [
+        "Adobe"
+      ]
+    }
   ]
 }

@@ -2,21 +2,44 @@
   "slug": "stl",
   "order": 5,
   "title": "STL & Collections",
-  "explainer_md": "The Standard Template Library is C++'s toolbox of ready-made containers and algorithms. Knowing it cold is a massive time-saver in interviews \u2014 you implement the *idea*, not the data structure. The four containers you'll reach for constantly: `vector` (dynamic array), `map`/`set` (sorted, tree-backed, O(log n)), `unordered_map`/`unordered_set` (hash-backed, O(1) average), and `pair`/`tuple` for grouping.\n\nThe algorithms header gives you `sort`, `lower_bound`, `upper_bound`, `next_permutation`, `accumulate`, and more \u2014 each replacing a chunk of hand-written code. Add `priority_queue` (a heap) and `stack`/`queue` and you can express most solutions concisely.\n\nMental model: the STL is a set of Lego blocks \u2014 pick the container whose complexity matches your access pattern, and let the library handle the internals.",
-  "patterns_md": "**Choose by access pattern**: need ordering + range queries \u2192 `map`/`set`. Need pure fast lookup \u2192 `unordered_map`/`unordered_set`. Need top/min element repeatedly \u2192 `priority_queue`. Need LIFO/FIFO \u2192 `stack`/`queue`.\n\n**Custom sorting** \u2014 pass a comparator lambda to `sort`: `sort(v.begin(), v.end(), [](auto&a, auto&b){ return a.second < b.second; })`.\n\n**Binary search helpers** \u2014 `lower_bound`/`upper_bound` on a sorted vector give O(log n) boundary queries without writing the loop.\n\n**Frequency + ordering combos** \u2014 `map<int,int>` keeps counts in sorted key order; pair it with iteration for 'k-th' style problems.",
-  "complexity_md": "| Container | Access | Insert | Search | Ordered? |\n|---|---|---|---|---|\n| vector | O(1) | O(1)* end | O(n) | insertion |\n| map / set | O(log n) | O(log n) | O(log n) | yes (sorted) |\n| unordered_map / set | O(1) avg | O(1) avg | O(1) avg | no |\n| priority_queue | O(1) top | O(log n) | \u2014 | heap order |\n| stack / queue | O(1) top | O(1) | \u2014 | LIFO / FIFO |\n\n*Amortized. Worst-case for unordered containers is O(n) under heavy collisions.",
+  "explainer_md": "The Standard Template Library is C++'s toolbox of ready-made containers and algorithms. Knowing it cold is a massive time-saver in interviews — you implement the *idea*, not the data structure. The four containers you'll reach for constantly: `vector` (dynamic array), `map`/`set` (sorted, tree-backed, O(log n)), `unordered_map`/`unordered_set` (hash-backed, O(1) average), and `pair`/`tuple` for grouping.\n\nThe algorithms header gives you `sort`, `lower_bound`, `upper_bound`, `next_permutation`, `accumulate`, and more — each replacing a chunk of hand-written code. Add `priority_queue` (a heap) and `stack`/`queue` and you can express most solutions concisely.\n\nMental model: the STL is a set of Lego blocks — pick the container whose complexity matches your access pattern, and let the library handle the internals.",
+  "patterns_md": "**Choose by access pattern**: need ordering + range queries → `map`/`set`. Need pure fast lookup → `unordered_map`/`unordered_set`. Need top/min element repeatedly → `priority_queue`. Need LIFO/FIFO → `stack`/`queue`.\n\n**Custom sorting** — pass a comparator lambda to `sort`: `sort(v.begin(), v.end(), [](auto&a, auto&b){ return a.second < b.second; })`.\n\n**Binary search helpers** — `lower_bound`/`upper_bound` on a sorted vector give O(log n) boundary queries without writing the loop.\n\n**Frequency + ordering combos** — `map<int,int>` keeps counts in sorted key order; pair it with iteration for 'k-th' style problems.",
+  "complexity_md": "| Container | Access | Insert | Search | Ordered? |\n|---|---|---|---|---|\n| vector | O(1) | O(1)* end | O(n) | insertion |\n| map / set | O(log n) | O(log n) | O(log n) | yes (sorted) |\n| unordered_map / set | O(1) avg | O(1) avg | O(1) avg | no |\n| priority_queue | O(1) top | O(log n) | — | heap order |\n| stack / queue | O(1) top | O(1) | — | LIFO / FIFO |\n\n*Amortized. Worst-case for unordered containers is O(n) under heavy collisions.",
   "code": [
     {
-      "label": "Maps & sets \u2014 count frequencies",
+      "lang": "cpp",
+      "label": "Maps & sets — count frequencies",
       "code": "unordered_map<int,int> freq;\nfor (int x : nums) freq[x]++;\nfor (auto& [val, cnt] : freq)\n    cout << val << \" -> \" << cnt << \"\\n\";"
     },
     {
+      "lang": "cpp",
       "label": "Sort with custom comparator",
       "code": "vector<pair<string,int>> v;\n// sort by count desc, then name asc\nsort(v.begin(), v.end(), [](auto& a, auto& b){\n    if (a.second != b.second) return a.second > b.second;\n    return a.first < b.first;\n});"
     },
     {
-      "label": "priority_queue \u2014 min-heap of top K",
+      "lang": "cpp",
+      "label": "priority_queue — min-heap of top K",
       "code": "priority_queue<int, vector<int>, greater<int>> minHeap;\nfor (int x : nums) {\n    minHeap.push(x);\n    if ((int)minHeap.size() > k) minHeap.pop();\n}\n// minHeap.top() is the k-th largest"
+    },
+    {
+      "lang": "java",
+      "label": "Collections framework — the containers you actually need",
+      "code": "// Java's equivalent of the STL. Note the interface-typed declarations:\n// program to List/Map/Set, not to the implementation.\nList<Integer> list = new ArrayList<>();       // vector\nlist.add(3); list.get(0); list.size();\n\nDeque<Integer> stack = new ArrayDeque<>();    // prefer over legacy Stack\nstack.push(1); stack.peek(); stack.pop();\n\nQueue<Integer> queue = new ArrayDeque<>();\nqueue.offer(1); queue.peek(); queue.poll();\n\nMap<String, Integer> map = new HashMap<>();   // unordered_map\nmap.put(\"a\", 1);\nmap.getOrDefault(\"b\", 0);\nmap.merge(\"a\", 1, Integer::sum);              // idiomatic counting\n\nMap<String, Integer> sorted = new TreeMap<>();// map (ordered, O(log n))\nSet<Integer> seen = new HashSet<>();          // unordered_set\n\n// Sorting: Arrays.sort on primitives is dual-pivot quicksort (no stability\n// guarantee); on objects it's a stable merge sort.\nint[] a = {3, 1, 2};\nArrays.sort(a);\nlist.sort(Comparator.reverseOrder());\nlist.sort(Comparator.comparingInt(String::length));"
+    },
+    {
+      "lang": "py",
+      "label": "The standard containers — collections and heapq",
+      "code": "# Python's answer to the STL is mostly built in, plus `collections`.\nfrom collections import defaultdict, Counter, deque, OrderedDict\nimport heapq\n\nlst = [3, 1, 2]                    # vector\nlst.sort()                         # in place, stable (Timsort)\nnew = sorted(lst, reverse=True)    # returns a copy\nlst.sort(key=len)                  # sort by a key function\n\nd: dict[str, int] = {}             # unordered_map (insertion-ordered since 3.7)\nd.get('missing', 0)\ncounts = defaultdict(int)           # no KeyError on first touch\ncounts['a'] += 1\nfreq = Counter('mississippi')       # counting, done\nfreq.most_common(2)\n\nseen: set[int] = set()             # unordered_set\n\ndq = deque()                       # O(1) at BOTH ends — a list is O(n) at the front\ndq.append(1); dq.appendleft(0)\ndq.pop(); dq.popleft()\n\nheap: list[int] = []               # min-heap\nheapq.heappush(heap, 3)\nsmallest = heapq.heappop(heap)\n# No max-heap: push negated values, or use heapq.nlargest(k, xs)."
+    },
+    {
+      "lang": "c",
+      "label": "There is no STL — build the containers",
+      "code": "/* C has no vector, map or set. The standard library gives you qsort and\n   bsearch, and that is essentially it. Knowing what to build is the skill. */\n#include <stdlib.h>\n\n/* Growable array: double the capacity so n appends stay amortised O(1). */\ntypedef struct { int *data; size_t len, cap; } Vec;\n\nvoid vec_push(Vec *v, int x) {\n    if (v->len == v->cap) {\n        v->cap = v->cap ? v->cap * 2 : 4;\n        int *grown = realloc(v->data, v->cap * sizeof *v->data);\n        if (!grown) { free(v->data); exit(1); }   /* realloc can fail; the old\n                                                     pointer is still valid */\n        v->data = grown;\n    }\n    v->data[v->len++] = x;\n}\n\nvoid vec_free(Vec *v) { free(v->data); v->data = NULL; v->len = v->cap = 0; }\n\n/* qsort needs a comparator returning <0 / 0 / >0. Do NOT write a - b for\n   ints that may be large: the subtraction itself can overflow. */\nint cmp_int(const void *p, const void *q) {\n    int a = *(const int *) p, b = *(const int *) q;\n    return (a > b) - (a < b);\n}\n\nint a[] = {3, 1, 2};\nqsort(a, 3, sizeof a[0], cmp_int);\n\n/* Fixed-size hash set by open addressing — the usual interview stand-in\n   for unordered_set. */\n#define CAP 1031            /* prime, comfortably larger than n */\nint keys[CAP];\nchar used[CAP];\n\nvoid set_add(int k) {\n    unsigned h = (unsigned) k % CAP;\n    while (used[h] && keys[h] != k) h = (h + 1) % CAP;   /* linear probe */\n    keys[h] = k; used[h] = 1;\n}"
+    },
+    {
+      "lang": "go",
+      "label": "Slices, maps and the standard containers",
+      "code": "// Go's containers are slices and maps, plus container/heap and container/list.\ns := []int{3, 1, 2}\ns = append(s, 4)\nslices.Sort(s)                       // Go 1.21+; else sort.Ints\nslices.Reverse(s)\ni, ok := slices.BinarySearch(s, 3)\nslices.Contains(s, 3)\n\n// Maps. The two-value form is how you distinguish absent from zero —\n// m[\"missing\"] returns 0 silently, which is a common bug source.\nm := map[string]int{}\nm[\"a\"]++                             // zero value means no init needed\nv, ok := m[\"b\"]                      // ok is false when absent\ndelete(m, \"a\")\n\n// Map iteration order is RANDOMISED by design. Sort the keys when you need\n// deterministic output.\nkeys := make([]string, 0, len(m))\nfor k := range m {\n\tkeys = append(keys, k)\n}\nslices.Sort(keys)\n\n// Sets are maps to empty structs — struct{} occupies no space.\nseen := map[int]struct{}{}\nseen[42] = struct{}{}\n_, exists := seen[42]\n\n// Stack and queue on a slice.\nstack := []int{}\nstack = append(stack, 1)             // push\ntop := stack[len(stack)-1]           // peek\nstack = stack[:len(stack)-1]         // pop\n\nqueue := []int{1, 2}\nfront := queue[0]                    // O(n) dequeue; use container/list or an\nqueue = queue[1:]                    // index cursor for hot loops"
     }
   ],
   "problems": [
@@ -26,10 +49,8 @@
       "platform": "LeetCode",
       "difficulty": "Easy",
       "tier": "warmup",
-      "companies": [
-        "Amazon",
-        "Google"
-      ]
+      "companies": [],
+      "video": "https://www.youtube.com/watch?v=KLlXCFG5TnA"
     },
     {
       "name": "Contains Duplicate",
@@ -37,10 +58,8 @@
       "platform": "LeetCode",
       "difficulty": "Easy",
       "tier": "warmup",
-      "companies": [
-        "Amazon",
-        "Adobe"
-      ]
+      "companies": [],
+      "video": "https://www.youtube.com/watch?v=3OamzN90kPg"
     },
     {
       "name": "Valid Parentheses",
@@ -48,11 +67,8 @@
       "platform": "LeetCode",
       "difficulty": "Easy",
       "tier": "warmup",
-      "companies": [
-        "Amazon",
-        "Google",
-        "Microsoft"
-      ]
+      "companies": [],
+      "video": "https://www.youtube.com/watch?v=WTzjTskDFMg"
     },
     {
       "name": "Top K Frequent Elements",
@@ -61,10 +77,10 @@
       "difficulty": "Medium",
       "tier": "core",
       "companies": [
-        "Amazon",
         "Google",
         "Meta"
-      ]
+      ],
+      "video": "https://www.youtube.com/watch?v=YPTqKIgVk-k"
     },
     {
       "name": "Sort Characters By Frequency",
@@ -73,7 +89,6 @@
       "difficulty": "Medium",
       "tier": "core",
       "companies": [
-        "Amazon",
         "Google"
       ]
     },
@@ -87,7 +102,8 @@
         "Amazon",
         "Meta",
         "Microsoft"
-      ]
+      ],
+      "video": "https://www.youtube.com/watch?v=XEmy13g1Qxc"
     }
   ]
 }

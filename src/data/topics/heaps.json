@@ -2,17 +2,39 @@
   "slug": "heaps",
   "order": 13,
   "title": "Heaps & Priority Queues",
-  "explainer_md": "A heap is a binary tree kept in a specific partial order: in a **min-heap**, every parent is \u2264 its children (so the minimum sits at the root); a max-heap is the mirror. It's stored compactly in an array \u2014 no pointers \u2014 and gives you the smallest (or largest) element in O(1), with insert and extract in O(log n).\n\nHeaps shine on 'top-K', 'k-th largest', 'merge k sorted', and 'running median' problems \u2014 anything where you repeatedly need the best remaining element without fully sorting. In C++ it's `priority_queue` (max-heap by default; use `greater<>` for a min-heap).\n\nMental model: a tournament bracket that always keeps the current champion (min or max) at the top and reorganizes cheaply when players come and go.",
-  "patterns_md": "**Top-K with a bounded heap** \u2014 to find the k largest, keep a **min**-heap of size k; if it overflows, pop the smallest. O(n log k), better than sorting when k \u226a n.\n\n**k-way merge** \u2014 push the heads of k sorted lists into a heap; repeatedly pop the min and push its successor. Merges k lists in O(N log k).\n\n**Two-heap median** \u2014 a max-heap for the lower half and a min-heap for the upper half; balance them to read the median in O(1).\n\n**Greedy scheduling** \u2014 heaps power interval/task scheduling where you always process the nearest deadline or highest priority next.",
-  "complexity_md": "| Operation | Time |\n|---|---|\n| Peek min/max (top) | O(1) |\n| Insert (push) | O(log n) |\n| Extract (pop) | O(log n) |\n| Build heap from array | O(n) |\n| Top-K (size-k heap) | O(n log k) |\n\nBuilding a heap by successive sift-down is O(n), not O(n log n) \u2014 a common interview gotcha. Space is O(n) for the heap, or O(k) for a bounded top-K heap.",
+  "explainer_md": "A heap is a binary tree kept in a specific partial order: in a **min-heap**, every parent is ≤ its children (so the minimum sits at the root); a max-heap is the mirror. It's stored compactly in an array — no pointers — and gives you the smallest (or largest) element in O(1), with insert and extract in O(log n).\n\nHeaps shine on 'top-K', 'k-th largest', 'merge k sorted', and 'running median' problems — anything where you repeatedly need the best remaining element without fully sorting. In C++ it's `priority_queue` (max-heap by default; use `greater<>` for a min-heap).\n\nMental model: a tournament bracket that always keeps the current champion (min or max) at the top and reorganizes cheaply when players come and go.",
+  "patterns_md": "**Top-K with a bounded heap** — to find the k largest, keep a **min**-heap of size k; if it overflows, pop the smallest. O(n log k), better than sorting when k ≪ n.\n\n**k-way merge** — push the heads of k sorted lists into a heap; repeatedly pop the min and push its successor. Merges k lists in O(N log k).\n\n**Two-heap median** — a max-heap for the lower half and a min-heap for the upper half; balance them to read the median in O(1).\n\n**Greedy scheduling** — heaps power interval/task scheduling where you always process the nearest deadline or highest priority next.",
+  "complexity_md": "| Operation | Time |\n|---|---|\n| Peek min/max (top) | O(1) |\n| Insert (push) | O(log n) |\n| Extract (pop) | O(log n) |\n| Build heap from array | O(n) |\n| Top-K (size-k heap) | O(n log k) |\n\nBuilding a heap by successive sift-down is O(n), not O(n log n) — a common interview gotcha. Space is O(n) for the heap, or O(k) for a bounded top-K heap.",
   "code": [
     {
+      "lang": "cpp",
       "label": "Min-heap & max-heap declarations",
       "code": "priority_queue<int> maxHeap;                       // max on top\npriority_queue<int, vector<int>, greater<int>> minHeap;  // min on top\nmaxHeap.push(5); maxHeap.push(1);\nint top = maxHeap.top();   // 5\nmaxHeap.pop();"
     },
     {
+      "lang": "cpp",
       "label": "Top-K largest with bounded min-heap",
       "code": "int findKthLargest(vector<int>& nums, int k) {\n    priority_queue<int, vector<int>, greater<int>> h;\n    for (int x : nums) {\n        h.push(x);\n        if ((int)h.size() > k) h.pop();  // drop smallest\n    }\n    return h.top();   // k-th largest\n}"
+    },
+    {
+      "lang": "java",
+      "label": "PriorityQueue — top-K and k-way merge",
+      "code": "// Java's PriorityQueue is a MIN-heap by default (C++ priority_queue is a max-heap).\nPriorityQueue<Integer> minHeap = new PriorityQueue<>();\nPriorityQueue<Integer> maxHeap = new PriorityQueue<>(Comparator.reverseOrder());\n\n// Kth largest: keep a min-heap of size k. O(n log k), better than sorting.\nstatic int kthLargest(int[] nums, int k) {\n    PriorityQueue<Integer> pq = new PriorityQueue<>();\n    for (int n : nums) {\n        pq.offer(n);\n        if (pq.size() > k) pq.poll();   // evict the smallest\n    }\n    return pq.peek();\n}\n\n// Top K frequent: count, then heap by frequency.\nMap<Integer, Integer> freq = new HashMap<>();\nfor (int n : nums) freq.merge(n, 1, Integer::sum);\nPriorityQueue<int[]> pq = new PriorityQueue<>((x, y) -> x[1] - y[1]);\nfor (var e : freq.entrySet()) {\n    pq.offer(new int[]{e.getKey(), e.getValue()});\n    if (pq.size() > k) pq.poll();\n}"
+    },
+    {
+      "lang": "py",
+      "label": "heapq — top-K and k-way merge",
+      "code": "import heapq\n\n# heapq is a MIN-heap and operates on a plain list, in place.\nheap: list[int] = []\nheapq.heappush(heap, 5)\nsmallest = heapq.heappop(heap)\nheapq.heapify(existing_list)          # O(n), beats n pushes\n\n# Kth largest: min-heap of size k. O(n log k).\ndef kth_largest(nums: list[int], k: int) -> int:\n    h = nums[:k]\n    heapq.heapify(h)\n    for x in nums[k:]:\n        if x > h[0]:\n            heapq.heapreplace(h, x)   # pop+push in one operation\n    return h[0]\n\n# There is no max-heap: negate on the way in and out.\nmax_heap: list[int] = []\nheapq.heappush(max_heap, -x)\nlargest = -heapq.heappop(max_heap)\n\n# Top K frequent, in two lines.\nfrom collections import Counter\ntop = [v for v, _ in Counter(nums).most_common(k)]\n\n# K-way merge of sorted iterables — lazy, memory-efficient.\nmerged = list(heapq.merge(*sorted_lists))"
+    },
+    {
+      "lang": "c",
+      "label": "Binary heap on an array",
+      "code": "/* No priority_queue in C — but a heap IS just an array with index\n   arithmetic: children of i are 2i+1 and 2i+2, parent is (i-1)/2. */\ntypedef struct { int *a; int n, cap; } Heap;\n\nstatic void swap(int *x, int *y) { int t = *x; *x = *y; *y = t; }\n\n/* Sift up after inserting at the end. */\nvoid heap_push(Heap *h, int x) {\n    int i = h->n++;\n    h->a[i] = x;\n    while (i > 0) {\n        int p = (i - 1) / 2;\n        if (h->a[p] <= h->a[i]) break;   /* min-heap: parent must be smaller */\n        swap(&h->a[p], &h->a[i]);\n        i = p;\n    }\n}\n\n/* Move the last element to the root, then sift down. */\nint heap_pop(Heap *h) {\n    int top = h->a[0];\n    h->a[0] = h->a[--h->n];\n    int i = 0;\n    for (;;) {\n        int l = 2 * i + 1, r = l + 1, m = i;\n        if (l < h->n && h->a[l] < h->a[m]) m = l;\n        if (r < h->n && h->a[r] < h->a[m]) m = r;\n        if (m == i) break;\n        swap(&h->a[i], &h->a[m]);\n        i = m;\n    }\n    return top;\n}\n\n/* Kth largest: keep a min-heap of size k, evicting the smallest. O(n log k). */"
+    },
+    {
+      "lang": "go",
+      "label": "container/heap — top-K",
+      "code": "// Go has no ready-made priority queue: container/heap gives you the algorithms\n// and you supply the storage by implementing heap.Interface.\ntype IntHeap []int\n\nfunc (h IntHeap) Len() int            { return len(h) }\nfunc (h IntHeap) Less(i, j int) bool  { return h[i] < h[j] } // min-heap; flip for max\nfunc (h IntHeap) Swap(i, j int)       { h[i], h[j] = h[j], h[i] }\nfunc (h *IntHeap) Push(x any)         { *h = append(*h, x.(int)) }\nfunc (h *IntHeap) Pop() any {\n\told := *h\n\tn := len(old)\n\tx := old[n-1]\n\t*h = old[:n-1]\n\treturn x\n}\n\n// Note Push/Pop are the storage hooks — you call heap.Push/heap.Pop, never\n// these directly, or the heap invariant is not maintained.\nfunc kthLargest(nums []int, k int) int {\n\th := &IntHeap{}\n\theap.Init(h)\n\tfor _, x := range nums {\n\t\theap.Push(h, x)\n\t\tif h.Len() > k {\n\t\t\theap.Pop(h) // evict the smallest\n\t\t}\n\t}\n\treturn (*h)[0]\n}"
     }
   ],
   "problems": [
@@ -22,10 +44,7 @@
       "platform": "LeetCode",
       "difficulty": "Easy",
       "tier": "warmup",
-      "companies": [
-        "Amazon",
-        "Meta"
-      ]
+      "companies": []
     },
     {
       "name": "Last Stone Weight",
@@ -33,9 +52,7 @@
       "platform": "LeetCode",
       "difficulty": "Easy",
       "tier": "warmup",
-      "companies": [
-        "Amazon"
-      ]
+      "companies": []
     },
     {
       "name": "K Closest Points to Origin",
@@ -44,7 +61,6 @@
       "difficulty": "Medium",
       "tier": "core",
       "companies": [
-        "Amazon",
         "Meta",
         "Google"
       ]
@@ -56,10 +72,10 @@
       "difficulty": "Medium",
       "tier": "core",
       "companies": [
-        "Amazon",
         "Google",
         "Meta"
-      ]
+      ],
+      "video": "https://www.youtube.com/watch?v=YPTqKIgVk-k"
     },
     {
       "name": "Task Scheduler",
@@ -83,7 +99,8 @@
         "Amazon",
         "Google",
         "Microsoft"
-      ]
+      ],
+      "video": "https://www.youtube.com/watch?v=q5a5OiGbT6Q"
     },
     {
       "name": "Find Median from Data Stream",

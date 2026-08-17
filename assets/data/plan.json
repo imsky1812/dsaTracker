@@ -166,12 +166,34 @@
       "complexity_md": "| Pattern | Time | Space |\n|---|---|---|\n| Any n-row pattern | O(n²) | O(1) |\n| Printing a full grid | O(rows · cols) | O(1) |\n\nMost pattern problems are O(n²) because you print roughly n characters across n rows. Space is O(1) — you print directly without storing. The value is conceptual, not algorithmic: fluency with nested loops.",
       "code": [
         {
+          "lang": "cpp",
           "label": "Right triangle of stars",
           "code": "void triangle(int n) {\n    for (int i = 1; i <= n; i++) {      // rows\n        for (int j = 1; j <= i; j++)     // stars in row i\n            cout << \"* \";\n        cout << \"\\n\";\n    }\n}"
         },
         {
+          "lang": "cpp",
           "label": "Centered pyramid",
           "code": "void pyramid(int n) {\n    for (int i = 1; i <= n; i++) {\n        for (int s = 0; s < n - i; s++) cout << \" \";   // leading spaces\n        for (int j = 0; j < 2*i - 1; j++) cout << \"*\"; // 2i-1 stars\n        cout << \"\\n\";\n    }\n}"
+        },
+        {
+          "lang": "java",
+          "label": "Nested loops — pyramid pattern",
+          "code": "// Outer loop = rows, inner loops = what each row prints.\n// Internalise this and matrices, DP tables and brute-force scans stop\n// feeling intimidating.\nstatic void pyramid(int n) {\n    for (int i = 1; i <= n; i++) {\n        for (int s = 0; s < n - i; s++) System.out.print(\" \");\n        for (int k = 0; k < 2 * i - 1; k++) System.out.print(\"*\");\n        System.out.println();\n    }\n}\n\n// Fast IO for competitive input sizes — Scanner is far too slow past ~10^5.\nBufferedReader br = new BufferedReader(new InputStreamReader(System.in));\nint n = Integer.parseInt(br.readLine().trim());"
+        },
+        {
+          "lang": "py",
+          "label": "Nested loops — pyramid pattern",
+          "code": "# Outer loop = rows, inner expressions = what each row prints.\n# Python lets you say this declaratively, but write the loops out first —\n# the point is to make nested iteration automatic.\ndef pyramid(n: int) -> None:\n    for i in range(1, n + 1):\n        print(' ' * (n - i) + '*' * (2 * i - 1))\n\n# Fast IO. input() is slow in loops; sys.stdin is what you want past ~10^5 lines.\nimport sys\ndata = sys.stdin.buffer.read().split()\nn = int(data[0])"
+        },
+        {
+          "lang": "c",
+          "label": "Nested loops and fast IO",
+          "code": "#include <stdio.h>\n\n/* Outer loop = rows, inner loops = what each row prints. */\nvoid pyramid(int n) {\n    for (int i = 1; i <= n; i++) {\n        for (int s = 0; s < n - i; s++) putchar(' ');\n        for (int k = 0; k < 2 * i - 1; k++) putchar('*');\n        putchar('\\n');\n    }\n}\n\n/* scanf is fine, but getchar_unlocked-style manual parsing is much faster\n   when input runs to 10^6 numbers. */\nint readInt(void) {\n    int c = getchar(), sign = 1, x = 0;\n    while (c == ' ' || c == '\\n' || c == '\\r') c = getchar();\n    if (c == '-') { sign = -1; c = getchar(); }\n    while (c >= '0' && c <= '9') { x = x * 10 + (c - '0'); c = getchar(); }\n    return x * sign;\n}"
+        },
+        {
+          "lang": "go",
+          "label": "Nested loops and fast IO",
+          "code": "// Outer loop = rows, inner loops = what each row prints.\nfunc pyramid(n int) {\n\tfor i := 1; i <= n; i++ {\n\t\tfmt.Print(strings.Repeat(\" \", n-i))\n\t\tfmt.Println(strings.Repeat(\"*\", 2*i-1))\n\t}\n}\n\n// fmt.Scan is slow in loops. bufio.Scanner with a word split is the\n// competitive-programming default in Go.\nfunc newReader() *bufio.Scanner {\n\tsc := bufio.NewScanner(os.Stdin)\n\tsc.Buffer(make([]byte, 1024*1024), 1024*1024)\n\tsc.Split(bufio.ScanWords)\n\treturn sc\n}\n\nfunc readInt(sc *bufio.Scanner) int {\n\tsc.Scan()\n\tn, _ := strconv.Atoi(sc.Text())\n\treturn n\n}"
         }
       ],
       "problems": [
@@ -193,10 +215,7 @@
           "platform": "LeetCode",
           "difficulty": "Easy",
           "tier": "warmup",
-          "companies": [
-            "Amazon",
-            "Microsoft"
-          ]
+          "companies": []
         },
         {
           "name": "Number of Steps to Reduce a Number to Zero",
@@ -204,9 +223,7 @@
           "platform": "LeetCode",
           "difficulty": "Easy",
           "tier": "warmup",
-          "companies": [
-            "Amazon"
-          ]
+          "companies": []
         },
         {
           "name": "Count Primes",
@@ -215,7 +232,6 @@
           "difficulty": "Medium",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Microsoft"
           ]
         },
@@ -226,7 +242,6 @@
           "difficulty": "Easy",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Adobe"
           ]
         }
@@ -241,20 +256,44 @@
       "complexity_md": "| Operation | Time | Notes |\n|---|---|---|\n| Access by index | O(1) | The core superpower |\n| Search (unsorted) | O(n) | Must scan |\n| Search (sorted) | O(log n) | Binary search |\n| Insert/remove at end | O(1)* | Amortized for vector |\n| Insert/remove in middle | O(n) | Shift elements |\n| Two-pointer / sliding window scan | O(n) | Single pass |\n| Prefix-sum build | O(n) | Then O(1) per range query |\n\nSpace: O(1) extra for in-place two-pointer work; O(n) for prefix-sum arrays.",
       "code": [
         {
+          "lang": "cpp",
           "label": "Two pointers — reverse in place",
           "code": "void reverse(vector<int>& a) {\n    int l = 0, r = a.size() - 1;\n    while (l < r) {\n        swap(a[l], a[r]);\n        l++; r--;\n    }\n}"
         },
         {
+          "lang": "cpp",
           "label": "Sliding window — max sum of size k",
           "code": "int maxSum(vector<int>& a, int k) {\n    int sum = 0;\n    for (int i = 0; i < k; i++) sum += a[i];\n    int best = sum;\n    for (int i = k; i < (int)a.size(); i++) {\n        sum += a[i] - a[i - k];   // slide: add new, drop old\n        best = max(best, sum);\n    }\n    return best;\n}"
         },
         {
+          "lang": "cpp",
           "label": "Prefix sum — O(1) range queries",
           "code": "vector<long long> buildPrefix(vector<int>& a) {\n    int n = a.size();\n    vector<long long> pre(n + 1, 0);\n    for (int i = 0; i < n; i++) pre[i + 1] = pre[i] + a[i];\n    return pre;   // sum(l..r) = pre[r+1] - pre[l]\n}"
         },
         {
+          "lang": "cpp",
           "label": "Kadane — maximum subarray sum",
           "code": "int maxSubArray(vector<int>& a) {\n    int best = a[0], cur = a[0];\n    for (int i = 1; i < (int)a.size(); i++) {\n        cur = max(a[i], cur + a[i]);\n        best = max(best, cur);\n    }\n    return best;\n}"
+        },
+        {
+          "lang": "java",
+          "label": "Kadane's maximum subarray",
+          "code": "// Keep the best sum ending here; restart whenever carrying the prefix\n// forward is worse than starting fresh.\nstatic int maxSubArray(int[] nums) {\n    int best = nums[0], cur = nums[0];\n    for (int i = 1; i < nums.length; i++) {\n        cur = Math.max(nums[i], cur + nums[i]);\n        best = Math.max(best, cur);\n    }\n    return best;\n}\n\n// Prefix sums: range sum in O(1) after O(n) setup.\nint[] pre = new int[nums.length + 1];\nfor (int i = 0; i < nums.length; i++) pre[i + 1] = pre[i] + nums[i];\n// sum of nums[l..r] inclusive:\nint sum = pre[r + 1] - pre[l];"
+        },
+        {
+          "lang": "py",
+          "label": "Kadane's maximum subarray",
+          "code": "# Keep the best sum ending here; restart whenever carrying the prefix\n# forward is worse than starting fresh.\ndef max_subarray(nums: list[int]) -> int:\n    best = cur = nums[0]\n    for x in nums[1:]:\n        cur = max(x, cur + x)\n        best = max(best, cur)\n    return best\n\n# Prefix sums: range sum in O(1) after O(n) setup.\nfrom itertools import accumulate\npre = [0, *accumulate(nums)]\ntotal = pre[r + 1] - pre[l]        # sum of nums[l..r] inclusive\n\n# Two pointers on a sorted array.\ndef two_sum_sorted(a: list[int], target: int) -> tuple[int, int] | None:\n    i, j = 0, len(a) - 1\n    while i < j:\n        s = a[i] + a[j]\n        if s == target:\n            return i, j\n        if s < target:\n            i += 1\n        else:\n            j -= 1\n    return None"
+        },
+        {
+          "lang": "c",
+          "label": "Kadane's maximum subarray and prefix sums",
+          "code": "#include <limits.h>\n\n/* C passes arrays as bare pointers — sizeof() gives you the POINTER size\n   inside a function, not the array length. Always pass the length. */\nint maxSubArray(const int *a, int n) {\n    int best = a[0], cur = a[0];\n    for (int i = 1; i < n; i++) {\n        cur = (a[i] > cur + a[i]) ? a[i] : cur + a[i];\n        if (cur > best) best = cur;\n    }\n    return best;\n}\n\n/* Prefix sums. Use long long: int sums overflow at ~2.1e9, silently. */\nvoid prefix(const int *a, int n, long long *pre) {\n    pre[0] = 0;\n    for (int i = 0; i < n; i++) pre[i + 1] = pre[i] + a[i];\n    /* sum of a[l..r] == pre[r + 1] - pre[l] */\n}\n\n/* Two pointers on a sorted array. */\nint twoSumSorted(const int *a, int n, int target, int *i_out, int *j_out) {\n    int i = 0, j = n - 1;\n    while (i < j) {\n        int s = a[i] + a[j];\n        if (s == target) { *i_out = i; *j_out = j; return 1; }\n        if (s < target) i++; else j--;\n    }\n    return 0;\n}"
+        },
+        {
+          "lang": "go",
+          "label": "Kadane's maximum subarray and prefix sums",
+          "code": "// Go has no generic max for ints before 1.21; since 1.21 `max`/`min` are builtins.\nfunc maxSubArray(nums []int) int {\n\tbest, cur := nums[0], nums[0]\n\tfor _, x := range nums[1:] {\n\t\tcur = max(x, cur+x)\n\t\tbest = max(best, cur)\n\t}\n\treturn best\n}\n\n// Prefix sums: O(1) range queries after O(n) setup.\nfunc prefix(nums []int) []int {\n\tpre := make([]int, len(nums)+1)\n\tfor i, x := range nums {\n\t\tpre[i+1] = pre[i] + x\n\t}\n\treturn pre // sum of nums[l..r] == pre[r+1] - pre[l]\n}\n\n// Slices share backing arrays. append may or may not reallocate, so never\n// assume a slice you handed out is unaffected by your appends.\nb := make([]int, len(a))\ncopy(b, a) // explicit copy when you need independence"
         }
       ],
       "problems": [
@@ -264,12 +303,8 @@
           "platform": "LeetCode",
           "difficulty": "Easy",
           "tier": "warmup",
-          "companies": [
-            "Amazon",
-            "Google",
-            "Microsoft",
-            "Adobe"
-          ]
+          "companies": [],
+          "video": "https://www.youtube.com/watch?v=KLlXCFG5TnA"
         },
         {
           "name": "Best Time to Buy and Sell Stock",
@@ -277,11 +312,8 @@
           "platform": "LeetCode",
           "difficulty": "Easy",
           "tier": "warmup",
-          "companies": [
-            "Amazon",
-            "Microsoft",
-            "Meta"
-          ]
+          "companies": [],
+          "video": "https://www.youtube.com/watch?v=1pkOgXD63yU"
         },
         {
           "name": "Move Zeroes",
@@ -289,10 +321,7 @@
           "platform": "LeetCode",
           "difficulty": "Easy",
           "tier": "warmup",
-          "companies": [
-            "Meta",
-            "Amazon"
-          ]
+          "companies": []
         },
         {
           "name": "Maximum Subarray (Kadane)",
@@ -301,7 +330,6 @@
           "difficulty": "Medium",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Microsoft",
             "LinkedIn"
           ]
@@ -313,10 +341,10 @@
           "difficulty": "Medium",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Google",
             "Adobe"
-          ]
+          ],
+          "video": "https://www.youtube.com/watch?v=UuiTKBwPgAo"
         },
         {
           "name": "3Sum",
@@ -341,7 +369,8 @@
             "Amazon",
             "Meta",
             "Microsoft"
-          ]
+          ],
+          "video": "https://www.youtube.com/watch?v=bNvIQI2wAjk"
         },
         {
           "name": "Sort Colors (Dutch flag)",
@@ -388,7 +417,8 @@
             "Google",
             "Microsoft",
             "Adobe"
-          ]
+          ],
+          "video": "https://www.youtube.com/watch?v=ZI2z5pq0TqA"
         },
         {
           "name": "First Missing Positive",
@@ -412,20 +442,44 @@
       "complexity_md": "| Task | Time | Space |\n|---|---|---|\n| Search sorted array | O(log n) | O(1) |\n| Lower/upper bound | O(log n) | O(1) |\n| Binary search on answer | O(n log(range)) | O(1) |\n| Search rotated array | O(log n) | O(1) |\n\nThe `log(range)` factor in answer-search is the number of halvings of the value range; each feasibility check is usually O(n). Always prefer `mid = l + (r - l) / 2` over `(l + r) / 2` to prevent overflow on large bounds.",
       "code": [
         {
+          "lang": "cpp",
           "label": "Vanilla binary search",
           "code": "int binarySearch(vector<int>& a, int target) {\n    int l = 0, r = a.size() - 1;\n    while (l <= r) {\n        int mid = l + (r - l) / 2;\n        if (a[mid] == target) return mid;\n        if (a[mid] < target) l = mid + 1;\n        else r = mid - 1;\n    }\n    return -1;\n}"
         },
         {
+          "lang": "cpp",
           "label": "Lower bound (first index >= target)",
           "code": "int lowerBound(vector<int>& a, int target) {\n    int l = 0, r = a.size();   // note: r = n, half-open\n    while (l < r) {\n        int mid = l + (r - l) / 2;\n        if (a[mid] < target) l = mid + 1;\n        else r = mid;\n    }\n    return l;   // insertion point\n}"
         },
         {
+          "lang": "cpp",
           "label": "Binary search on answer — template",
           "code": "// smallest x in [lo, hi] such that feasible(x) is true\nint searchAnswer(int lo, int hi, function<bool(int)> feasible) {\n    while (lo < hi) {\n        int mid = lo + (hi - lo) / 2;\n        if (feasible(mid)) hi = mid;   // mid works, try smaller\n        else lo = mid + 1;             // mid fails, go bigger\n    }\n    return lo;\n}"
         },
         {
+          "lang": "cpp",
           "label": "Search in rotated sorted array",
           "code": "int search(vector<int>& a, int target) {\n    int l = 0, r = a.size() - 1;\n    while (l <= r) {\n        int mid = l + (r - l) / 2;\n        if (a[mid] == target) return mid;\n        if (a[l] <= a[mid]) {              // left half sorted\n            if (a[l] <= target && target < a[mid]) r = mid - 1;\n            else l = mid + 1;\n        } else {                          // right half sorted\n            if (a[mid] < target && target <= a[r]) l = mid + 1;\n            else r = mid - 1;\n        }\n    }\n    return -1;\n}"
+        },
+        {
+          "lang": "java",
+          "label": "Binary search and binary search on the answer",
+          "code": "// lo + (hi - lo) / 2 avoids the overflow that (lo + hi) / 2 can hit.\nstatic int search(int[] a, int target) {\n    int lo = 0, hi = a.length - 1;\n    while (lo <= hi) {\n        int mid = lo + (hi - lo) / 2;\n        if (a[mid] == target) return mid;\n        if (a[mid] < target) lo = mid + 1;\n        else hi = mid - 1;\n    }\n    return -1;\n}\n\n// Binary search on the answer: find the smallest capacity that works.\n// The predicate must be monotonic — false...false,true...true.\nstatic int minCapacity(int lo, int hi) {\n    while (lo < hi) {\n        int mid = lo + (hi - lo) / 2;\n        if (feasible(mid)) hi = mid;   // keep mid as a candidate\n        else lo = mid + 1;\n    }\n    return lo;\n}"
+        },
+        {
+          "lang": "py",
+          "label": "bisect, and binary search on the answer",
+          "code": "# Python ships binary search — don't hand-roll it for plain lookups.\nimport bisect\ni = bisect.bisect_left(a, x)    # first index with a[i] >= x  (lower_bound)\nj = bisect.bisect_right(a, x)   # first index with a[j] >  x  (upper_bound)\nfound = i < len(a) and a[i] == x\n\n# Hand-rolled, for when you need the index semantics explicit.\ndef search(a: list[int], target: int) -> int:\n    lo, hi = 0, len(a) - 1\n    while lo <= hi:\n        mid = (lo + hi) // 2        # Python ints are arbitrary precision — no overflow\n        if a[mid] == target:\n            return mid\n        if a[mid] < target:\n            lo = mid + 1\n        else:\n            hi = mid - 1\n    return -1\n\n# Binary search on the answer: smallest value for which feasible() is True.\n# The predicate must be monotonic: False...False, True...True.\ndef min_feasible(lo: int, hi: int) -> int:\n    while lo < hi:\n        mid = (lo + hi) // 2\n        if feasible(mid):\n            hi = mid                # keep mid as a candidate\n        else:\n            lo = mid + 1\n    return lo"
+        },
+        {
+          "lang": "c",
+          "label": "Binary search and binary search on the answer",
+          "code": "/* lo + (hi - lo) / 2 rather than (lo + hi) / 2: the latter overflows once\n   lo + hi exceeds INT_MAX, and signed overflow in C is undefined behaviour —\n   not merely a wrong answer. */\nint binarySearch(const int *a, int n, int target) {\n    int lo = 0, hi = n - 1;\n    while (lo <= hi) {\n        int mid = lo + (hi - lo) / 2;\n        if (a[mid] == target) return mid;\n        if (a[mid] < target) lo = mid + 1;\n        else hi = mid - 1;\n    }\n    return -1;\n}\n\n/* lower_bound: first index with a[i] >= target (n when none). */\nint lowerBound(const int *a, int n, int target) {\n    int lo = 0, hi = n;\n    while (lo < hi) {\n        int mid = lo + (hi - lo) / 2;\n        if (a[mid] < target) lo = mid + 1;\n        else hi = mid;\n    }\n    return lo;\n}\n\n/* Binary search on the answer: smallest value for which feasible() holds.\n   The predicate must be monotonic. */\nint minFeasible(int lo, int hi, int (*feasible)(int)) {\n    while (lo < hi) {\n        int mid = lo + (hi - lo) / 2;\n        if (feasible(mid)) hi = mid;\n        else lo = mid + 1;\n    }\n    return lo;\n}"
+        },
+        {
+          "lang": "go",
+          "label": "sort.SearchInts and binary search on the answer",
+          "code": "// The standard library has it — use this for plain lookups.\ni := sort.SearchInts(a, x) // first index with a[i] >= x (lower_bound)\nfound := i < len(a) && a[i] == x\n\n// sort.Search is the general form: give it a monotonic predicate.\nj := sort.Search(len(a), func(i int) bool { return a[i] >= x })\n\n// Hand-rolled, when the index semantics need to be explicit.\nfunc search(a []int, target int) int {\n\tlo, hi := 0, len(a)-1\n\tfor lo <= hi {\n\t\tmid := lo + (hi-lo)/2 // avoids the overflow (lo+hi)/2 can hit\n\t\tswitch {\n\t\tcase a[mid] == target:\n\t\t\treturn mid\n\t\tcase a[mid] < target:\n\t\t\tlo = mid + 1\n\t\tdefault:\n\t\t\thi = mid - 1\n\t\t}\n\t}\n\treturn -1\n}\n\n// Binary search on the answer: smallest value for which feasible is true.\nfunc minFeasible(lo, hi int, feasible func(int) bool) int {\n\tfor lo < hi {\n\t\tmid := lo + (hi-lo)/2\n\t\tif feasible(mid) {\n\t\t\thi = mid // keep mid as a candidate\n\t\t} else {\n\t\t\tlo = mid + 1\n\t\t}\n\t}\n\treturn lo\n}"
         }
       ],
       "problems": [
@@ -435,10 +489,8 @@
           "platform": "LeetCode",
           "difficulty": "Easy",
           "tier": "warmup",
-          "companies": [
-            "Amazon",
-            "Microsoft"
-          ]
+          "companies": [],
+          "video": "https://www.youtube.com/watch?v=s4DPM8ct1pI"
         },
         {
           "name": "Search Insert Position",
@@ -446,10 +498,7 @@
           "platform": "LeetCode",
           "difficulty": "Easy",
           "tier": "warmup",
-          "companies": [
-            "Amazon",
-            "Adobe"
-          ]
+          "companies": []
         },
         {
           "name": "First Bad Version",
@@ -457,10 +506,7 @@
           "platform": "LeetCode",
           "difficulty": "Easy",
           "tier": "warmup",
-          "companies": [
-            "Google",
-            "Meta"
-          ]
+          "companies": []
         },
         {
           "name": "Find First and Last Position",
@@ -469,7 +515,6 @@
           "difficulty": "Medium",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Microsoft",
             "Google"
           ]
@@ -485,7 +530,8 @@
             "Google",
             "Microsoft",
             "Meta"
-          ]
+          ],
+          "video": "https://www.youtube.com/watch?v=U8XENwh8Oy8"
         },
         {
           "name": "Find Peak Element",
@@ -494,8 +540,7 @@
           "difficulty": "Medium",
           "tier": "core",
           "companies": [
-            "Google",
-            "Amazon"
+            "Google"
           ]
         },
         {
@@ -568,16 +613,39 @@
       "complexity_md": "| Operation | Time | Notes |\n|---|---|---|\n| Access char by index | O(1) | It's an array |\n| Concatenation (`+`) | O(n+m) | Copies both |\n| substr(i, len) | O(len) | Copies |\n| find / search (naive) | O(n·m) | Use KMP for O(n+m) |\n| Frequency count | O(n) | Single pass |\n| Sliding window scan | O(n) | Each char enters/leaves once |\n\nSpace: O(1) for a fixed 26-letter frequency array; O(k) for a window's character set.",
       "code": [
         {
+          "lang": "cpp",
           "label": "Frequency array — anagram check",
           "code": "bool isAnagram(string s, string t) {\n    if (s.size() != t.size()) return false;\n    int freq[26] = {0};\n    for (char c : s) freq[c - 'a']++;\n    for (char c : t) if (--freq[c - 'a'] < 0) return false;\n    return true;\n}"
         },
         {
+          "lang": "cpp",
           "label": "Two pointers — valid palindrome",
           "code": "bool isPalindrome(string s) {\n    int l = 0, r = s.size() - 1;\n    while (l < r) {\n        while (l < r && !isalnum(s[l])) l++;\n        while (l < r && !isalnum(s[r])) r--;\n        if (tolower(s[l]) != tolower(s[r])) return false;\n        l++; r--;\n    }\n    return true;\n}"
         },
         {
+          "lang": "cpp",
           "label": "Sliding window — longest substring w/o repeat",
           "code": "int lengthOfLongest(string s) {\n    vector<int> last(128, -1);\n    int l = 0, best = 0;\n    for (int r = 0; r < (int)s.size(); r++) {\n        if (last[s[r]] >= l) l = last[s[r]] + 1;\n        last[s[r]] = r;\n        best = max(best, r - l + 1);\n    }\n    return best;\n}"
+        },
+        {
+          "lang": "java",
+          "label": "StringBuilder, two pointers, frequency counts",
+          "code": "// Java Strings are immutable: building with += inside a loop is O(n^2).\nStringBuilder sb = new StringBuilder();\nfor (char c : s.toCharArray()) if (Character.isLetterOrDigit(c)) sb.append(Character.toLowerCase(c));\nString cleaned = sb.toString();\n\n// Palindrome check with two pointers — no extra allocation.\nstatic boolean isPalindrome(String s) {\n    int i = 0, j = s.length() - 1;\n    while (i < j) {\n        if (s.charAt(i) != s.charAt(j)) return false;\n        i++; j--;\n    }\n    return true;\n}\n\n// Anagram check: 26-slot count beats sorting (O(n) vs O(n log n)).\nstatic boolean isAnagram(String a, String b) {\n    if (a.length() != b.length()) return false;\n    int[] cnt = new int[26];\n    for (int i = 0; i < a.length(); i++) { cnt[a.charAt(i) - 'a']++; cnt[b.charAt(i) - 'a']--; }\n    for (int c : cnt) if (c != 0) return false;\n    return true;\n}"
+        },
+        {
+          "lang": "py",
+          "label": "Slicing, Counter, two pointers",
+          "code": "# Strings are immutable, so build with a list + join, not += in a loop.\nparts = [c.lower() for c in s if c.isalnum()]\ncleaned = ''.join(parts)\n\n# Palindrome: slicing is idiomatic and fast, though it allocates.\nis_pal = cleaned == cleaned[::-1]\n\n# Two pointers when you must avoid the copy.\ndef is_palindrome(s: str) -> bool:\n    i, j = 0, len(s) - 1\n    while i < j:\n        if s[i] != s[j]:\n            return False\n        i, j = i + 1, j - 1\n    return True\n\n# Anagram: Counter equality reads better than sorting and is O(n).\nfrom collections import Counter\nis_anagram = Counter(a) == Counter(b)\n\n# Sliding window: longest substring without repeats.\ndef longest_unique(s: str) -> int:\n    last: dict[str, int] = {}\n    start = best = 0\n    for i, c in enumerate(s):\n        if c in last and last[c] >= start:\n            start = last[c] + 1     # jump past the previous occurrence\n        last[c] = i\n        best = max(best, i - start + 1)\n    return best"
+        },
+        {
+          "lang": "c",
+          "label": "char arrays, and the NUL terminator",
+          "code": "#include <string.h>\n#include <ctype.h>\n\n/* A C string is a char array ending in '\\0'. strlen walks to find that\n   terminator, so calling it inside a loop condition makes the loop O(n^2). */\nsize_t n = strlen(s);          /* compute ONCE */\nfor (size_t i = 0; i < n; i++) { /* ... */ }\n\n/* Palindrome, two pointers, skipping non-alphanumerics. */\nint isPalindrome(const char *s) {\n    int i = 0, j = (int) strlen(s) - 1;\n    while (i < j) {\n        while (i < j && !isalnum((unsigned char) s[i])) i++;\n        while (i < j && !isalnum((unsigned char) s[j])) j--;\n        if (tolower((unsigned char) s[i]) != tolower((unsigned char) s[j])) return 0;\n        i++; j--;\n    }\n    return 1;\n}\n\n/* Anagram via a 26-slot count. Cast to unsigned char before ctype calls:\n   passing a negative char is undefined behaviour. */\nint isAnagram(const char *a, const char *b) {\n    if (strlen(a) != strlen(b)) return 0;\n    int cnt[26] = {0};\n    for (int i = 0; a[i]; i++) { cnt[a[i] - 'a']++; cnt[b[i] - 'a']--; }\n    for (int i = 0; i < 26; i++) if (cnt[i]) return 0;\n    return 1;\n}\n\n/* strcpy does not bound-check. Prefer snprintf, which always terminates. */\nchar buf[64];\nsnprintf(buf, sizeof buf, \"%s\", s);"
+        },
+        {
+          "lang": "go",
+          "label": "strings.Builder, runes, and byte vs character",
+          "code": "// Strings are immutable byte slices. Concatenating in a loop is O(n^2);\n// use a Builder.\nvar sb strings.Builder\nfor _, r := range s {\n\tif unicode.IsLetter(r) || unicode.IsDigit(r) {\n\t\tsb.WriteRune(unicode.ToLower(r))\n\t}\n}\ncleaned := sb.String()\n\n// The trap: indexing a string gives BYTES, ranging gives RUNES. For ASCII\n// interview input they coincide; for anything else they do not.\nfmt.Println(len(\"héllo\"))          // 6 bytes\nfmt.Println(len([]rune(\"héllo\")))  // 5 characters\n\n// Palindrome over runes, two pointers.\nfunc isPalindrome(s string) bool {\n\tr := []rune(s)\n\tfor i, j := 0, len(r)-1; i < j; i, j = i+1, j-1 {\n\t\tif r[i] != r[j] {\n\t\t\treturn false\n\t\t}\n\t}\n\treturn true\n}\n\n// Anagram: a 26-slot count beats sorting.\nfunc isAnagram(a, b string) bool {\n\tif len(a) != len(b) {\n\t\treturn false\n\t}\n\tvar cnt [26]int\n\tfor i := 0; i < len(a); i++ {\n\t\tcnt[a[i]-'a']++\n\t\tcnt[b[i]-'a']--\n\t}\n\treturn cnt == [26]int{} // arrays are comparable in Go\n}"
         }
       ],
       "problems": [
@@ -587,10 +655,8 @@
           "platform": "LeetCode",
           "difficulty": "Easy",
           "tier": "warmup",
-          "companies": [
-            "Amazon",
-            "Adobe"
-          ]
+          "companies": [],
+          "video": "https://www.youtube.com/watch?v=9UtInBqnCgA"
         },
         {
           "name": "Valid Palindrome",
@@ -598,10 +664,8 @@
           "platform": "LeetCode",
           "difficulty": "Easy",
           "tier": "warmup",
-          "companies": [
-            "Meta",
-            "Amazon"
-          ]
+          "companies": [],
+          "video": "https://www.youtube.com/watch?v=jJXJ16kPFWg"
         },
         {
           "name": "Longest Common Prefix",
@@ -609,10 +673,7 @@
           "platform": "LeetCode",
           "difficulty": "Easy",
           "tier": "warmup",
-          "companies": [
-            "Adobe",
-            "Amazon"
-          ]
+          "companies": []
         },
         {
           "name": "Longest Substring Without Repeating Characters",
@@ -621,11 +682,11 @@
           "difficulty": "Medium",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Google",
             "Meta",
             "Adobe"
-          ]
+          ],
+          "video": "https://www.youtube.com/watch?v=wiGpQwVHdE0"
         },
         {
           "name": "Group Anagrams",
@@ -634,10 +695,10 @@
           "difficulty": "Medium",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Google",
             "Uber"
-          ]
+          ],
+          "video": "https://www.youtube.com/watch?v=vzdNOK2oB2E"
         },
         {
           "name": "Longest Palindromic Substring",
@@ -686,16 +747,39 @@
       "complexity_md": "| Container | Access | Insert | Search | Ordered? |\n|---|---|---|---|---|\n| vector | O(1) | O(1)* end | O(n) | insertion |\n| map / set | O(log n) | O(log n) | O(log n) | yes (sorted) |\n| unordered_map / set | O(1) avg | O(1) avg | O(1) avg | no |\n| priority_queue | O(1) top | O(log n) | — | heap order |\n| stack / queue | O(1) top | O(1) | — | LIFO / FIFO |\n\n*Amortized. Worst-case for unordered containers is O(n) under heavy collisions.",
       "code": [
         {
+          "lang": "cpp",
           "label": "Maps & sets — count frequencies",
           "code": "unordered_map<int,int> freq;\nfor (int x : nums) freq[x]++;\nfor (auto& [val, cnt] : freq)\n    cout << val << \" -> \" << cnt << \"\\n\";"
         },
         {
+          "lang": "cpp",
           "label": "Sort with custom comparator",
           "code": "vector<pair<string,int>> v;\n// sort by count desc, then name asc\nsort(v.begin(), v.end(), [](auto& a, auto& b){\n    if (a.second != b.second) return a.second > b.second;\n    return a.first < b.first;\n});"
         },
         {
+          "lang": "cpp",
           "label": "priority_queue — min-heap of top K",
           "code": "priority_queue<int, vector<int>, greater<int>> minHeap;\nfor (int x : nums) {\n    minHeap.push(x);\n    if ((int)minHeap.size() > k) minHeap.pop();\n}\n// minHeap.top() is the k-th largest"
+        },
+        {
+          "lang": "java",
+          "label": "Collections framework — the containers you actually need",
+          "code": "// Java's equivalent of the STL. Note the interface-typed declarations:\n// program to List/Map/Set, not to the implementation.\nList<Integer> list = new ArrayList<>();       // vector\nlist.add(3); list.get(0); list.size();\n\nDeque<Integer> stack = new ArrayDeque<>();    // prefer over legacy Stack\nstack.push(1); stack.peek(); stack.pop();\n\nQueue<Integer> queue = new ArrayDeque<>();\nqueue.offer(1); queue.peek(); queue.poll();\n\nMap<String, Integer> map = new HashMap<>();   // unordered_map\nmap.put(\"a\", 1);\nmap.getOrDefault(\"b\", 0);\nmap.merge(\"a\", 1, Integer::sum);              // idiomatic counting\n\nMap<String, Integer> sorted = new TreeMap<>();// map (ordered, O(log n))\nSet<Integer> seen = new HashSet<>();          // unordered_set\n\n// Sorting: Arrays.sort on primitives is dual-pivot quicksort (no stability\n// guarantee); on objects it's a stable merge sort.\nint[] a = {3, 1, 2};\nArrays.sort(a);\nlist.sort(Comparator.reverseOrder());\nlist.sort(Comparator.comparingInt(String::length));"
+        },
+        {
+          "lang": "py",
+          "label": "The standard containers — collections and heapq",
+          "code": "# Python's answer to the STL is mostly built in, plus `collections`.\nfrom collections import defaultdict, Counter, deque, OrderedDict\nimport heapq\n\nlst = [3, 1, 2]                    # vector\nlst.sort()                         # in place, stable (Timsort)\nnew = sorted(lst, reverse=True)    # returns a copy\nlst.sort(key=len)                  # sort by a key function\n\nd: dict[str, int] = {}             # unordered_map (insertion-ordered since 3.7)\nd.get('missing', 0)\ncounts = defaultdict(int)           # no KeyError on first touch\ncounts['a'] += 1\nfreq = Counter('mississippi')       # counting, done\nfreq.most_common(2)\n\nseen: set[int] = set()             # unordered_set\n\ndq = deque()                       # O(1) at BOTH ends — a list is O(n) at the front\ndq.append(1); dq.appendleft(0)\ndq.pop(); dq.popleft()\n\nheap: list[int] = []               # min-heap\nheapq.heappush(heap, 3)\nsmallest = heapq.heappop(heap)\n# No max-heap: push negated values, or use heapq.nlargest(k, xs)."
+        },
+        {
+          "lang": "c",
+          "label": "There is no STL — build the containers",
+          "code": "/* C has no vector, map or set. The standard library gives you qsort and\n   bsearch, and that is essentially it. Knowing what to build is the skill. */\n#include <stdlib.h>\n\n/* Growable array: double the capacity so n appends stay amortised O(1). */\ntypedef struct { int *data; size_t len, cap; } Vec;\n\nvoid vec_push(Vec *v, int x) {\n    if (v->len == v->cap) {\n        v->cap = v->cap ? v->cap * 2 : 4;\n        int *grown = realloc(v->data, v->cap * sizeof *v->data);\n        if (!grown) { free(v->data); exit(1); }   /* realloc can fail; the old\n                                                     pointer is still valid */\n        v->data = grown;\n    }\n    v->data[v->len++] = x;\n}\n\nvoid vec_free(Vec *v) { free(v->data); v->data = NULL; v->len = v->cap = 0; }\n\n/* qsort needs a comparator returning <0 / 0 / >0. Do NOT write a - b for\n   ints that may be large: the subtraction itself can overflow. */\nint cmp_int(const void *p, const void *q) {\n    int a = *(const int *) p, b = *(const int *) q;\n    return (a > b) - (a < b);\n}\n\nint a[] = {3, 1, 2};\nqsort(a, 3, sizeof a[0], cmp_int);\n\n/* Fixed-size hash set by open addressing — the usual interview stand-in\n   for unordered_set. */\n#define CAP 1031            /* prime, comfortably larger than n */\nint keys[CAP];\nchar used[CAP];\n\nvoid set_add(int k) {\n    unsigned h = (unsigned) k % CAP;\n    while (used[h] && keys[h] != k) h = (h + 1) % CAP;   /* linear probe */\n    keys[h] = k; used[h] = 1;\n}"
+        },
+        {
+          "lang": "go",
+          "label": "Slices, maps and the standard containers",
+          "code": "// Go's containers are slices and maps, plus container/heap and container/list.\ns := []int{3, 1, 2}\ns = append(s, 4)\nslices.Sort(s)                       // Go 1.21+; else sort.Ints\nslices.Reverse(s)\ni, ok := slices.BinarySearch(s, 3)\nslices.Contains(s, 3)\n\n// Maps. The two-value form is how you distinguish absent from zero —\n// m[\"missing\"] returns 0 silently, which is a common bug source.\nm := map[string]int{}\nm[\"a\"]++                             // zero value means no init needed\nv, ok := m[\"b\"]                      // ok is false when absent\ndelete(m, \"a\")\n\n// Map iteration order is RANDOMISED by design. Sort the keys when you need\n// deterministic output.\nkeys := make([]string, 0, len(m))\nfor k := range m {\n\tkeys = append(keys, k)\n}\nslices.Sort(keys)\n\n// Sets are maps to empty structs — struct{} occupies no space.\nseen := map[int]struct{}{}\nseen[42] = struct{}{}\n_, exists := seen[42]\n\n// Stack and queue on a slice.\nstack := []int{}\nstack = append(stack, 1)             // push\ntop := stack[len(stack)-1]           // peek\nstack = stack[:len(stack)-1]         // pop\n\nqueue := []int{1, 2}\nfront := queue[0]                    // O(n) dequeue; use container/list or an\nqueue = queue[1:]                    // index cursor for hot loops"
         }
       ],
       "problems": [
@@ -705,10 +789,8 @@
           "platform": "LeetCode",
           "difficulty": "Easy",
           "tier": "warmup",
-          "companies": [
-            "Amazon",
-            "Google"
-          ]
+          "companies": [],
+          "video": "https://www.youtube.com/watch?v=KLlXCFG5TnA"
         },
         {
           "name": "Contains Duplicate",
@@ -716,10 +798,8 @@
           "platform": "LeetCode",
           "difficulty": "Easy",
           "tier": "warmup",
-          "companies": [
-            "Amazon",
-            "Adobe"
-          ]
+          "companies": [],
+          "video": "https://www.youtube.com/watch?v=3OamzN90kPg"
         },
         {
           "name": "Valid Parentheses",
@@ -727,11 +807,8 @@
           "platform": "LeetCode",
           "difficulty": "Easy",
           "tier": "warmup",
-          "companies": [
-            "Amazon",
-            "Google",
-            "Microsoft"
-          ]
+          "companies": [],
+          "video": "https://www.youtube.com/watch?v=WTzjTskDFMg"
         },
         {
           "name": "Top K Frequent Elements",
@@ -740,10 +817,10 @@
           "difficulty": "Medium",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Google",
             "Meta"
-          ]
+          ],
+          "video": "https://www.youtube.com/watch?v=YPTqKIgVk-k"
         },
         {
           "name": "Sort Characters By Frequency",
@@ -752,7 +829,6 @@
           "difficulty": "Medium",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Google"
           ]
         },
@@ -766,7 +842,8 @@
             "Amazon",
             "Meta",
             "Microsoft"
-          ]
+          ],
+          "video": "https://www.youtube.com/watch?v=XEmy13g1Qxc"
         }
       ]
     },
@@ -779,16 +856,39 @@
       "complexity_md": "| Aspect | Cost |\n|---|---|\n| Time | (number of nodes in recursion tree) × (work per node) |\n| Space | O(depth of recursion) for the call stack |\n| Subsets / pick-skip | O(2^n) time |\n| Permutations | O(n! · n) time |\n\nRecursion depth matters: deep recursion (e.g. O(n) on a 10^6 input) can overflow the stack. Convert to iteration or increase stack limits when needed.",
       "code": [
         {
+          "lang": "cpp",
           "label": "Base + recursive case — factorial",
           "code": "long long fact(int n) {\n    if (n <= 1) return 1;        // base case\n    return n * fact(n - 1);      // recursive case\n}"
         },
         {
+          "lang": "cpp",
           "label": "Pick or skip — all subsequences",
           "code": "void subseq(vector<int>& a, int i, vector<int>& cur, vector<vector<int>>& out) {\n    if (i == (int)a.size()) { out.push_back(cur); return; }\n    cur.push_back(a[i]);          // pick\n    subseq(a, i + 1, cur, out);\n    cur.pop_back();               // skip (backtrack)\n    subseq(a, i + 1, cur, out);\n}"
         },
         {
+          "lang": "cpp",
           "label": "Fast exponentiation — divide & conquer",
           "code": "long long power(long long x, long long n) {\n    if (n == 0) return 1;\n    long long half = power(x, n / 2);\n    return (n % 2) ? half * half * x : half * half;\n}"
+        },
+        {
+          "lang": "java",
+          "label": "Recursion — base case, recurse, combine",
+          "code": "// Every recursion needs: a base case, a strictly smaller subproblem,\n// and a way to combine. Draw the recursion tree before coding.\nstatic int fib(int n, int[] memo) {\n    if (n <= 1) return n;\n    if (memo[n] != 0) return memo[n];\n    return memo[n] = fib(n - 1, memo) + fib(n - 2, memo);\n}\n\n// Subsets: at each index, either take the element or don't.\nstatic void subsets(int[] nums, int i, List<Integer> cur, List<List<Integer>> out) {\n    if (i == nums.length) { out.add(new ArrayList<>(cur)); return; }\n    subsets(nums, i + 1, cur, out);          // skip\n    cur.add(nums[i]);\n    subsets(nums, i + 1, cur, out);          // take\n    cur.remove(cur.size() - 1);              // undo — this is the backtrack\n}"
+        },
+        {
+          "lang": "py",
+          "label": "Recursion — base case, recurse, combine",
+          "code": "# Python's default recursion limit is 1000. Deep recursion needs either\n# sys.setrecursionlimit or an iterative rewrite — this bites on tree and\n# graph problems with 10^5 nodes.\nimport sys\nsys.setrecursionlimit(300_000)\n\nfrom functools import cache\n\n@cache                              # memoisation for free\ndef fib(n: int) -> int:\n    if n <= 1:\n        return n\n    return fib(n - 1) + fib(n - 2)\n\n# Subsets: at each index, take the element or don't.\ndef subsets(nums: list[int]) -> list[list[int]]:\n    out: list[list[int]] = []\n\n    def go(i: int, cur: list[int]) -> None:\n        if i == len(nums):\n            out.append(cur[:])      # copy — cur is mutated on the way back up\n            return\n        go(i + 1, cur)              # skip\n        cur.append(nums[i])\n        go(i + 1, cur)              # take\n        cur.pop()                   # undo\n\n    go(0, [])\n    return out"
+        },
+        {
+          "lang": "c",
+          "label": "Recursion — base case, recurse, combine",
+          "code": "/* C has no default recursion guard and stacks are typically 1-8 MB, so deep\n   recursion segfaults rather than raising an error. Prefer iteration when the\n   depth can reach 10^5. */\nlong long fib(int n, long long *memo) {\n    if (n <= 1) return n;\n    if (memo[n]) return memo[n];\n    return memo[n] = fib(n - 1, memo) + fib(n - 2, memo);\n}\n\n/* Subsets: at each index, take the element or don't. The caller owns the\n   buffers — there is no container to return. */\nvoid subsets(const int *nums, int n, int i, int *cur, int curLen,\n             void (*emit)(const int *, int)) {\n    if (i == n) { emit(cur, curLen); return; }\n    subsets(nums, n, i + 1, cur, curLen, emit);           /* skip */\n    cur[curLen] = nums[i];\n    subsets(nums, n, i + 1, cur, curLen + 1, emit);       /* take */\n    /* nothing to undo: curLen is passed by value, which IS the backtrack */\n}\n\n/* Tail-recursive shapes are often clearer as loops in C — the compiler may\n   or may not eliminate the call. */\nint gcd(int a, int b) { while (b) { int t = a % b; a = b; b = t; } return a; }"
+        },
+        {
+          "lang": "go",
+          "label": "Recursion — base case, recurse, combine",
+          "code": "// Go grows goroutine stacks dynamically, so deep recursion is far safer here\n// than in Python or C — but it is still not free.\nfunc fib(n int, memo map[int]int) int {\n\tif n <= 1 {\n\t\treturn n\n\t}\n\tif v, ok := memo[n]; ok {\n\t\treturn v\n\t}\n\tmemo[n] = fib(n-1, memo) + fib(n-2, memo)\n\treturn memo[n]\n}\n\n// Subsets: at each index, take the element or don't.\nfunc subsets(nums []int) [][]int {\n\tvar out [][]int\n\tvar cur []int\n\n\tvar go_ func(i int)\n\tgo_ = func(i int) {\n\t\tif i == len(nums) {\n\t\t\t// MUST copy: cur's backing array is reused as we backtrack.\n\t\t\tout = append(out, append([]int(nil), cur...))\n\t\t\treturn\n\t\t}\n\t\tgo_(i + 1) // skip\n\t\tcur = append(cur, nums[i])\n\t\tgo_(i + 1) // take\n\t\tcur = cur[:len(cur)-1]\n\t}\n\tgo_(0)\n\treturn out\n}"
         }
       ],
       "problems": [
@@ -798,9 +898,7 @@
           "platform": "LeetCode",
           "difficulty": "Easy",
           "tier": "warmup",
-          "companies": [
-            "Amazon"
-          ]
+          "companies": []
         },
         {
           "name": "Pow(x, n)",
@@ -808,11 +906,7 @@
           "platform": "LeetCode",
           "difficulty": "Medium",
           "tier": "warmup",
-          "companies": [
-            "Google",
-            "Amazon",
-            "Meta"
-          ]
+          "companies": []
         },
         {
           "name": "Subsets",
@@ -821,10 +915,10 @@
           "difficulty": "Medium",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Meta",
             "Google"
-          ]
+          ],
+          "video": "https://www.youtube.com/watch?v=REOH22Xwdkk"
         },
         {
           "name": "Combination Sum",
@@ -833,9 +927,9 @@
           "difficulty": "Medium",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Adobe"
-          ]
+          ],
+          "video": "https://www.youtube.com/watch?v=GBKI9VSKdGg"
         },
         {
           "name": "Permutations",
@@ -847,7 +941,8 @@
             "Amazon",
             "Microsoft",
             "Meta"
-          ]
+          ],
+          "video": "https://www.youtube.com/watch?v=s7AvT7cGdSo"
         },
         {
           "name": "Generate Parentheses",
@@ -872,12 +967,34 @@
       "complexity_md": "| Problem | Time (worst) | Space |\n|---|---|---|\n| Subsets | O(2^n) | O(n) depth |\n| Permutations | O(n! · n) | O(n) |\n| N-Queens | O(n!) | O(n) |\n| Sudoku | O(9^(empty cells)) | O(1) board |\n\nBacktracking is exponential by nature — its value is *pruning* the search so the real running time is far below the worst case. Space is the recursion depth plus whatever state you carry.",
       "code": [
         {
+          "lang": "cpp",
           "label": "Universal backtracking template",
           "code": "void backtrack(State& s, vector<Solution>& out) {\n    if (isGoal(s)) { out.push_back(extract(s)); return; }\n    for (auto& choice : choices(s)) {\n        apply(s, choice);        // try\n        backtrack(s, out);       // recurse\n        undo(s, choice);         // un-try\n    }\n}"
         },
         {
+          "lang": "cpp",
           "label": "N-Queens — safety check + placement",
           "code": "bool safe(vector<int>& col, int r, int c) {\n    for (int i = 0; i < r; i++)\n        if (col[i] == c || abs(col[i]-c) == abs(i-r)) return false;\n    return true;\n}\nvoid solve(int r, int n, vector<int>& col, int& count) {\n    if (r == n) { count++; return; }\n    for (int c = 0; c < n; c++)\n        if (safe(col, r, c)) {\n            col[r] = c;          // place\n            solve(r+1, n, col, count);\n            col[r] = -1;         // remove (backtrack)\n        }\n}"
+        },
+        {
+          "lang": "java",
+          "label": "Backtracking template",
+          "code": "// choose -> explore -> un-choose. The un-choose is what makes it\n// backtracking rather than plain recursion.\nstatic void permute(int[] nums, boolean[] used, List<Integer> cur, List<List<Integer>> out) {\n    if (cur.size() == nums.length) { out.add(new ArrayList<>(cur)); return; }\n    for (int i = 0; i < nums.length; i++) {\n        if (used[i]) continue;\n        used[i] = true; cur.add(nums[i]);        // choose\n        permute(nums, used, cur, out);           // explore\n        cur.remove(cur.size() - 1); used[i] = false; // un-choose\n    }\n}\n\n// N-Queens: the pruning is the whole algorithm. Track occupied columns and\n// both diagonals so a conflict is O(1) to detect.\nboolean[] col = new boolean[n], diag = new boolean[2 * n], anti = new boolean[2 * n];\n// for cell (r, c): diag index r + c, anti index r - c + n"
+        },
+        {
+          "lang": "py",
+          "label": "Backtracking template",
+          "code": "# choose -> explore -> un-choose. The un-choose is what makes it backtracking.\ndef permutations(nums: list[int]) -> list[list[int]]:\n    out: list[list[int]] = []\n    used = [False] * len(nums)\n\n    def go(cur: list[int]) -> None:\n        if len(cur) == len(nums):\n            out.append(cur[:])\n            return\n        for i, x in enumerate(nums):\n            if used[i]:\n                continue\n            used[i] = True\n            cur.append(x)           # choose\n            go(cur)                 # explore\n            cur.pop()               # un-choose\n            used[i] = False\n\n    go([])\n    return out\n\n# Combination sum: allow reuse by passing i (not i + 1); prune when over target.\ndef combination_sum(nums: list[int], target: int) -> list[list[int]]:\n    out: list[list[int]] = []\n\n    def go(i: int, remaining: int, cur: list[int]) -> None:\n        if remaining == 0:\n            out.append(cur[:]); return\n        if i == len(nums) or remaining < 0:\n            return\n        cur.append(nums[i])\n        go(i, remaining - nums[i], cur)   # reuse the same element\n        cur.pop()\n        go(i + 1, remaining, cur)         # move on\n\n    go(0, target, [])\n    return out"
+        },
+        {
+          "lang": "c",
+          "label": "Backtracking template",
+          "code": "#include <string.h>\n\n/* choose -> explore -> un-choose. With manual memory the un-choose is\n   usually just decrementing a length. */\nvoid permute(int *nums, int n, int *used, int *cur, int curLen,\n             void (*emit)(const int *, int)) {\n    if (curLen == n) { emit(cur, curLen); return; }\n    for (int i = 0; i < n; i++) {\n        if (used[i]) continue;\n        used[i] = 1; cur[curLen] = nums[i];          /* choose */\n        permute(nums, n, used, cur, curLen + 1, emit); /* explore */\n        used[i] = 0;                                  /* un-choose */\n    }\n}\n\n/* N-Queens: the pruning IS the algorithm. Track occupied columns and both\n   diagonals so a conflict is O(1) to test.\n   For cell (r, c): diagonal r + c, anti-diagonal r - c + n. */\nint solveQueens(int n, int row, char *col, char *diag, char *anti) {\n    if (row == n) return 1;\n    int count = 0;\n    for (int c = 0; c < n; c++) {\n        int d = row + c, ad = row - c + n;\n        if (col[c] || diag[d] || anti[ad]) continue;\n        col[c] = diag[d] = anti[ad] = 1;\n        count += solveQueens(n, row + 1, col, diag, anti);\n        col[c] = diag[d] = anti[ad] = 0;\n    }\n    return count;\n}"
+        },
+        {
+          "lang": "go",
+          "label": "Backtracking template",
+          "code": "// choose -> explore -> un-choose.\nfunc permute(nums []int) [][]int {\n\tvar out [][]int\n\tvar cur []int\n\tused := make([]bool, len(nums))\n\n\tvar rec func()\n\trec = func() {\n\t\tif len(cur) == len(nums) {\n\t\t\tout = append(out, append([]int(nil), cur...)) // copy\n\t\t\treturn\n\t\t}\n\t\tfor i, x := range nums {\n\t\t\tif used[i] {\n\t\t\t\tcontinue\n\t\t\t}\n\t\t\tused[i] = true\n\t\t\tcur = append(cur, x) // choose\n\t\t\trec()                // explore\n\t\t\tcur = cur[:len(cur)-1]\n\t\t\tused[i] = false // un-choose\n\t\t}\n\t}\n\trec()\n\treturn out\n}\n\n// N-Queens pruning: track occupied columns and both diagonals so a conflict\n// is O(1) to test. For cell (r,c): diagonal r+c, anti-diagonal r-c+n.\ncol := make([]bool, n)\ndiag := make([]bool, 2*n)\nanti := make([]bool, 2*n)"
         }
       ],
       "problems": [
@@ -887,10 +1004,8 @@
           "platform": "LeetCode",
           "difficulty": "Medium",
           "tier": "warmup",
-          "companies": [
-            "Amazon",
-            "Meta"
-          ]
+          "companies": [],
+          "video": "https://www.youtube.com/watch?v=REOH22Xwdkk"
         },
         {
           "name": "Combination Sum",
@@ -899,9 +1014,9 @@
           "difficulty": "Medium",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Adobe"
-          ]
+          ],
+          "video": "https://www.youtube.com/watch?v=GBKI9VSKdGg"
         },
         {
           "name": "Permutations",
@@ -910,9 +1025,9 @@
           "difficulty": "Medium",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Microsoft"
-          ]
+          ],
+          "video": "https://www.youtube.com/watch?v=s7AvT7cGdSo"
         },
         {
           "name": "Word Search",
@@ -972,12 +1087,34 @@
       "complexity_md": "| Algorithm | Best | Average | Worst | Space | Stable |\n|---|---|---|---|---|---|\n| Bubble/Insertion | O(n) | O(n²) | O(n²) | O(1) | yes |\n| Merge sort | O(n log n) | O(n log n) | O(n log n) | O(n) | yes |\n| Quick sort | O(n log n) | O(n log n) | O(n²) | O(log n) | no |\n| Heap sort | O(n log n) | O(n log n) | O(n log n) | O(1) | no |\n| Counting sort | O(n+k) | O(n+k) | O(n+k) | O(k) | yes |\n\nComparison sorts can't beat O(n log n) in the worst case — that's a proven lower bound.",
       "code": [
         {
+          "lang": "cpp",
           "label": "Merge sort",
           "code": "void merge(vector<int>& a, int l, int m, int r) {\n    vector<int> tmp;\n    int i = l, j = m + 1;\n    while (i <= m && j <= r)\n        tmp.push_back(a[i] <= a[j] ? a[i++] : a[j++]);\n    while (i <= m) tmp.push_back(a[i++]);\n    while (j <= r) tmp.push_back(a[j++]);\n    for (int k = 0; k < (int)tmp.size(); k++) a[l + k] = tmp[k];\n}\nvoid mergeSort(vector<int>& a, int l, int r) {\n    if (l >= r) return;\n    int m = l + (r - l) / 2;\n    mergeSort(a, l, m); mergeSort(a, m + 1, r);\n    merge(a, l, m, r);\n}"
         },
         {
+          "lang": "cpp",
           "label": "Quickselect — k-th smallest, O(n) avg",
           "code": "int partition(vector<int>& a, int l, int r) {\n    int pivot = a[r], i = l;\n    for (int j = l; j < r; j++)\n        if (a[j] < pivot) swap(a[i++], a[j]);\n    swap(a[i], a[r]);\n    return i;\n}\nint quickselect(vector<int>& a, int l, int r, int k) {\n    int p = partition(a, l, r);\n    if (p == k) return a[p];\n    return p < k ? quickselect(a, p+1, r, k)\n                 : quickselect(a, l, p-1, k);\n}"
+        },
+        {
+          "lang": "java",
+          "label": "Merge sort and quick sort",
+          "code": "// Merge sort: O(n log n) always, stable, needs O(n) extra space.\nstatic void mergeSort(int[] a, int lo, int hi) {\n    if (lo >= hi) return;\n    int mid = lo + (hi - lo) / 2;\n    mergeSort(a, lo, mid);\n    mergeSort(a, mid + 1, hi);\n    int[] tmp = new int[hi - lo + 1];\n    int i = lo, j = mid + 1, k = 0;\n    while (i <= mid && j <= hi) tmp[k++] = a[i] <= a[j] ? a[i++] : a[j++];\n    while (i <= mid) tmp[k++] = a[i++];\n    while (j <= hi)  tmp[k++] = a[j++];\n    System.arraycopy(tmp, 0, a, lo, tmp.length);\n}\n\n// Quick sort: O(n log n) average, O(n^2) worst on already-sorted input\n// unless you randomise the pivot. In-place.\nstatic int partition(int[] a, int lo, int hi) {\n    int pivot = a[hi], i = lo - 1;\n    for (int j = lo; j < hi; j++) if (a[j] < pivot) { i++; swap(a, i, j); }\n    swap(a, i + 1, hi);\n    return i + 1;\n}"
+        },
+        {
+          "lang": "py",
+          "label": "Merge sort, quick sort, and sorting by key",
+          "code": "import random\n\n# In practice use list.sort()/sorted() — Timsort, O(n log n), stable.\n# Write these out to understand divide and conquer, not to use them.\n\ndef merge_sort(a: list[int]) -> list[int]:\n    if len(a) <= 1:\n        return a\n    mid = len(a) // 2\n    left, right = merge_sort(a[:mid]), merge_sort(a[mid:])\n    out, i, j = [], 0, 0\n    while i < len(left) and j < len(right):\n        if left[i] <= right[j]:          # <= keeps it stable\n            out.append(left[i]); i += 1\n        else:\n            out.append(right[j]); j += 1\n    out.extend(left[i:]); out.extend(right[j:])\n    return out\n\ndef quick_sort(a: list[int], lo: int, hi: int) -> None:\n    if lo >= hi:\n        return\n    r = random.randint(lo, hi)                    # randomise to dodge O(n^2)\n    a[hi], a[r] = a[r], a[hi]\n    pivot, i = a[hi], lo - 1\n    for j in range(lo, hi):\n        if a[j] < pivot:\n            i += 1\n            a[i], a[j] = a[j], a[i]\n    a[i + 1], a[hi] = a[hi], a[i + 1]\n    quick_sort(a, lo, i); quick_sort(a, i + 2, hi)\n\n# Multi-key sort: ascending by age, then descending by score.\npeople.sort(key=lambda p: (p.age, -p.score))"
+        },
+        {
+          "lang": "c",
+          "label": "Merge sort, quick sort, and qsort",
+          "code": "#include <stdlib.h>\n\n/* Merge sort: O(n log n) always, stable, needs a scratch buffer. */\nvoid mergeSort(int *a, int lo, int hi, int *tmp) {\n    if (lo >= hi) return;\n    int mid = lo + (hi - lo) / 2;\n    mergeSort(a, lo, mid, tmp);\n    mergeSort(a, mid + 1, hi, tmp);\n    int i = lo, j = mid + 1, k = lo;\n    while (i <= mid && j <= hi) tmp[k++] = (a[i] <= a[j]) ? a[i++] : a[j++];\n    while (i <= mid) tmp[k++] = a[i++];\n    while (j <= hi)  tmp[k++] = a[j++];\n    for (int t = lo; t <= hi; t++) a[t] = tmp[t];\n}\n\n/* Quick sort, Lomuto partition. O(n^2) on sorted input unless the pivot is\n   randomised — and sorted input is exactly what test suites feed you. */\nstatic void swap(int *x, int *y) { int t = *x; *x = *y; *y = t; }\n\nint partition(int *a, int lo, int hi) {\n    swap(&a[lo + rand() % (hi - lo + 1)], &a[hi]);   /* randomise the pivot */\n    int pivot = a[hi], i = lo - 1;\n    for (int j = lo; j < hi; j++) if (a[j] < pivot) swap(&a[++i], &a[j]);\n    swap(&a[i + 1], &a[hi]);\n    return i + 1;\n}\n\nvoid quickSort(int *a, int lo, int hi) {\n    if (lo >= hi) return;\n    int p = partition(a, lo, hi);\n    quickSort(a, lo, p - 1);\n    quickSort(a, p + 1, hi);\n}"
+        },
+        {
+          "lang": "go",
+          "label": "Sorting, and merge sort by hand",
+          "code": "// Use the standard library: slices.Sort is pdqsort, sort.SliceStable when\n// stability matters.\nslices.Sort(nums)\nslices.SortFunc(people, func(a, b Person) int {\n\tif a.Age != b.Age {\n\t\treturn a.Age - b.Age\n\t}\n\treturn b.Score - a.Score // tie-break: score descending\n})\nsort.SliceStable(xs, func(i, j int) bool { return xs[i].K < xs[j].K })\n\n// Merge sort by hand, to understand divide and conquer.\nfunc mergeSort(a []int) []int {\n\tif len(a) <= 1 {\n\t\treturn a\n\t}\n\tmid := len(a) / 2\n\tl, r := mergeSort(a[:mid]), mergeSort(a[mid:])\n\tout := make([]int, 0, len(a))\n\ti, j := 0, 0\n\tfor i < len(l) && j < len(r) {\n\t\tif l[i] <= r[j] { // <= keeps it stable\n\t\t\tout = append(out, l[i])\n\t\t\ti++\n\t\t} else {\n\t\t\tout = append(out, r[j])\n\t\t\tj++\n\t\t}\n\t}\n\tout = append(out, l[i:]...)\n\tout = append(out, r[j:]...)\n\treturn out\n}"
         }
       ],
       "problems": [
@@ -987,9 +1124,7 @@
           "platform": "LeetCode",
           "difficulty": "Medium",
           "tier": "warmup",
-          "companies": [
-            "Amazon"
-          ]
+          "companies": []
         },
         {
           "name": "Merge Intervals",
@@ -998,7 +1133,6 @@
           "difficulty": "Medium",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Google",
             "Meta",
             "Microsoft"
@@ -1011,9 +1145,9 @@
           "difficulty": "Medium",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Meta"
-          ]
+          ],
+          "video": "https://www.youtube.com/watch?v=XEmy13g1Qxc"
         },
         {
           "name": "Sort Colors",
@@ -1059,16 +1193,39 @@
       "complexity_md": "| Operation | Time | Notes |\n|---|---|---|\n| Access by index | O(n) | Must traverse |\n| Insert/delete at head | O(1) | Rewire pointers |\n| Insert/delete at known node | O(1) | No shifting |\n| Search | O(n) | Linear scan |\n| Reverse | O(n) | Single pass |\n| Cycle detection | O(n) | Fast-slow, O(1) space |\n\nSpace: O(1) for in-place pointer work — a key advantage interviewers look for over O(n) copy-based solutions.",
       "code": [
         {
+          "lang": "cpp",
           "label": "Node definition",
           "code": "struct ListNode {\n    int val;\n    ListNode* next;\n    ListNode(int x) : val(x), next(nullptr) {}\n};"
         },
         {
+          "lang": "cpp",
           "label": "Iterative reversal",
           "code": "ListNode* reverse(ListNode* head) {\n    ListNode* prev = nullptr;\n    while (head) {\n        ListNode* next = head->next;\n        head->next = prev;   // rewire\n        prev = head;\n        head = next;\n    }\n    return prev;             // new head\n}"
         },
         {
+          "lang": "cpp",
           "label": "Floyd's cycle detection",
           "code": "bool hasCycle(ListNode* head) {\n    ListNode *slow = head, *fast = head;\n    while (fast && fast->next) {\n        slow = slow->next;\n        fast = fast->next->next;\n        if (slow == fast) return true;\n    }\n    return false;\n}"
+        },
+        {
+          "lang": "java",
+          "label": "Reverse, and Floyd's cycle detection",
+          "code": "static class ListNode { int val; ListNode next; ListNode(int v) { val = v; } }\n\n// Reverse: walk forward rewiring each next pointer backwards.\nstatic ListNode reverse(ListNode head) {\n    ListNode prev = null;\n    while (head != null) {\n        ListNode next = head.next;   // save before clobbering\n        head.next = prev;\n        prev = head;\n        head = next;\n    }\n    return prev;\n}\n\n// Floyd: slow moves 1, fast moves 2. If they meet there is a cycle.\n// Reset one to head and advance both by 1 to find the cycle entry.\nstatic ListNode cycleStart(ListNode head) {\n    ListNode slow = head, fast = head;\n    while (fast != null && fast.next != null) {\n        slow = slow.next; fast = fast.next.next;\n        if (slow == fast) {\n            slow = head;\n            while (slow != fast) { slow = slow.next; fast = fast.next; }\n            return slow;\n        }\n    }\n    return null;\n}"
+        },
+        {
+          "lang": "py",
+          "label": "Reverse, and Floyd's cycle detection",
+          "code": "class ListNode:\n    def __init__(self, val: int = 0, nxt: 'ListNode | None' = None):\n        self.val, self.next = val, nxt\n\n# Reverse: rewire each next pointer backwards as you walk forward.\ndef reverse(head: ListNode | None) -> ListNode | None:\n    prev = None\n    while head:\n        head.next, prev, head = prev, head, head.next   # save-rewire-advance\n    return prev\n\n# Floyd: slow moves 1, fast moves 2. Meeting means a cycle. Reset one pointer\n# to head, advance both by 1, and they meet at the cycle entry.\ndef cycle_start(head: ListNode | None) -> ListNode | None:\n    slow = fast = head\n    while fast and fast.next:\n        slow, fast = slow.next, fast.next.next\n        if slow is fast:\n            slow = head\n            while slow is not fast:\n                slow, fast = slow.next, fast.next\n            return slow\n    return None\n\n# Middle of the list — the same fast/slow idea.\ndef middle(head: ListNode | None) -> ListNode | None:\n    slow = fast = head\n    while fast and fast.next:\n        slow, fast = slow.next, fast.next.next\n    return slow"
+        },
+        {
+          "lang": "c",
+          "label": "Reverse, Floyd's cycle detection, and freeing",
+          "code": "#include <stdlib.h>\n\ntypedef struct Node { int val; struct Node *next; } Node;\n\nNode *node_new(int v) {\n    Node *n = malloc(sizeof *n);\n    if (!n) exit(1);\n    n->val = v; n->next = NULL;\n    return n;\n}\n\n/* Reverse: rewire each next backwards while walking forward. */\nNode *reverse(Node *head) {\n    Node *prev = NULL;\n    while (head) {\n        Node *next = head->next;   /* save before clobbering */\n        head->next = prev;\n        prev = head;\n        head = next;\n    }\n    return prev;\n}\n\n/* Floyd: meeting means a cycle. Reset one pointer to head, step both by 1,\n   and they meet at the cycle entry. */\nNode *cycleStart(Node *head) {\n    Node *slow = head, *fast = head;\n    while (fast && fast->next) {\n        slow = slow->next; fast = fast->next->next;\n        if (slow == fast) {\n            slow = head;\n            while (slow != fast) { slow = slow->next; fast = fast->next; }\n            return slow;\n        }\n    }\n    return NULL;\n}\n\n/* You own the memory. Save next BEFORE freeing — reading n->next after\n   free(n) is undefined behaviour, and it often appears to work. */\nvoid list_free(Node *head) {\n    while (head) {\n        Node *next = head->next;\n        free(head);\n        head = next;\n    }\n}"
+        },
+        {
+          "lang": "go",
+          "label": "Reverse, and Floyd's cycle detection",
+          "code": "type ListNode struct {\n\tVal  int\n\tNext *ListNode\n}\n\n// Reverse: rewire each Next backwards while walking forward.\nfunc reverse(head *ListNode) *ListNode {\n\tvar prev *ListNode\n\tfor head != nil {\n\t\thead.Next, prev, head = prev, head, head.Next\n\t}\n\treturn prev\n}\n\n// Floyd: slow moves 1, fast moves 2. Meeting means a cycle; reset one to head\n// and step both by 1 to land on the cycle entry.\nfunc cycleStart(head *ListNode) *ListNode {\n\tslow, fast := head, head\n\tfor fast != nil && fast.Next != nil {\n\t\tslow, fast = slow.Next, fast.Next.Next\n\t\tif slow == fast {\n\t\t\tslow = head\n\t\t\tfor slow != fast {\n\t\t\t\tslow, fast = slow.Next, fast.Next\n\t\t\t}\n\t\t\treturn slow\n\t\t}\n\t}\n\treturn nil\n}\n\n// A dummy head removes the \"is this the first node?\" special case from\n// every insert and delete.\nfunc removeVal(head *ListNode, v int) *ListNode {\n\tdummy := &ListNode{Next: head}\n\tfor cur := dummy; cur.Next != nil; {\n\t\tif cur.Next.Val == v {\n\t\t\tcur.Next = cur.Next.Next\n\t\t} else {\n\t\t\tcur = cur.Next\n\t\t}\n\t}\n\treturn dummy.Next\n}"
         }
       ],
       "problems": [
@@ -1078,11 +1235,8 @@
           "platform": "LeetCode",
           "difficulty": "Easy",
           "tier": "warmup",
-          "companies": [
-            "Amazon",
-            "Microsoft",
-            "Adobe"
-          ]
+          "companies": [],
+          "video": "https://www.youtube.com/watch?v=G0_I-ZF0S38"
         },
         {
           "name": "Middle of the Linked List",
@@ -1090,9 +1244,7 @@
           "platform": "LeetCode",
           "difficulty": "Easy",
           "tier": "warmup",
-          "companies": [
-            "Amazon"
-          ]
+          "companies": []
         },
         {
           "name": "Merge Two Sorted Lists",
@@ -1100,11 +1252,8 @@
           "platform": "LeetCode",
           "difficulty": "Easy",
           "tier": "warmup",
-          "companies": [
-            "Amazon",
-            "Microsoft",
-            "Adobe"
-          ]
+          "companies": [],
+          "video": "https://www.youtube.com/watch?v=XIdigk956u0"
         },
         {
           "name": "Linked List Cycle",
@@ -1113,9 +1262,9 @@
           "difficulty": "Easy",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Microsoft"
-          ]
+          ],
+          "video": "https://www.youtube.com/watch?v=gBTe7lFR3vc"
         },
         {
           "name": "Remove Nth Node From End of List",
@@ -1124,7 +1273,6 @@
           "difficulty": "Medium",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Meta"
           ]
         },
@@ -1162,7 +1310,8 @@
             "Google",
             "Microsoft",
             "Uber"
-          ]
+          ],
+          "video": "https://www.youtube.com/watch?v=q5a5OiGbT6Q"
         }
       ]
     },
@@ -1175,12 +1324,34 @@
       "complexity_md": "| Operation | Stack | Queue |\n|---|---|---|\n| Push / enqueue | O(1) | O(1) |\n| Pop / dequeue | O(1) | O(1) |\n| Top / front | O(1) | O(1) |\n| Search | O(n) | O(n) |\n| Monotonic-stack scan | O(n) total | — |\n\nEach element is pushed and popped at most once in a monotonic-stack pass, so the total is O(n) even though there's a nested-looking loop.",
       "code": [
         {
+          "lang": "cpp",
           "label": "Valid parentheses — matching stack",
           "code": "bool isValid(string s) {\n    stack<char> st;\n    unordered_map<char,char> m{{')','('},{']','['},{'}','{'}};\n    for (char c : s) {\n        if (m.count(c)) {\n            if (st.empty() || st.top() != m[c]) return false;\n            st.pop();\n        } else st.push(c);\n    }\n    return st.empty();\n}"
         },
         {
+          "lang": "cpp",
           "label": "Monotonic stack — next greater element",
           "code": "vector<int> nextGreater(vector<int>& a) {\n    int n = a.size();\n    vector<int> res(n, -1);\n    stack<int> st;   // holds indices, decreasing values\n    for (int i = 0; i < n; i++) {\n        while (!st.empty() && a[st.top()] < a[i]) {\n            res[st.top()] = a[i];\n            st.pop();\n        }\n        st.push(i);\n    }\n    return res;\n}"
+        },
+        {
+          "lang": "java",
+          "label": "Monotonic stack — next greater element",
+          "code": "// The pattern behind next-greater, largest-rectangle, stock-span and\n// daily-temperatures. Each index is pushed and popped at most once, so O(n).\nstatic int[] nextGreater(int[] a) {\n    int n = a.length;\n    int[] res = new int[n];\n    Arrays.fill(res, -1);\n    Deque<Integer> st = new ArrayDeque<>();   // holds indices, values decreasing\n    for (int i = 0; i < n; i++) {\n        while (!st.isEmpty() && a[st.peek()] < a[i]) res[st.pop()] = a[i];\n        st.push(i);\n    }\n    return res;\n}\n\n// Sliding window maximum with a deque: front holds the current max.\nDeque<Integer> dq = new ArrayDeque<>();\nfor (int i = 0; i < a.length; i++) {\n    while (!dq.isEmpty() && dq.peekFirst() <= i - k) dq.pollFirst();   // out of window\n    while (!dq.isEmpty() && a[dq.peekLast()] <= a[i]) dq.pollLast();   // dominated\n    dq.offerLast(i);\n    if (i >= k - 1) System.out.println(a[dq.peekFirst()]);\n}"
+        },
+        {
+          "lang": "py",
+          "label": "Monotonic stack — next greater element",
+          "code": "# The pattern behind next-greater, largest-rectangle, stock-span and\n# daily-temperatures. Each index is pushed and popped once, so O(n).\ndef next_greater(a: list[int]) -> list[int]:\n    res = [-1] * len(a)\n    stack: list[int] = []              # indices, values decreasing\n    for i, x in enumerate(a):\n        while stack and a[stack[-1]] < x:\n            res[stack.pop()] = x\n        stack.append(i)\n    return res\n\n# Sliding window maximum with a deque. Use deque, not list — list.pop(0) is O(n).\nfrom collections import deque\n\ndef window_max(a: list[int], k: int) -> list[int]:\n    dq: deque[int] = deque()           # indices\n    out: list[int] = []\n    for i, x in enumerate(a):\n        while dq and dq[0] <= i - k:\n            dq.popleft()               # fell out of the window\n        while dq and a[dq[-1]] <= x:\n            dq.pop()                   # dominated by x, can never be the max\n        dq.append(i)\n        if i >= k - 1:\n            out.append(a[dq[0]])\n    return out"
+        },
+        {
+          "lang": "c",
+          "label": "Array-backed stack, queue, and monotonic stack",
+          "code": "/* A stack is an array plus a top index. */\ntypedef struct { int *data; int top, cap; } Stack;\n\nvoid st_push(Stack *s, int x) { s->data[++s->top] = x; }\nint  st_pop(Stack *s)         { return s->data[s->top--]; }\nint  st_peek(const Stack *s)  { return s->data[s->top]; }\nint  st_empty(const Stack *s) { return s->top < 0; }   /* init top = -1 */\n\n/* A queue needs head and tail. Wrap them modulo cap (a circular buffer),\n   otherwise the array is exhausted after cap total pushes even if empty. */\ntypedef struct { int *data; int head, tail, count, cap; } Queue;\n\nvoid q_push(Queue *q, int x) {\n    q->data[q->tail] = x;\n    q->tail = (q->tail + 1) % q->cap;\n    q->count++;\n}\n\nint q_pop(Queue *q) {\n    int x = q->data[q->head];\n    q->head = (q->head + 1) % q->cap;\n    q->count--;\n    return x;\n}\n\n/* Monotonic stack — next greater element. Each index is pushed and popped\n   at most once, so O(n). */\nvoid nextGreater(const int *a, int n, int *res) {\n    int *st = malloc((size_t) n * sizeof *st);\n    int top = -1;\n    for (int i = 0; i < n; i++) res[i] = -1;\n    for (int i = 0; i < n; i++) {\n        while (top >= 0 && a[st[top]] < a[i]) res[st[top--]] = a[i];\n        st[++top] = i;\n    }\n    free(st);\n}"
+        },
+        {
+          "lang": "go",
+          "label": "Monotonic stack — next greater element",
+          "code": "// The pattern behind next-greater, largest-rectangle and daily-temperatures.\n// Each index is pushed and popped at most once, so O(n) overall.\nfunc nextGreater(a []int) []int {\n\tres := make([]int, len(a))\n\tfor i := range res {\n\t\tres[i] = -1\n\t}\n\tvar stack []int // indices, values decreasing\n\tfor i, x := range a {\n\t\tfor len(stack) > 0 && a[stack[len(stack)-1]] < x {\n\t\t\tres[stack[len(stack)-1]] = x\n\t\t\tstack = stack[:len(stack)-1]\n\t\t}\n\t\tstack = append(stack, i)\n\t}\n\treturn res\n}\n\n// Sliding window maximum with a deque of indices.\nfunc windowMax(a []int, k int) []int {\n\tvar dq []int // indices; a[dq] decreasing\n\tvar out []int\n\tfor i, x := range a {\n\t\tfor len(dq) > 0 && dq[0] <= i-k {\n\t\t\tdq = dq[1:] // left the window\n\t\t}\n\t\tfor len(dq) > 0 && a[dq[len(dq)-1]] <= x {\n\t\t\tdq = dq[:len(dq)-1] // dominated, can never be the max\n\t\t}\n\t\tdq = append(dq, i)\n\t\tif i >= k-1 {\n\t\t\tout = append(out, a[dq[0]])\n\t\t}\n\t}\n\treturn out\n}"
         }
       ],
       "problems": [
@@ -1190,11 +1361,8 @@
           "platform": "LeetCode",
           "difficulty": "Easy",
           "tier": "warmup",
-          "companies": [
-            "Amazon",
-            "Google",
-            "Microsoft"
-          ]
+          "companies": [],
+          "video": "https://www.youtube.com/watch?v=WTzjTskDFMg"
         },
         {
           "name": "Implement Queue using Stacks",
@@ -1202,10 +1370,7 @@
           "platform": "LeetCode",
           "difficulty": "Easy",
           "tier": "warmup",
-          "companies": [
-            "Amazon",
-            "Microsoft"
-          ]
+          "companies": []
         },
         {
           "name": "Min Stack",
@@ -1214,10 +1379,10 @@
           "difficulty": "Medium",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Google",
             "Adobe"
-          ]
+          ],
+          "video": "https://www.youtube.com/watch?v=qkLl7nAwDPo"
         },
         {
           "name": "Daily Temperatures",
@@ -1226,9 +1391,9 @@
           "difficulty": "Medium",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Google"
-          ]
+          ],
+          "video": "https://www.youtube.com/watch?v=cTBiBSnjO3c"
         },
         {
           "name": "Next Greater Element I",
@@ -1275,16 +1440,39 @@
       "complexity_md": "| Operation | Time | Space |\n|---|---|---|\n| Any traversal | O(n) | O(h) recursion / O(w) queue |\n| Height / diameter | O(n) | O(h) |\n| Search (unbalanced) | O(n) | O(h) |\n| Level-order (BFS) | O(n) | O(w) width |\n\n`h` = height (O(log n) if balanced, O(n) if skewed); `w` = max width. Every node is visited once, so traversals are linear; the space is the recursion depth or the widest level.",
       "code": [
         {
+          "lang": "cpp",
           "label": "Node + recursive traversals",
           "code": "struct TreeNode {\n    int val; TreeNode *left, *right;\n    TreeNode(int x): val(x), left(nullptr), right(nullptr) {}\n};\nvoid inorder(TreeNode* root, vector<int>& out) {\n    if (!root) return;\n    inorder(root->left, out);\n    out.push_back(root->val);\n    inorder(root->right, out);\n}"
         },
         {
+          "lang": "cpp",
           "label": "Level-order (BFS)",
           "code": "vector<vector<int>> levelOrder(TreeNode* root) {\n    vector<vector<int>> res;\n    if (!root) return res;\n    queue<TreeNode*> q; q.push(root);\n    while (!q.empty()) {\n        int sz = q.size();\n        vector<int> level;\n        for (int i = 0; i < sz; i++) {\n            TreeNode* n = q.front(); q.pop();\n            level.push_back(n->val);\n            if (n->left) q.push(n->left);\n            if (n->right) q.push(n->right);\n        }\n        res.push_back(level);\n    }\n    return res;\n}"
         },
         {
+          "lang": "cpp",
           "label": "Diameter — return height, track best",
           "code": "int diameter(TreeNode* root, int& best) {\n    if (!root) return 0;\n    int l = diameter(root->left, best);\n    int r = diameter(root->right, best);\n    best = max(best, l + r);      // path through this node\n    return 1 + max(l, r);         // height upward\n}"
+        },
+        {
+          "lang": "java",
+          "label": "Traversals — recursive and iterative",
+          "code": "static class TreeNode { int val; TreeNode left, right; TreeNode(int v) { val = v; } }\n\n// Inorder, recursive.\nstatic void inorder(TreeNode r, List<Integer> out) {\n    if (r == null) return;\n    inorder(r.left, out); out.add(r.val); inorder(r.right, out);\n}\n\n// Inorder, iterative — worth knowing; interviewers ask for it.\nstatic List<Integer> inorderIter(TreeNode root) {\n    List<Integer> out = new ArrayList<>();\n    Deque<TreeNode> st = new ArrayDeque<>();\n    TreeNode cur = root;\n    while (cur != null || !st.isEmpty()) {\n        while (cur != null) { st.push(cur); cur = cur.left; }\n        cur = st.pop();\n        out.add(cur.val);\n        cur = cur.right;\n    }\n    return out;\n}\n\n// Level order (BFS) — the basis of every \"views\" problem.\nQueue<TreeNode> q = new ArrayDeque<>();\nif (root != null) q.offer(root);\nwhile (!q.isEmpty()) {\n    int size = q.size();                 // fix the level boundary first\n    for (int i = 0; i < size; i++) {\n        TreeNode n = q.poll();\n        if (n.left != null) q.offer(n.left);\n        if (n.right != null) q.offer(n.right);\n    }\n}"
+        },
+        {
+          "lang": "py",
+          "label": "Traversals — recursive and iterative",
+          "code": "class TreeNode:\n    def __init__(self, val: int = 0, left=None, right=None):\n        self.val, self.left, self.right = val, left, right\n\ndef inorder(root: TreeNode | None) -> list[int]:\n    if not root:\n        return []\n    return inorder(root.left) + [root.val] + inorder(root.right)\n\n# Iterative inorder — asked for explicitly in interviews.\ndef inorder_iter(root: TreeNode | None) -> list[int]:\n    out, stack, cur = [], [], root\n    while cur or stack:\n        while cur:\n            stack.append(cur)\n            cur = cur.left\n        cur = stack.pop()\n        out.append(cur.val)\n        cur = cur.right\n    return out\n\n# Level order (BFS) — fix the level size before the inner loop, or you will\n# consume nodes belonging to the next level.\nfrom collections import deque\n\ndef level_order(root: TreeNode | None) -> list[list[int]]:\n    if not root:\n        return []\n    out, q = [], deque([root])\n    while q:\n        level = []\n        for _ in range(len(q)):\n            n = q.popleft()\n            level.append(n.val)\n            if n.left:  q.append(n.left)\n            if n.right: q.append(n.right)\n        out.append(level)\n    return out"
+        },
+        {
+          "lang": "c",
+          "label": "Traversals — recursive and iterative",
+          "code": "#include <stdlib.h>\n\ntypedef struct TreeNode {\n    int val;\n    struct TreeNode *left, *right;\n} TreeNode;\n\nvoid inorder(TreeNode *r, int *out, int *k) {\n    if (!r) return;\n    inorder(r->left, out, k);\n    out[(*k)++] = r->val;\n    inorder(r->right, out, k);\n}\n\n/* Iterative inorder with an explicit stack — the same shape the recursive\n   version builds implicitly. */\nvoid inorderIter(TreeNode *root, int *out, int *k) {\n    TreeNode **st = malloc(1024 * sizeof *st);\n    int top = -1;\n    TreeNode *cur = root;\n    while (cur || top >= 0) {\n        while (cur) { st[++top] = cur; cur = cur->left; }\n        cur = st[top--];\n        out[(*k)++] = cur->val;\n        cur = cur->right;\n    }\n    free(st);\n}\n\nint maxDepth(TreeNode *r) {\n    if (!r) return 0;\n    int l = maxDepth(r->left), rr = maxDepth(r->right);\n    return 1 + (l > rr ? l : rr);\n}\n\n/* Post-order is the only safe order in which to free a tree: you must not\n   touch a node's children after freeing the node. */\nvoid tree_free(TreeNode *r) {\n    if (!r) return;\n    tree_free(r->left);\n    tree_free(r->right);\n    free(r);\n}"
+        },
+        {
+          "lang": "go",
+          "label": "Traversals — recursive and iterative",
+          "code": "type TreeNode struct {\n\tVal         int\n\tLeft, Right *TreeNode\n}\n\nfunc inorder(root *TreeNode, out *[]int) {\n\tif root == nil {\n\t\treturn\n\t}\n\tinorder(root.Left, out)\n\t*out = append(*out, root.Val)\n\tinorder(root.Right, out)\n}\n\n// Iterative inorder — interviewers ask for this explicitly.\nfunc inorderIter(root *TreeNode) []int {\n\tvar out []int\n\tvar stack []*TreeNode\n\tcur := root\n\tfor cur != nil || len(stack) > 0 {\n\t\tfor cur != nil {\n\t\t\tstack = append(stack, cur)\n\t\t\tcur = cur.Left\n\t\t}\n\t\tcur = stack[len(stack)-1]\n\t\tstack = stack[:len(stack)-1]\n\t\tout = append(out, cur.Val)\n\t\tcur = cur.Right\n\t}\n\treturn out\n}\n\n// Level order (BFS). Capture the level size BEFORE the inner loop or you\n// consume nodes from the next level.\nfunc levelOrder(root *TreeNode) [][]int {\n\tif root == nil {\n\t\treturn nil\n\t}\n\tvar out [][]int\n\tq := []*TreeNode{root}\n\tfor len(q) > 0 {\n\t\tn := len(q)\n\t\tlevel := make([]int, 0, n)\n\t\tfor i := 0; i < n; i++ {\n\t\t\tnode := q[0]\n\t\t\tq = q[1:]\n\t\t\tlevel = append(level, node.Val)\n\t\t\tif node.Left != nil {\n\t\t\t\tq = append(q, node.Left)\n\t\t\t}\n\t\t\tif node.Right != nil {\n\t\t\t\tq = append(q, node.Right)\n\t\t\t}\n\t\t}\n\t\tout = append(out, level)\n\t}\n\treturn out\n}"
         }
       ],
       "problems": [
@@ -1294,10 +1482,8 @@
           "platform": "LeetCode",
           "difficulty": "Easy",
           "tier": "warmup",
-          "companies": [
-            "Amazon",
-            "Google"
-          ]
+          "companies": [],
+          "video": "https://www.youtube.com/watch?v=hTM3phVI6YQ"
         },
         {
           "name": "Invert Binary Tree",
@@ -1305,10 +1491,8 @@
           "platform": "LeetCode",
           "difficulty": "Easy",
           "tier": "warmup",
-          "companies": [
-            "Google",
-            "Amazon"
-          ]
+          "companies": [],
+          "video": "https://www.youtube.com/watch?v=OnSn2XEQ4MY"
         },
         {
           "name": "Diameter of Binary Tree",
@@ -1317,7 +1501,6 @@
           "difficulty": "Easy",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Meta",
             "Google"
           ]
@@ -1329,10 +1512,10 @@
           "difficulty": "Medium",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Microsoft",
             "Meta"
-          ]
+          ],
+          "video": "https://www.youtube.com/watch?v=6ZnyEApgFYg"
         },
         {
           "name": "Binary Tree Right Side View",
@@ -1396,12 +1579,34 @@
       "complexity_md": "| Operation | Balanced | Worst (skewed) |\n|---|---|---|\n| Search | O(log n) | O(n) |\n| Insert | O(log n) | O(n) |\n| Delete | O(log n) | O(n) |\n| Inorder traversal | O(n) | O(n) |\n| k-th smallest | O(h + k) | O(n) |\n\nEverything hinges on height. Balanced ⇒ O(log n); a sorted-order insertion sequence makes it a linked list ⇒ O(n).",
       "code": [
         {
+          "lang": "cpp",
           "label": "Search & insert",
           "code": "TreeNode* insert(TreeNode* root, int val) {\n    if (!root) return new TreeNode(val);\n    if (val < root->val) root->left = insert(root->left, val);\n    else root->right = insert(root->right, val);\n    return root;\n}\nbool search(TreeNode* root, int val) {\n    while (root) {\n        if (root->val == val) return true;\n        root = val < root->val ? root->left : root->right;\n    }\n    return false;\n}"
         },
         {
+          "lang": "cpp",
           "label": "Validate BST — range bounds",
           "code": "bool valid(TreeNode* root, long lo, long hi) {\n    if (!root) return true;\n    if (root->val <= lo || root->val >= hi) return false;\n    return valid(root->left, lo, root->val) &&\n           valid(root->right, root->val, hi);\n}\n// call: valid(root, LONG_MIN, LONG_MAX)"
+        },
+        {
+          "lang": "java",
+          "label": "BST insert, search, validate",
+          "code": "// BST invariant: everything left < node < everything right — and that must\n// hold against inherited bounds, not just the immediate parent. Checking\n// only the parent is the classic wrong answer.\nstatic boolean isValid(TreeNode r, Long lo, Long hi) {\n    if (r == null) return true;\n    if (lo != null && r.val <= lo) return false;\n    if (hi != null && r.val >= hi) return false;\n    return isValid(r.left, lo, (long) r.val) && isValid(r.right, (long) r.val, hi);\n}\n\nstatic TreeNode insert(TreeNode r, int v) {\n    if (r == null) return new TreeNode(v);\n    if (v < r.val) r.left = insert(r.left, v);\n    else if (v > r.val) r.right = insert(r.right, v);\n    return r;\n}\n\n// LCA in a BST: the first node that splits the two values.\nstatic TreeNode lca(TreeNode r, int p, int q) {\n    while (r != null) {\n        if (p < r.val && q < r.val) r = r.left;\n        else if (p > r.val && q > r.val) r = r.right;\n        else return r;\n    }\n    return null;\n}"
+        },
+        {
+          "lang": "py",
+          "label": "BST insert, search, validate",
+          "code": "# BST invariant: everything left < node < everything right — against INHERITED\n# bounds, not just the parent. Comparing only with the parent is the classic\n# wrong answer, and it passes small tests.\ndef is_valid(root: TreeNode | None,\n             lo: float = float('-inf'),\n             hi: float = float('inf')) -> bool:\n    if not root:\n        return True\n    if not (lo < root.val < hi):\n        return False\n    return is_valid(root.left, lo, root.val) and is_valid(root.right, root.val, hi)\n\ndef insert(root: TreeNode | None, v: int) -> TreeNode:\n    if not root:\n        return TreeNode(v)\n    if v < root.val:\n        root.left = insert(root.left, v)\n    elif v > root.val:\n        root.right = insert(root.right, v)\n    return root\n\n# LCA in a BST: the first node that splits the two values.\ndef lca(root: TreeNode | None, p: int, q: int) -> TreeNode | None:\n    while root:\n        if p < root.val and q < root.val:\n            root = root.left\n        elif p > root.val and q > root.val:\n            root = root.right\n        else:\n            return root\n    return None\n\n# An inorder walk of a BST is sorted — that fact solves a lot of problems."
+        },
+        {
+          "lang": "c",
+          "label": "BST insert, search, validate",
+          "code": "#include <limits.h>\n\n/* BST invariant: everything left < node < everything right, against\n   INHERITED bounds. Comparing only with the parent is the classic wrong\n   answer and it passes small tests. */\nint isValid(TreeNode *r, long lo, long hi) {\n    if (!r) return 1;\n    if (r->val <= lo || r->val >= hi) return 0;\n    return isValid(r->left, lo, r->val) && isValid(r->right, r->val, hi);\n}\n/* call as isValid(root, LONG_MIN, LONG_MAX) — a long avoids the edge case\n   where a node legitimately holds INT_MIN or INT_MAX */\n\nTreeNode *insert(TreeNode *r, int v) {\n    if (!r) {\n        TreeNode *n = malloc(sizeof *n);\n        if (!n) exit(1);\n        n->val = v; n->left = n->right = NULL;\n        return n;\n    }\n    if (v < r->val) r->left = insert(r->left, v);\n    else if (v > r->val) r->right = insert(r->right, v);\n    return r;\n}\n\n/* LCA in a BST: the first node that splits the two values. */\nTreeNode *lca(TreeNode *r, int p, int q) {\n    while (r) {\n        if (p < r->val && q < r->val) r = r->left;\n        else if (p > r->val && q > r->val) r = r->right;\n        else return r;\n    }\n    return NULL;\n}"
+        },
+        {
+          "lang": "go",
+          "label": "BST insert, search, validate",
+          "code": "// BST invariant: everything left < node < everything right, against INHERITED\n// bounds. Comparing only against the parent is the classic wrong answer and\n// it passes small tests.\nfunc isValid(root *TreeNode, lo, hi *int) bool {\n\tif root == nil {\n\t\treturn true\n\t}\n\tif lo != nil && root.Val <= *lo {\n\t\treturn false\n\t}\n\tif hi != nil && root.Val >= *hi {\n\t\treturn false\n\t}\n\treturn isValid(root.Left, lo, &root.Val) && isValid(root.Right, &root.Val, hi)\n}\n\nfunc insert(root *TreeNode, v int) *TreeNode {\n\tif root == nil {\n\t\treturn &TreeNode{Val: v}\n\t}\n\tif v < root.Val {\n\t\troot.Left = insert(root.Left, v)\n\t} else if v > root.Val {\n\t\troot.Right = insert(root.Right, v)\n\t}\n\treturn root\n}\n\n// LCA in a BST: the first node that splits the two values.\nfunc lca(root *TreeNode, p, q int) *TreeNode {\n\tfor root != nil {\n\t\tswitch {\n\t\tcase p < root.Val && q < root.Val:\n\t\t\troot = root.Left\n\t\tcase p > root.Val && q > root.Val:\n\t\t\troot = root.Right\n\t\tdefault:\n\t\t\treturn root\n\t\t}\n\t}\n\treturn nil\n}"
         }
       ],
       "problems": [
@@ -1411,9 +1616,7 @@
           "platform": "LeetCode",
           "difficulty": "Easy",
           "tier": "warmup",
-          "companies": [
-            "Amazon"
-          ]
+          "companies": []
         },
         {
           "name": "Insert into a Binary Search Tree",
@@ -1421,10 +1624,7 @@
           "platform": "LeetCode",
           "difficulty": "Medium",
           "tier": "warmup",
-          "companies": [
-            "Amazon",
-            "Microsoft"
-          ]
+          "companies": []
         },
         {
           "name": "Validate Binary Search Tree",
@@ -1433,11 +1633,11 @@
           "difficulty": "Medium",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Meta",
             "Microsoft",
             "Adobe"
-          ]
+          ],
+          "video": "https://www.youtube.com/watch?v=s6ATEkipzow"
         },
         {
           "name": "Kth Smallest Element in a BST",
@@ -1446,7 +1646,6 @@
           "difficulty": "Medium",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Google",
             "Uber"
           ]
@@ -1461,7 +1660,8 @@
             "Amazon",
             "Microsoft",
             "Meta"
-          ]
+          ],
+          "video": "https://www.youtube.com/watch?v=gs2LMfuOR9k"
         },
         {
           "name": "Convert Sorted Array to BST",
@@ -1485,12 +1685,34 @@
       "complexity_md": "| Operation | Time |\n|---|---|\n| Peek min/max (top) | O(1) |\n| Insert (push) | O(log n) |\n| Extract (pop) | O(log n) |\n| Build heap from array | O(n) |\n| Top-K (size-k heap) | O(n log k) |\n\nBuilding a heap by successive sift-down is O(n), not O(n log n) — a common interview gotcha. Space is O(n) for the heap, or O(k) for a bounded top-K heap.",
       "code": [
         {
+          "lang": "cpp",
           "label": "Min-heap & max-heap declarations",
           "code": "priority_queue<int> maxHeap;                       // max on top\npriority_queue<int, vector<int>, greater<int>> minHeap;  // min on top\nmaxHeap.push(5); maxHeap.push(1);\nint top = maxHeap.top();   // 5\nmaxHeap.pop();"
         },
         {
+          "lang": "cpp",
           "label": "Top-K largest with bounded min-heap",
           "code": "int findKthLargest(vector<int>& nums, int k) {\n    priority_queue<int, vector<int>, greater<int>> h;\n    for (int x : nums) {\n        h.push(x);\n        if ((int)h.size() > k) h.pop();  // drop smallest\n    }\n    return h.top();   // k-th largest\n}"
+        },
+        {
+          "lang": "java",
+          "label": "PriorityQueue — top-K and k-way merge",
+          "code": "// Java's PriorityQueue is a MIN-heap by default (C++ priority_queue is a max-heap).\nPriorityQueue<Integer> minHeap = new PriorityQueue<>();\nPriorityQueue<Integer> maxHeap = new PriorityQueue<>(Comparator.reverseOrder());\n\n// Kth largest: keep a min-heap of size k. O(n log k), better than sorting.\nstatic int kthLargest(int[] nums, int k) {\n    PriorityQueue<Integer> pq = new PriorityQueue<>();\n    for (int n : nums) {\n        pq.offer(n);\n        if (pq.size() > k) pq.poll();   // evict the smallest\n    }\n    return pq.peek();\n}\n\n// Top K frequent: count, then heap by frequency.\nMap<Integer, Integer> freq = new HashMap<>();\nfor (int n : nums) freq.merge(n, 1, Integer::sum);\nPriorityQueue<int[]> pq = new PriorityQueue<>((x, y) -> x[1] - y[1]);\nfor (var e : freq.entrySet()) {\n    pq.offer(new int[]{e.getKey(), e.getValue()});\n    if (pq.size() > k) pq.poll();\n}"
+        },
+        {
+          "lang": "py",
+          "label": "heapq — top-K and k-way merge",
+          "code": "import heapq\n\n# heapq is a MIN-heap and operates on a plain list, in place.\nheap: list[int] = []\nheapq.heappush(heap, 5)\nsmallest = heapq.heappop(heap)\nheapq.heapify(existing_list)          # O(n), beats n pushes\n\n# Kth largest: min-heap of size k. O(n log k).\ndef kth_largest(nums: list[int], k: int) -> int:\n    h = nums[:k]\n    heapq.heapify(h)\n    for x in nums[k:]:\n        if x > h[0]:\n            heapq.heapreplace(h, x)   # pop+push in one operation\n    return h[0]\n\n# There is no max-heap: negate on the way in and out.\nmax_heap: list[int] = []\nheapq.heappush(max_heap, -x)\nlargest = -heapq.heappop(max_heap)\n\n# Top K frequent, in two lines.\nfrom collections import Counter\ntop = [v for v, _ in Counter(nums).most_common(k)]\n\n# K-way merge of sorted iterables — lazy, memory-efficient.\nmerged = list(heapq.merge(*sorted_lists))"
+        },
+        {
+          "lang": "c",
+          "label": "Binary heap on an array",
+          "code": "/* No priority_queue in C — but a heap IS just an array with index\n   arithmetic: children of i are 2i+1 and 2i+2, parent is (i-1)/2. */\ntypedef struct { int *a; int n, cap; } Heap;\n\nstatic void swap(int *x, int *y) { int t = *x; *x = *y; *y = t; }\n\n/* Sift up after inserting at the end. */\nvoid heap_push(Heap *h, int x) {\n    int i = h->n++;\n    h->a[i] = x;\n    while (i > 0) {\n        int p = (i - 1) / 2;\n        if (h->a[p] <= h->a[i]) break;   /* min-heap: parent must be smaller */\n        swap(&h->a[p], &h->a[i]);\n        i = p;\n    }\n}\n\n/* Move the last element to the root, then sift down. */\nint heap_pop(Heap *h) {\n    int top = h->a[0];\n    h->a[0] = h->a[--h->n];\n    int i = 0;\n    for (;;) {\n        int l = 2 * i + 1, r = l + 1, m = i;\n        if (l < h->n && h->a[l] < h->a[m]) m = l;\n        if (r < h->n && h->a[r] < h->a[m]) m = r;\n        if (m == i) break;\n        swap(&h->a[i], &h->a[m]);\n        i = m;\n    }\n    return top;\n}\n\n/* Kth largest: keep a min-heap of size k, evicting the smallest. O(n log k). */"
+        },
+        {
+          "lang": "go",
+          "label": "container/heap — top-K",
+          "code": "// Go has no ready-made priority queue: container/heap gives you the algorithms\n// and you supply the storage by implementing heap.Interface.\ntype IntHeap []int\n\nfunc (h IntHeap) Len() int            { return len(h) }\nfunc (h IntHeap) Less(i, j int) bool  { return h[i] < h[j] } // min-heap; flip for max\nfunc (h IntHeap) Swap(i, j int)       { h[i], h[j] = h[j], h[i] }\nfunc (h *IntHeap) Push(x any)         { *h = append(*h, x.(int)) }\nfunc (h *IntHeap) Pop() any {\n\told := *h\n\tn := len(old)\n\tx := old[n-1]\n\t*h = old[:n-1]\n\treturn x\n}\n\n// Note Push/Pop are the storage hooks — you call heap.Push/heap.Pop, never\n// these directly, or the heap invariant is not maintained.\nfunc kthLargest(nums []int, k int) int {\n\th := &IntHeap{}\n\theap.Init(h)\n\tfor _, x := range nums {\n\t\theap.Push(h, x)\n\t\tif h.Len() > k {\n\t\t\theap.Pop(h) // evict the smallest\n\t\t}\n\t}\n\treturn (*h)[0]\n}"
         }
       ],
       "problems": [
@@ -1500,10 +1722,7 @@
           "platform": "LeetCode",
           "difficulty": "Easy",
           "tier": "warmup",
-          "companies": [
-            "Amazon",
-            "Meta"
-          ]
+          "companies": []
         },
         {
           "name": "Last Stone Weight",
@@ -1511,9 +1730,7 @@
           "platform": "LeetCode",
           "difficulty": "Easy",
           "tier": "warmup",
-          "companies": [
-            "Amazon"
-          ]
+          "companies": []
         },
         {
           "name": "K Closest Points to Origin",
@@ -1522,7 +1739,6 @@
           "difficulty": "Medium",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Meta",
             "Google"
           ]
@@ -1534,10 +1750,10 @@
           "difficulty": "Medium",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Google",
             "Meta"
-          ]
+          ],
+          "video": "https://www.youtube.com/watch?v=YPTqKIgVk-k"
         },
         {
           "name": "Task Scheduler",
@@ -1561,7 +1777,8 @@
             "Amazon",
             "Google",
             "Microsoft"
-          ]
+          ],
+          "video": "https://www.youtube.com/watch?v=q5a5OiGbT6Q"
         },
         {
           "name": "Find Median from Data Stream",
@@ -1586,12 +1803,34 @@
       "complexity_md": "| Operation | Average | Worst |\n|---|---|---|\n| Insert | O(1) | O(n) |\n| Lookup | O(1) | O(n) |\n| Delete | O(1) | O(n) |\n| Iteration | O(n) | O(n) |\n\nWorst case arises from many hash collisions; in practice with a good hash it's effectively O(1). Space is O(n) for the stored keys. Use `map`/`set` instead when you need sorted order or worst-case guarantees.",
       "code": [
         {
+          "lang": "cpp",
           "label": "Complement lookup — Two Sum",
           "code": "vector<int> twoSum(vector<int>& nums, int target) {\n    unordered_map<int,int> seen;   // value -> index\n    for (int i = 0; i < (int)nums.size(); i++) {\n        int need = target - nums[i];\n        if (seen.count(need)) return {seen[need], i};\n        seen[nums[i]] = i;\n    }\n    return {};\n}"
         },
         {
+          "lang": "cpp",
           "label": "Prefix sum + map — subarrays summing to k",
           "code": "int subarraySum(vector<int>& nums, int k) {\n    unordered_map<int,int> cnt{{0,1}};\n    int sum = 0, res = 0;\n    for (int x : nums) {\n        sum += x;\n        res += cnt[sum - k];   // seen a prefix that completes k\n        cnt[sum]++;\n    }\n    return res;\n}"
+        },
+        {
+          "lang": "java",
+          "label": "HashMap patterns — complements, counting, prefix sums",
+          "code": "// Two Sum: store what you've seen, look for the complement. One pass, O(n).\nstatic int[] twoSum(int[] nums, int target) {\n    Map<Integer, Integer> seen = new HashMap<>();   // value -> index\n    for (int i = 0; i < nums.length; i++) {\n        Integer j = seen.get(target - nums[i]);\n        if (j != null) return new int[]{j, i};\n        seen.put(nums[i], i);\n    }\n    return new int[]{-1, -1};\n}\n\n// Subarray sum equals K: count prefix sums seen so far.\n// The seed count.put(0, 1) accounts for a prefix that is itself the answer.\nstatic int subarraySum(int[] nums, int k) {\n    Map<Integer, Integer> count = new HashMap<>();\n    count.put(0, 1);\n    int sum = 0, res = 0;\n    for (int n : nums) {\n        sum += n;\n        res += count.getOrDefault(sum - k, 0);\n        count.merge(sum, 1, Integer::sum);\n    }\n    return res;\n}"
+        },
+        {
+          "lang": "py",
+          "label": "dict patterns — complements, counting, prefix sums",
+          "code": "# Two Sum: store what you've seen, look for the complement. One pass, O(n).\ndef two_sum(nums: list[int], target: int) -> tuple[int, int] | None:\n    seen: dict[int, int] = {}          # value -> index\n    for i, x in enumerate(nums):\n        if target - x in seen:\n            return seen[target - x], i\n        seen[x] = i\n    return None\n\n# Subarray sum equals K: count prefix sums as you go.\n# The {0: 1} seed accounts for a prefix that is itself the answer — without it\n# you miss every subarray starting at index 0.\nfrom collections import defaultdict\n\ndef subarray_sum(nums: list[int], k: int) -> int:\n    count = defaultdict(int)\n    count[0] = 1\n    total = res = 0\n    for x in nums:\n        total += x\n        res += count[total - k]\n        count[total] += 1\n    return res\n\n# Group anagrams: a sorted-letters tuple is a canonical key.\ndef group_anagrams(words: list[str]) -> list[list[str]]:\n    groups = defaultdict(list)\n    for w in words:\n        groups[tuple(sorted(w))].append(w)\n    return list(groups.values())"
+        },
+        {
+          "lang": "c",
+          "label": "Hash table by open addressing",
+          "code": "#include <stdlib.h>\n#include <string.h>\n\n/* No unordered_map. For interview-sized input, a fixed-capacity open-address\n   table is enough and easy to reason about. Keep the load factor under ~0.7\n   or linear probing degrades badly. */\n#define CAP 2053                    /* prime */\n\ntypedef struct { int key, val; char used; } Slot;\nstatic Slot table[CAP];\n\nstatic unsigned hash(int k) {\n    unsigned x = (unsigned) k;\n    x = ((x >> 16) ^ x) * 0x45d9f3b; /* cheap integer mix — sequential keys\n                                        otherwise cluster badly */\n    x = ((x >> 16) ^ x) * 0x45d9f3b;\n    return (x >> 16) ^ x;\n}\n\nint *map_get(int key) {\n    unsigned h = hash(key) % CAP;\n    while (table[h].used) {\n        if (table[h].key == key) return &table[h].val;\n        h = (h + 1) % CAP;           /* linear probe */\n    }\n    return NULL;\n}\n\nvoid map_put(int key, int val) {\n    unsigned h = hash(key) % CAP;\n    while (table[h].used && table[h].key != key) h = (h + 1) % CAP;\n    table[h].key = key; table[h].val = val; table[h].used = 1;\n}\n\n/* Two Sum with it: store seen values, look for the complement. */\nint twoSum(const int *nums, int n, int target, int *out) {\n    memset(table, 0, sizeof table);\n    for (int i = 0; i < n; i++) {\n        int *j = map_get(target - nums[i]);\n        if (j) { out[0] = *j; out[1] = i; return 1; }\n        map_put(nums[i], i);\n    }\n    return 0;\n}"
+        },
+        {
+          "lang": "go",
+          "label": "Map patterns — complements, counting, prefix sums",
+          "code": "// Two Sum: store what you've seen, look for the complement. One pass, O(n).\nfunc twoSum(nums []int, target int) []int {\n\tseen := make(map[int]int, len(nums)) // value -> index\n\tfor i, x := range nums {\n\t\tif j, ok := seen[target-x]; ok {\n\t\t\treturn []int{j, i}\n\t\t}\n\t\tseen[x] = i\n\t}\n\treturn nil\n}\n\n// Subarray sum equals K. The count[0] = 1 seed accounts for a prefix that is\n// itself the answer; without it you miss every subarray starting at index 0.\nfunc subarraySum(nums []int, k int) int {\n\tcount := map[int]int{0: 1}\n\tsum, res := 0, 0\n\tfor _, x := range nums {\n\t\tsum += x\n\t\tres += count[sum-k] // absent key yields 0 — convenient here\n\t\tcount[sum]++\n\t}\n\treturn res\n}\n\n// Group anagrams: a sorted-letters string is a canonical key.\nfunc groupAnagrams(words []string) [][]string {\n\tgroups := map[string][]string{}\n\tfor _, w := range words {\n\t\tb := []byte(w)\n\t\tslices.Sort(b)\n\t\tgroups[string(b)] = append(groups[string(b)], w)\n\t}\n\tout := make([][]string, 0, len(groups))\n\tfor _, g := range groups {\n\t\tout = append(out, g)\n\t}\n\treturn out\n}"
         }
       ],
       "problems": [
@@ -1601,10 +1840,8 @@
           "platform": "LeetCode",
           "difficulty": "Easy",
           "tier": "warmup",
-          "companies": [
-            "Amazon",
-            "Adobe"
-          ]
+          "companies": [],
+          "video": "https://www.youtube.com/watch?v=3OamzN90kPg"
         },
         {
           "name": "Valid Anagram",
@@ -1612,10 +1849,8 @@
           "platform": "LeetCode",
           "difficulty": "Easy",
           "tier": "warmup",
-          "companies": [
-            "Amazon",
-            "Adobe"
-          ]
+          "companies": [],
+          "video": "https://www.youtube.com/watch?v=9UtInBqnCgA"
         },
         {
           "name": "Two Sum",
@@ -1623,11 +1858,8 @@
           "platform": "LeetCode",
           "difficulty": "Easy",
           "tier": "warmup",
-          "companies": [
-            "Amazon",
-            "Google",
-            "Microsoft"
-          ]
+          "companies": [],
+          "video": "https://www.youtube.com/watch?v=KLlXCFG5TnA"
         },
         {
           "name": "Group Anagrams",
@@ -1636,10 +1868,10 @@
           "difficulty": "Medium",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Google",
             "Uber"
-          ]
+          ],
+          "video": "https://www.youtube.com/watch?v=vzdNOK2oB2E"
         },
         {
           "name": "Subarray Sum Equals K",
@@ -1648,7 +1880,6 @@
           "difficulty": "Medium",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Google",
             "Meta"
           ]
@@ -1676,12 +1907,34 @@
       "complexity_md": "| Step | Typical cost |\n|---|---|\n| Sort (usual first step) | O(n log n) |\n| Greedy sweep | O(n) |\n| With a heap | O(n log n) |\n| Overall | usually O(n log n) |\n\nGreedy is prized for being fast and low-space (often O(1) beyond the sort). The catch is correctness, not efficiency — always sanity-check that the greedy choice is actually safe.",
       "code": [
         {
+          "lang": "cpp",
           "label": "Interval scheduling — max non-overlapping",
           "code": "int maxMeetings(vector<pair<int,int>>& iv) {\n    // sort by end time\n    sort(iv.begin(), iv.end(), [](auto&a, auto&b){\n        return a.second < b.second;\n    });\n    int count = 0, lastEnd = INT_MIN;\n    for (auto& [s, e] : iv)\n        if (s > lastEnd) { count++; lastEnd = e; }\n    return count;\n}"
         },
         {
+          "lang": "cpp",
           "label": "Jump Game — furthest reach",
           "code": "bool canJump(vector<int>& nums) {\n    int reach = 0;\n    for (int i = 0; i < (int)nums.size(); i++) {\n        if (i > reach) return false;      // stuck\n        reach = max(reach, i + nums[i]);\n    }\n    return true;\n}"
+        },
+        {
+          "lang": "java",
+          "label": "Greedy — sort, then take the locally safe choice",
+          "code": "// Activity selection / non-overlapping intervals: sort by END time.\n// Sorting by start or by duration both fail — the proof is that finishing\n// earliest leaves the most room for everything after it.\nstatic int maxNonOverlapping(int[][] intervals) {\n    Arrays.sort(intervals, Comparator.comparingInt(x -> x[1]));\n    int count = 0, lastEnd = Integer.MIN_VALUE;\n    for (int[] iv : intervals) {\n        if (iv[0] >= lastEnd) { count++; lastEnd = iv[1]; }\n    }\n    return count;\n}\n\n// Jump game: track the furthest index reachable so far.\nstatic boolean canJump(int[] nums) {\n    int reach = 0;\n    for (int i = 0; i < nums.length; i++) {\n        if (i > reach) return false;\n        reach = Math.max(reach, i + nums[i]);\n    }\n    return true;\n}"
+        },
+        {
+          "lang": "py",
+          "label": "Greedy — sort, then take the locally safe choice",
+          "code": "# Activity selection / non-overlapping intervals: sort by END time.\n# Sorting by start or by duration both fail. The argument: finishing earliest\n# leaves the most room for everything that follows.\ndef max_non_overlapping(intervals: list[tuple[int, int]]) -> int:\n    intervals.sort(key=lambda iv: iv[1])\n    count, last_end = 0, float('-inf')\n    for start, end in intervals:\n        if start >= last_end:\n            count += 1\n            last_end = end\n    return count\n\n# Merge intervals: sort by START, then extend or append.\ndef merge(intervals: list[list[int]]) -> list[list[int]]:\n    intervals.sort()\n    out: list[list[int]] = []\n    for iv in intervals:\n        if out and iv[0] <= out[-1][1]:\n            out[-1][1] = max(out[-1][1], iv[1])\n        else:\n            out.append(iv[:])\n    return out\n\n# Jump game: track the furthest index reachable so far.\ndef can_jump(nums: list[int]) -> bool:\n    reach = 0\n    for i, n in enumerate(nums):\n        if i > reach:\n            return False\n        reach = max(reach, i + n)\n    return True"
+        },
+        {
+          "lang": "c",
+          "label": "Greedy — sort, then take the locally safe choice",
+          "code": "#include <stdlib.h>\n\ntypedef struct { int start, end; } Interval;\n\n/* Activity selection: sort by END time. Sorting by start or by duration both\n   fail; finishing earliest leaves the most room for what follows. */\nstatic int cmp_end(const void *p, const void *q) {\n    int a = ((const Interval *) p)->end, b = ((const Interval *) q)->end;\n    return (a > b) - (a < b);       /* not a - b: that can overflow */\n}\n\nint maxNonOverlapping(Interval *iv, int n) {\n    qsort(iv, (size_t) n, sizeof *iv, cmp_end);\n    int count = 0, lastEnd = INT_MIN;\n    for (int i = 0; i < n; i++) {\n        if (iv[i].start >= lastEnd) { count++; lastEnd = iv[i].end; }\n    }\n    return count;\n}\n\n/* Jump game: track the furthest reachable index. */\nint canJump(const int *nums, int n) {\n    int reach = 0;\n    for (int i = 0; i < n; i++) {\n        if (i > reach) return 0;\n        if (i + nums[i] > reach) reach = i + nums[i];\n    }\n    return 1;\n}"
+        },
+        {
+          "lang": "go",
+          "label": "Greedy — sort, then take the locally safe choice",
+          "code": "// Activity selection: sort by END time. Sorting by start or by duration both\n// fail; finishing earliest leaves the most room for everything after.\nfunc maxNonOverlapping(intervals [][]int) int {\n\tslices.SortFunc(intervals, func(a, b []int) int { return a[1] - b[1] })\n\tcount, lastEnd := 0, math.MinInt\n\tfor _, iv := range intervals {\n\t\tif iv[0] >= lastEnd {\n\t\t\tcount++\n\t\t\tlastEnd = iv[1]\n\t\t}\n\t}\n\treturn count\n}\n\n// Merge intervals: sort by START, then extend or append.\nfunc merge(intervals [][]int) [][]int {\n\tslices.SortFunc(intervals, func(a, b []int) int { return a[0] - b[0] })\n\tvar out [][]int\n\tfor _, iv := range intervals {\n\t\tif n := len(out); n > 0 && iv[0] <= out[n-1][1] {\n\t\t\tout[n-1][1] = max(out[n-1][1], iv[1])\n\t\t} else {\n\t\t\tout = append(out, []int{iv[0], iv[1]})\n\t\t}\n\t}\n\treturn out\n}\n\n// Jump game: track the furthest reachable index.\nfunc canJump(nums []int) bool {\n\treach := 0\n\tfor i, n := range nums {\n\t\tif i > reach {\n\t\t\treturn false\n\t\t}\n\t\treach = max(reach, i+n)\n\t}\n\treturn true\n}"
         }
       ],
       "problems": [
@@ -1691,9 +1944,7 @@
           "platform": "LeetCode",
           "difficulty": "Easy",
           "tier": "warmup",
-          "companies": [
-            "Amazon"
-          ]
+          "companies": []
         },
         {
           "name": "Best Time to Buy and Sell Stock II",
@@ -1701,10 +1952,7 @@
           "platform": "LeetCode",
           "difficulty": "Medium",
           "tier": "warmup",
-          "companies": [
-            "Amazon",
-            "Adobe"
-          ]
+          "companies": []
         },
         {
           "name": "Jump Game",
@@ -1713,7 +1961,6 @@
           "difficulty": "Medium",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Google",
             "Microsoft"
           ]
@@ -1725,7 +1972,6 @@
           "difficulty": "Medium",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Google"
           ]
         },
@@ -1775,16 +2021,39 @@
       "complexity_md": "| Algorithm | Time | Space |\n|---|---|---|\n| BFS / DFS | O(V + E) | O(V) |\n| Topological sort | O(V + E) | O(V) |\n| Dijkstra (heap) | O((V+E) log V) | O(V) |\n| Bellman-Ford | O(V·E) | O(V) |\n| Union-Find op | ~O(1) amortized | O(V) |\n\nV = vertices, E = edges. Adjacency-list traversals are linear in the graph size; the log factor in Dijkstra comes from the priority queue.",
       "code": [
         {
+          "lang": "cpp",
           "label": "BFS on adjacency list",
           "code": "void bfs(int start, vector<vector<int>>& adj) {\n    int n = adj.size();\n    vector<bool> vis(n, false);\n    queue<int> q; q.push(start); vis[start] = true;\n    while (!q.empty()) {\n        int u = q.front(); q.pop();\n        for (int v : adj[u])\n            if (!vis[v]) { vis[v] = true; q.push(v); }\n    }\n}"
         },
         {
+          "lang": "cpp",
           "label": "Topological sort (Kahn's, BFS)",
           "code": "vector<int> topoSort(int n, vector<vector<int>>& adj) {\n    vector<int> indeg(n, 0), order;\n    for (int u = 0; u < n; u++)\n        for (int v : adj[u]) indeg[v]++;\n    queue<int> q;\n    for (int i = 0; i < n; i++) if (!indeg[i]) q.push(i);\n    while (!q.empty()) {\n        int u = q.front(); q.pop(); order.push_back(u);\n        for (int v : adj[u]) if (--indeg[v] == 0) q.push(v);\n    }\n    return order;   // size < n means a cycle exists\n}"
         },
         {
+          "lang": "cpp",
           "label": "Dijkstra — shortest path (min-heap)",
           "code": "vector<int> dijkstra(int src, vector<vector<pair<int,int>>>& adj) {\n    int n = adj.size();\n    vector<int> dist(n, INT_MAX); dist[src] = 0;\n    priority_queue<pair<int,int>, vector<pair<int,int>>,\n                   greater<>> pq;\n    pq.push({0, src});\n    while (!pq.empty()) {\n        auto [d, u] = pq.top(); pq.pop();\n        if (d > dist[u]) continue;\n        for (auto [v, w] : adj[u])\n            if (dist[u] + w < dist[v]) {\n                dist[v] = dist[u] + w;\n                pq.push({dist[v], v});\n            }\n    }\n    return dist;\n}"
+        },
+        {
+          "lang": "java",
+          "label": "BFS, DFS, topological sort",
+          "code": "// Adjacency list. For n nodes, prefer List<List<Integer>> over a map.\nList<List<Integer>> adj = new ArrayList<>();\nfor (int i = 0; i < n; i++) adj.add(new ArrayList<>());\nadj.get(u).add(v);\n\n// BFS gives shortest path in an UNWEIGHTED graph. Mark visited on enqueue,\n// not on dequeue, or nodes get queued many times.\nstatic int[] bfs(List<List<Integer>> adj, int src, int n) {\n    int[] dist = new int[n];\n    Arrays.fill(dist, -1);\n    Queue<Integer> q = new ArrayDeque<>();\n    dist[src] = 0; q.offer(src);\n    while (!q.isEmpty()) {\n        int u = q.poll();\n        for (int v : adj.get(u)) if (dist[v] == -1) { dist[v] = dist[u] + 1; q.offer(v); }\n    }\n    return dist;\n}\n\n// Kahn's topological sort. If fewer than n nodes come out, there is a cycle.\nstatic List<Integer> topoSort(List<List<Integer>> adj, int n) {\n    int[] indeg = new int[n];\n    for (int u = 0; u < n; u++) for (int v : adj.get(u)) indeg[v]++;\n    Queue<Integer> q = new ArrayDeque<>();\n    for (int i = 0; i < n; i++) if (indeg[i] == 0) q.offer(i);\n    List<Integer> order = new ArrayList<>();\n    while (!q.isEmpty()) {\n        int u = q.poll(); order.add(u);\n        for (int v : adj.get(u)) if (--indeg[v] == 0) q.offer(v);\n    }\n    return order.size() == n ? order : List.of();   // empty => cycle\n}"
+        },
+        {
+          "lang": "py",
+          "label": "BFS, DFS, topological sort",
+          "code": "from collections import defaultdict, deque\n\nadj = defaultdict(list)\nadj[u].append(v)\n\n# BFS gives shortest path in an UNWEIGHTED graph. Mark visited on enqueue,\n# not on dequeue, or a node gets queued many times.\ndef bfs(src: int, n: int) -> list[int]:\n    dist = [-1] * n\n    dist[src] = 0\n    q = deque([src])\n    while q:\n        u = q.popleft()\n        for v in adj[u]:\n            if dist[v] == -1:\n                dist[v] = dist[u] + 1\n                q.append(v)\n    return dist\n\n# Grid BFS — the same thing with implicit neighbours.\nDIRS = ((1, 0), (-1, 0), (0, 1), (0, -1))\n\n# Kahn's topological sort. Fewer than n nodes out means there is a cycle.\ndef topo_sort(n: int) -> list[int]:\n    indeg = [0] * n\n    for u in range(n):\n        for v in adj[u]:\n            indeg[v] += 1\n    q = deque(i for i in range(n) if indeg[i] == 0)\n    order: list[int] = []\n    while q:\n        u = q.popleft()\n        order.append(u)\n        for v in adj[u]:\n            indeg[v] -= 1\n            if indeg[v] == 0:\n                q.append(v)\n    return order if len(order) == n else []      # [] => cycle\n\n# Dijkstra with a heap, for non-negative weights.\nimport heapq\n\ndef dijkstra(src: int, n: int) -> list[float]:\n    dist = [float('inf')] * n\n    dist[src] = 0\n    pq = [(0, src)]\n    while pq:\n        d, u = heapq.heappop(pq)\n        if d > dist[u]:\n            continue                              # stale entry\n        for v, w in adj[u]:\n            if d + w < dist[v]:\n                dist[v] = d + w\n                heapq.heappush(pq, (dist[v], v))\n    return dist"
+        },
+        {
+          "lang": "c",
+          "label": "Adjacency list, BFS, topological sort",
+          "code": "#include <stdlib.h>\n#include <string.h>\n\n/* Without vectors, the standard trick is a head/next edge list ('forward\n   star'): one array of edge heads per node, one next-pointer per edge.\n   No per-node allocation, cache friendly. */\ntypedef struct { int *head, *next, *to; int edgeCount; } Graph;\n\nvoid g_init(Graph *g, int n, int m) {\n    g->head = malloc((size_t) n * sizeof *g->head);\n    g->next = malloc((size_t) m * sizeof *g->next);\n    g->to   = malloc((size_t) m * sizeof *g->to);\n    for (int i = 0; i < n; i++) g->head[i] = -1;   /* -1 == no edges */\n    g->edgeCount = 0;\n}\n\nvoid g_add(Graph *g, int u, int v) {\n    int e = g->edgeCount++;\n    g->to[e] = v;\n    g->next[e] = g->head[u];    /* push onto u's list */\n    g->head[u] = e;\n}\n\n/* BFS gives shortest path in an UNWEIGHTED graph. Set dist on ENQUEUE, not\n   on dequeue, or nodes get queued repeatedly. */\nvoid bfs(const Graph *g, int n, int src, int *dist) {\n    for (int i = 0; i < n; i++) dist[i] = -1;\n    int *q = malloc((size_t) n * sizeof *q);\n    int head = 0, tail = 0;\n    dist[src] = 0; q[tail++] = src;\n    while (head < tail) {\n        int u = q[head++];\n        for (int e = g->head[u]; e != -1; e = g->next[e]) {\n            int v = g->to[e];\n            if (dist[v] == -1) { dist[v] = dist[u] + 1; q[tail++] = v; }\n        }\n    }\n    free(q);\n}\n\n/* Kahn's topological sort: repeatedly take a node with in-degree 0.\n   Fewer than n emitted means a cycle. */"
+        },
+        {
+          "lang": "go",
+          "label": "BFS, DFS, topological sort",
+          "code": "// Adjacency list as a slice of slices.\nadj := make([][]int, n)\nadj[u] = append(adj[u], v)\n\n// BFS gives shortest path in an UNWEIGHTED graph. Mark distance on ENQUEUE,\n// not on dequeue, or nodes get queued repeatedly.\nfunc bfs(adj [][]int, src int) []int {\n\tdist := make([]int, len(adj))\n\tfor i := range dist {\n\t\tdist[i] = -1\n\t}\n\tdist[src] = 0\n\tq := []int{src}\n\tfor len(q) > 0 {\n\t\tu := q[0]\n\t\tq = q[1:]\n\t\tfor _, v := range adj[u] {\n\t\t\tif dist[v] == -1 {\n\t\t\t\tdist[v] = dist[u] + 1\n\t\t\t\tq = append(q, v)\n\t\t\t}\n\t\t}\n\t}\n\treturn dist\n}\n\n// Kahn's topological sort. Fewer than n nodes out means there is a cycle.\nfunc topoSort(adj [][]int) []int {\n\tn := len(adj)\n\tindeg := make([]int, n)\n\tfor u := 0; u < n; u++ {\n\t\tfor _, v := range adj[u] {\n\t\t\tindeg[v]++\n\t\t}\n\t}\n\tvar q []int\n\tfor i := 0; i < n; i++ {\n\t\tif indeg[i] == 0 {\n\t\t\tq = append(q, i)\n\t\t}\n\t}\n\tvar order []int\n\tfor len(q) > 0 {\n\t\tu := q[0]\n\t\tq = q[1:]\n\t\torder = append(order, u)\n\t\tfor _, v := range adj[u] {\n\t\t\tindeg[v]--\n\t\t\tif indeg[v] == 0 {\n\t\t\t\tq = append(q, v)\n\t\t\t}\n\t\t}\n\t}\n\tif len(order) != n {\n\t\treturn nil // cycle\n\t}\n\treturn order\n}"
         }
       ],
       "problems": [
@@ -1794,12 +2063,8 @@
           "platform": "LeetCode",
           "difficulty": "Medium",
           "tier": "warmup",
-          "companies": [
-            "Amazon",
-            "Google",
-            "Meta",
-            "Microsoft"
-          ]
+          "companies": [],
+          "video": "https://www.youtube.com/watch?v=pV2kpPD66nE"
         },
         {
           "name": "Flood Fill",
@@ -1807,9 +2072,7 @@
           "platform": "LeetCode",
           "difficulty": "Easy",
           "tier": "warmup",
-          "companies": [
-            "Amazon"
-          ]
+          "companies": []
         },
         {
           "name": "Rotting Oranges",
@@ -1818,7 +2081,6 @@
           "difficulty": "Medium",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Google",
             "Microsoft"
           ]
@@ -1830,10 +2092,10 @@
           "difficulty": "Medium",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Google",
             "Meta"
-          ]
+          ],
+          "video": "https://www.youtube.com/watch?v=EgI5nU9etnU"
         },
         {
           "name": "Number of Provinces",
@@ -1857,7 +2119,8 @@
             "Google",
             "Meta",
             "Uber"
-          ]
+          ],
+          "video": "https://www.youtube.com/watch?v=mQeF6bN8hMk"
         },
         {
           "name": "Network Delay Time",
@@ -1893,16 +2156,39 @@
       "complexity_md": "| Problem family | Time | Space |\n|---|---|---|\n| 1D DP (stairs, robber) | O(n) | O(1) optimizable |\n| 0/1 Knapsack | O(n·W) | O(W) optimizable |\n| LCS / edit distance | O(n·m) | O(min(n,m)) |\n| LIS | O(n log n) | O(n) |\n| Grid DP | O(n·m) | O(m) optimizable |\n\nGeneral rule: DP time = (number of states) × (work per transition). Identify those two and you have the complexity before writing a line.",
       "code": [
         {
+          "lang": "cpp",
           "label": "Recursion → memoization (top-down)",
           "code": "int rob(vector<int>& nums, int i, vector<int>& memo) {\n    if (i >= (int)nums.size()) return 0;\n    if (memo[i] != -1) return memo[i];\n    int take = nums[i] + rob(nums, i + 2, memo);\n    int skip = rob(nums, i + 1, memo);\n    return memo[i] = max(take, skip);\n}"
         },
         {
+          "lang": "cpp",
           "label": "Tabulation (bottom-up) + O(1) space",
           "code": "int rob(vector<int>& nums) {\n    int prev2 = 0, prev1 = 0;\n    for (int x : nums) {\n        int cur = max(prev1, prev2 + x);\n        prev2 = prev1;\n        prev1 = cur;\n    }\n    return prev1;\n}"
         },
         {
+          "lang": "cpp",
           "label": "LCS — classic 2D table",
           "code": "int lcs(string a, string b) {\n    int n = a.size(), m = b.size();\n    vector<vector<int>> dp(n+1, vector<int>(m+1, 0));\n    for (int i = 1; i <= n; i++)\n        for (int j = 1; j <= m; j++)\n            dp[i][j] = (a[i-1] == b[j-1])\n                ? dp[i-1][j-1] + 1\n                : max(dp[i-1][j], dp[i][j-1]);\n    return dp[n][m];\n}"
+        },
+        {
+          "lang": "java",
+          "label": "Memoisation to tabulation to rolling array",
+          "code": "// The progression to practise on every DP: recursion -> memo -> table -> O(1) space.\n\n// 1. Top-down (memoised recursion).\nstatic int robMemo(int[] a, int i, Integer[] memo) {\n    if (i >= a.length) return 0;\n    if (memo[i] != null) return memo[i];\n    return memo[i] = Math.max(a[i] + robMemo(a, i + 2, memo), robMemo(a, i + 1, memo));\n}\n\n// 2. Bottom-up table.\nstatic int robTab(int[] a) {\n    int n = a.length;\n    int[] dp = new int[n + 2];\n    for (int i = n - 1; i >= 0; i--) dp[i] = Math.max(a[i] + dp[i + 2], dp[i + 1]);\n    return dp[0];\n}\n\n// 3. Rolling — only the last two states are ever read.\nstatic int rob(int[] a) {\n    int take = 0, skip = 0;\n    for (int i = a.length - 1; i >= 0; i--) {\n        int cur = Math.max(a[i] + skip, take);\n        skip = take; take = cur;\n    }\n    return take;\n}\n\n// 0/1 knapsack, 1-D. Iterate weight DOWNWARD so each item is used once.\nint[] dp = new int[cap + 1];\nfor (int i = 0; i < n; i++)\n    for (int w = cap; w >= wt[i]; w--)\n        dp[w] = Math.max(dp[w], val[i] + dp[w - wt[i]]);"
+        },
+        {
+          "lang": "py",
+          "label": "Memoisation to tabulation to rolling array",
+          "code": "from functools import cache\n\n# 1. Top-down. @cache turns naive recursion into memoised DP for free —\n#    the fastest way to get a correct baseline in an interview.\n@cache\ndef rob(i: int) -> int:\n    if i >= len(nums):\n        return 0\n    return max(nums[i] + rob(i + 2), rob(i + 1))\n\n# 2. Bottom-up table.\ndef rob_tab(nums: list[int]) -> int:\n    n = len(nums)\n    dp = [0] * (n + 2)\n    for i in range(n - 1, -1, -1):\n        dp[i] = max(nums[i] + dp[i + 2], dp[i + 1])\n    return dp[0]\n\n# 3. Rolling — only two states are ever read.\ndef rob_rolling(nums: list[int]) -> int:\n    take = skip = 0\n    for x in reversed(nums):\n        take, skip = max(x + skip, take), take\n    return take\n\n# 0/1 knapsack, 1-D. Iterate weight DOWNWARD so each item is used at most once;\n# going upward silently turns it into the unbounded version.\ndef knapsack(wt: list[int], val: list[int], cap: int) -> int:\n    dp = [0] * (cap + 1)\n    for w_i, v_i in zip(wt, val):\n        for w in range(cap, w_i - 1, -1):\n            dp[w] = max(dp[w], v_i + dp[w - w_i])\n    return dp[cap]\n\n# LCS — the template for most string DP.\ndef lcs(a: str, b: str) -> int:\n    dp = [[0] * (len(b) + 1) for _ in range(len(a) + 1)]\n    for i in range(1, len(a) + 1):\n        for j in range(1, len(b) + 1):\n            dp[i][j] = dp[i - 1][j - 1] + 1 if a[i - 1] == b[j - 1] \\\n                       else max(dp[i - 1][j], dp[i][j - 1])\n    return dp[len(a)][len(b)]"
+        },
+        {
+          "lang": "c",
+          "label": "Tabulation and rolling arrays",
+          "code": "#include <stdlib.h>\n#include <string.h>\n\n/* In C, prefer bottom-up tables: no recursion depth risk, and the memory is\n   explicit. Note calloc zeroes for you; malloc does NOT — reading\n   uninitialised memory is the classic DP bug here. */\nint climbStairs(int n) {\n    if (n <= 2) return n;\n    int prev = 1, cur = 2;\n    for (int i = 3; i <= n; i++) {\n        int next = prev + cur;      /* rolling: only two states are read */\n        prev = cur; cur = next;\n    }\n    return cur;\n}\n\n/* 0/1 knapsack, 1-D. Iterate weight DOWNWARD so each item is used at most\n   once; upward silently becomes the unbounded version. */\nint knapsack(const int *wt, const int *val, int n, int cap) {\n    int *dp = calloc((size_t) cap + 1, sizeof *dp);\n    for (int i = 0; i < n; i++)\n        for (int w = cap; w >= wt[i]; w--) {\n            int cand = val[i] + dp[w - wt[i]];\n            if (cand > dp[w]) dp[w] = cand;\n        }\n    int best = dp[cap];\n    free(dp);\n    return best;\n}\n\n/* 2-D tables: allocate one flat block and index it yourself. An array of\n   row pointers costs an extra indirection and fragments the heap. */\nint *dp = calloc((size_t) rows * cols, sizeof *dp);\n#define DP(i, j) dp[(size_t)(i) * cols + (j)]"
+        },
+        {
+          "lang": "go",
+          "label": "Memoisation to tabulation to rolling array",
+          "code": "// 1. Top-down with a memo map (or slice, when the state is a small int).\nfunc robMemo(a []int, i int, memo []int) int {\n\tif i >= len(a) {\n\t\treturn 0\n\t}\n\tif memo[i] != -1 {\n\t\treturn memo[i]\n\t}\n\tmemo[i] = max(a[i]+robMemo(a, i+2, memo), robMemo(a, i+1, memo))\n\treturn memo[i]\n}\n\n// 2. Bottom-up table.\nfunc robTab(a []int) int {\n\tn := len(a)\n\tdp := make([]int, n+2)\n\tfor i := n - 1; i >= 0; i-- {\n\t\tdp[i] = max(a[i]+dp[i+2], dp[i+1])\n\t}\n\treturn dp[0]\n}\n\n// 3. Rolling — only two states are ever read.\nfunc rob(a []int) int {\n\ttake, skip := 0, 0\n\tfor i := len(a) - 1; i >= 0; i-- {\n\t\ttake, skip = max(a[i]+skip, take), take\n\t}\n\treturn take\n}\n\n// 0/1 knapsack, 1-D. Iterate weight DOWNWARD so each item is used once;\n// upward silently becomes the unbounded version.\nfunc knapsack(wt, val []int, cap int) int {\n\tdp := make([]int, cap+1)\n\tfor i := range wt {\n\t\tfor w := cap; w >= wt[i]; w-- {\n\t\t\tdp[w] = max(dp[w], val[i]+dp[w-wt[i]])\n\t\t}\n\t}\n\treturn dp[cap]\n}"
         }
       ],
       "problems": [
@@ -1912,10 +2198,8 @@
           "platform": "LeetCode",
           "difficulty": "Easy",
           "tier": "warmup",
-          "companies": [
-            "Amazon",
-            "Adobe"
-          ]
+          "companies": [],
+          "video": "https://www.youtube.com/watch?v=Y0lT9Fck7qI"
         },
         {
           "name": "House Robber",
@@ -1923,11 +2207,8 @@
           "platform": "LeetCode",
           "difficulty": "Medium",
           "tier": "warmup",
-          "companies": [
-            "Amazon",
-            "Google",
-            "Microsoft"
-          ]
+          "companies": [],
+          "video": "https://www.youtube.com/watch?v=73r3KWiEvyk"
         },
         {
           "name": "Coin Change",
@@ -1936,10 +2217,10 @@
           "difficulty": "Medium",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Google",
             "Uber"
-          ]
+          ],
+          "video": "https://www.youtube.com/watch?v=H9bfqozjoqs"
         },
         {
           "name": "Longest Increasing Subsequence",
@@ -1948,10 +2229,10 @@
           "difficulty": "Medium",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Google",
             "Microsoft"
-          ]
+          ],
+          "video": "https://www.youtube.com/watch?v=cjWnW0hdF1Y"
         },
         {
           "name": "Unique Paths",
@@ -1960,7 +2241,6 @@
           "difficulty": "Medium",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Google",
             "Adobe"
           ]
@@ -1975,7 +2255,8 @@
             "Amazon",
             "Google",
             "Microsoft"
-          ]
+          ],
+          "video": "https://www.youtube.com/watch?v=Ua0GhsJSlWM"
         },
         {
           "name": "Word Break",
@@ -1988,7 +2269,8 @@
             "Google",
             "Meta",
             "Uber"
-          ]
+          ],
+          "video": "https://www.youtube.com/watch?v=Sx9NNgInc3A"
         },
         {
           "name": "Edit Distance",
@@ -2035,8 +2317,29 @@
       "complexity_md": "| Operation | Time | Space |\n|---|---|---|\n| Insert word | O(L) | O(L · alphabet) worst |\n| Search word | O(L) | O(1) |\n| Prefix query | O(L) | O(1) |\n| Build from n words | O(n · L) | up to O(n · L · Σ) |\n\nL = word length, Σ = alphabet size. Time is independent of the number of stored words — the trie's key advantage. Memory is the trade-off; use a `map` of children instead of a fixed array for sparse alphabets.",
       "code": [
         {
+          "lang": "cpp",
           "label": "Trie node + insert/search",
           "code": "struct TrieNode {\n    TrieNode* child[26] = {};\n    bool isEnd = false;\n};\nstruct Trie {\n    TrieNode* root = new TrieNode();\n    void insert(const string& w) {\n        TrieNode* cur = root;\n        for (char c : w) {\n            int i = c - 'a';\n            if (!cur->child[i]) cur->child[i] = new TrieNode();\n            cur = cur->child[i];\n        }\n        cur->isEnd = true;\n    }\n    bool search(const string& w) {\n        TrieNode* cur = root;\n        for (char c : w) {\n            int i = c - 'a';\n            if (!cur->child[i]) return false;\n            cur = cur->child[i];\n        }\n        return cur->isEnd;\n    }\n};"
+        },
+        {
+          "lang": "java",
+          "label": "Trie — insert, search, prefix",
+          "code": "// A trie trades memory for prefix queries in O(length) regardless of how\n// many words are stored.\nstatic class Trie {\n    private final Trie[] next = new Trie[26];\n    private boolean end;\n\n    void insert(String w) {\n        Trie cur = this;\n        for (char c : w.toCharArray()) {\n            int i = c - 'a';\n            if (cur.next[i] == null) cur.next[i] = new Trie();\n            cur = cur.next[i];\n        }\n        cur.end = true;\n    }\n\n    private Trie walk(String w) {\n        Trie cur = this;\n        for (char c : w.toCharArray()) {\n            cur = cur.next[c - 'a'];\n            if (cur == null) return null;\n        }\n        return cur;\n    }\n\n    boolean search(String w)     { Trie n = walk(w); return n != null && n.end; }\n    boolean startsWith(String p) { return walk(p) != null; }\n}"
+        },
+        {
+          "lang": "py",
+          "label": "Trie — insert, search, prefix",
+          "code": "# A trie trades memory for prefix queries in O(len) regardless of how many\n# words are stored. A dict per node keeps it simple and handles any alphabet.\nclass Trie:\n    def __init__(self) -> None:\n        self.children: dict[str, 'Trie'] = {}\n        self.end = False\n\n    def insert(self, word: str) -> None:\n        node = self\n        for c in word:\n            node = node.children.setdefault(c, Trie())\n        node.end = True\n\n    def _walk(self, prefix: str) -> 'Trie | None':\n        node = self\n        for c in prefix:\n            node = node.children.get(c)\n            if node is None:\n                return None\n        return node\n\n    def search(self, word: str) -> bool:\n        node = self._walk(word)\n        return node is not None and node.end\n\n    def starts_with(self, prefix: str) -> bool:\n        return self._walk(prefix) is not None"
+        },
+        {
+          "lang": "c",
+          "label": "Trie — insert, search, prefix",
+          "code": "#include <stdlib.h>\n#include <string.h>\n\n/* A trie node is 26 child pointers plus an end flag. That is 200+ bytes per\n   node on 64-bit — tries trade memory for O(len) prefix queries. */\ntypedef struct TrieNode {\n    struct TrieNode *children[26];\n    int end;\n} TrieNode;\n\nTrieNode *trie_new(void) {\n    TrieNode *t = calloc(1, sizeof *t);   /* calloc: children start NULL */\n    if (!t) exit(1);\n    return t;\n}\n\nvoid trie_insert(TrieNode *root, const char *w) {\n    TrieNode *cur = root;\n    for (int i = 0; w[i]; i++) {\n        int c = w[i] - 'a';\n        if (!cur->children[c]) cur->children[c] = trie_new();\n        cur = cur->children[c];\n    }\n    cur->end = 1;\n}\n\nstatic TrieNode *trie_walk(TrieNode *root, const char *s) {\n    TrieNode *cur = root;\n    for (int i = 0; s[i]; i++) {\n        cur = cur->children[s[i] - 'a'];\n        if (!cur) return NULL;\n    }\n    return cur;\n}\n\nint trie_search(TrieNode *root, const char *w) {\n    TrieNode *n = trie_walk(root, w);\n    return n && n->end;\n}\n\nint trie_starts_with(TrieNode *root, const char *p) {\n    return trie_walk(root, p) != NULL;\n}\n\nvoid trie_free(TrieNode *t) {\n    if (!t) return;\n    for (int i = 0; i < 26; i++) trie_free(t->children[i]);\n    free(t);\n}"
+        },
+        {
+          "lang": "go",
+          "label": "Trie — insert, search, prefix",
+          "code": "// A trie trades memory for prefix queries in O(len), independent of how many\n// words are stored.\ntype Trie struct {\n\tchildren [26]*Trie\n\tend      bool\n}\n\nfunc NewTrie() *Trie { return &Trie{} }\n\nfunc (t *Trie) Insert(word string) {\n\tcur := t\n\tfor i := 0; i < len(word); i++ {\n\t\tc := word[i] - 'a'\n\t\tif cur.children[c] == nil {\n\t\t\tcur.children[c] = &Trie{}\n\t\t}\n\t\tcur = cur.children[c]\n\t}\n\tcur.end = true\n}\n\nfunc (t *Trie) walk(s string) *Trie {\n\tcur := t\n\tfor i := 0; i < len(s); i++ {\n\t\tcur = cur.children[s[i]-'a']\n\t\tif cur == nil {\n\t\t\treturn nil\n\t\t}\n\t}\n\treturn cur\n}\n\nfunc (t *Trie) Search(word string) bool {\n\tn := t.walk(word)\n\treturn n != nil && n.end\n}\n\nfunc (t *Trie) StartsWith(prefix string) bool { return t.walk(prefix) != nil }"
         }
       ],
       "problems": [
@@ -2046,11 +2349,8 @@
           "platform": "LeetCode",
           "difficulty": "Medium",
           "tier": "warmup",
-          "companies": [
-            "Amazon",
-            "Google",
-            "Microsoft"
-          ]
+          "companies": [],
+          "video": "https://www.youtube.com/watch?v=oobqoCJlHA0"
         },
         {
           "name": "Design Add and Search Words Data Structure",
@@ -2059,7 +2359,6 @@
           "difficulty": "Medium",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Google",
             "Meta"
           ]
@@ -2110,12 +2409,34 @@
       "complexity_md": "| Trick | Time |\n|---|---|\n| Any single bit op | O(1) |\n| Count set bits (Kernighan) | O(set bits) |\n| Enumerate all subsets of n items | O(2^n) |\n| XOR whole array | O(n) |\n\nBit operations are constant-time and constant-space — that's the appeal. Bitmask subset enumeration is exponential in the number of items but each step is O(1).",
       "code": [
         {
+          "lang": "cpp",
           "label": "XOR — single number",
           "code": "int singleNumber(vector<int>& nums) {\n    int x = 0;\n    for (int n : nums) x ^= n;   // pairs cancel\n    return x;\n}"
         },
         {
+          "lang": "cpp",
           "label": "Bit ops — test, set, clear, count",
           "code": "bool getBit(int x, int k)  { return (x >> k) & 1; }\nint  setBit(int x, int k)  { return x | (1 << k); }\nint  clearBit(int x, int k){ return x & ~(1 << k); }\nint countBits(int x) {        // Brian Kernighan\n    int c = 0;\n    while (x) { x &= (x - 1); c++; }\n    return c;\n}"
+        },
+        {
+          "lang": "java",
+          "label": "Bit tricks worth memorising",
+          "code": "// Java has no unsigned int. For right shifts on values that may be negative,\n// use >>> (logical) rather than >> (arithmetic, sign-extending).\nint x = 0b1011;\n\nboolean isSet   = (x & (1 << k)) != 0;\nint set         = x | (1 << k);\nint clear       = x & ~(1 << k);\nint toggle      = x ^ (1 << k);\n\nboolean isPow2  = x > 0 && (x & (x - 1)) == 0;   // only one bit set\nint lowestBit   = x & -x;                       // isolate lowest set bit\nint dropLowest  = x & (x - 1);                  // clear lowest set bit\nint bits        = Integer.bitCount(x);          // popcount\n\n// XOR: a ^ a == 0 and a ^ 0 == a, so XOR-ing everything leaves the element\n// that appears an odd number of times.\nstatic int singleNumber(int[] nums) {\n    int r = 0;\n    for (int n : nums) r ^= n;\n    return r;\n}\n\n// Iterate every subset of an n-element set.\nfor (int mask = 0; mask < (1 << n); mask++)\n    for (int i = 0; i < n; i++)\n        if ((mask & (1 << i)) != 0) { /* i is in this subset */ }"
+        },
+        {
+          "lang": "py",
+          "label": "Bit tricks worth memorising",
+          "code": "# Python ints are arbitrary precision and there is no unsigned type, so\n# right-shifting a negative number keeps its sign forever. Mask with\n# & 0xFFFFFFFF when you need 32-bit semantics.\nx = 0b1011\n\nis_set     = bool(x & (1 << k))\nset_bit    = x | (1 << k)\nclear_bit  = x & ~(1 << k)\ntoggle     = x ^ (1 << k)\n\nis_pow2    = x > 0 and x & (x - 1) == 0   # only one bit set\nlowest     = x & -x                       # isolate lowest set bit\ndrop_lowest = x & (x - 1)                 # clear lowest set bit\nbits       = x.bit_count()                # popcount (3.10+); else bin(x).count('1')\n\n# XOR: a ^ a == 0 and a ^ 0 == a, so XOR-ing everything leaves the value that\n# appears an odd number of times.\nfrom functools import reduce\nimport operator\nsingle = reduce(operator.xor, nums, 0)\n\n# Iterate every subset of an n-element set.\nfor mask in range(1 << n):\n    subset = [xs[i] for i in range(n) if mask & (1 << i)]"
+        },
+        {
+          "lang": "c",
+          "label": "Bit tricks, and the undefined behaviour to avoid",
+          "code": "/* C is where bit manipulation is most natural and most dangerous. Use\n   unsigned for anything involving shifts: shifting a signed value left into\n   the sign bit is undefined behaviour, as is shifting by >= the width. */\nunsigned x = 0b1011u;\n\nint isSet      = (x >> k) & 1u;\nunsigned set   = x | (1u << k);      /* 1u, not 1 — 1 << 31 on int is UB */\nunsigned clear = x & ~(1u << k);\nunsigned tog   = x ^ (1u << k);\n\nint isPow2      = x && !(x & (x - 1));   /* only one bit set */\nunsigned lowest = x & -x;                 /* isolate lowest set bit */\nunsigned drop   = x & (x - 1);            /* clear lowest set bit */\n\n/* popcount: __builtin_popcount on GCC/Clang, or count manually. */\nint bits = __builtin_popcount(x);\n\nint popcount(unsigned v) {\n    int c = 0;\n    while (v) { v &= v - 1; c++; }        /* runs once per SET bit */\n    return c;\n}\n\n/* XOR: a^a == 0 and a^0 == a, so XOR-ing everything leaves the value that\n   appears an odd number of times. O(1) space. */\nint singleNumber(const int *nums, int n) {\n    int r = 0;\n    for (int i = 0; i < n; i++) r ^= nums[i];\n    return r;\n}\n\n/* Iterate every subset of an n-element set. */\nfor (unsigned mask = 0; mask < (1u << n); mask++)\n    for (int i = 0; i < n; i++)\n        if (mask & (1u << i)) { /* i is in this subset */ }"
+        },
+        {
+          "lang": "go",
+          "label": "Bit tricks worth memorising",
+          "code": "// Go has both signed and unsigned types, and shifts on signed values are\n// arithmetic. Use uint when you want logical shifts.\nx := 0b1011\n\nisSet := x&(1<<k) != 0\nset := x | (1 << k)\nclear := x & ^(1 << k) // Go spells it &^ or & ^\ntoggle := x ^ (1 << k)\n\nisPow2 := x > 0 && x&(x-1) == 0 // only one bit set\nlowest := x & -x                // isolate lowest set bit\ndropLowest := x & (x - 1)       // clear lowest set bit\nbits := bits.OnesCount(uint(x)) // math/bits: popcount\n\n// XOR: a^a == 0 and a^0 == a, so XOR-ing everything leaves the value\n// appearing an odd number of times.\nfunc singleNumber(nums []int) int {\n\tr := 0\n\tfor _, n := range nums {\n\t\tr ^= n\n\t}\n\treturn r\n}\n\n// Iterate every subset of an n-element set.\nfor mask := 0; mask < 1<<n; mask++ {\n\tfor i := 0; i < n; i++ {\n\t\tif mask&(1<<i) != 0 {\n\t\t\t_ = i // i is in this subset\n\t\t}\n\t}\n}"
         }
       ],
       "problems": [
@@ -2125,10 +2446,8 @@
           "platform": "LeetCode",
           "difficulty": "Easy",
           "tier": "warmup",
-          "companies": [
-            "Amazon",
-            "Adobe"
-          ]
+          "companies": [],
+          "video": "https://www.youtube.com/watch?v=qMPX1AOa83k"
         },
         {
           "name": "Number of 1 Bits",
@@ -2136,10 +2455,8 @@
           "platform": "LeetCode",
           "difficulty": "Easy",
           "tier": "warmup",
-          "companies": [
-            "Amazon",
-            "Microsoft"
-          ]
+          "companies": [],
+          "video": "https://www.youtube.com/watch?v=5Km3utixwZs"
         },
         {
           "name": "Counting Bits",
@@ -2148,9 +2465,9 @@
           "difficulty": "Easy",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Google"
-          ]
+          ],
+          "video": "https://www.youtube.com/watch?v=RyBM56RIWrM"
         },
         {
           "name": "Missing Number",
@@ -2159,7 +2476,6 @@
           "difficulty": "Easy",
           "tier": "core",
           "companies": [
-            "Amazon",
             "Microsoft"
           ]
         },
@@ -2189,6 +2505,74 @@
     }
   ],
   "primers": {
+    "c": {
+      "language": "c",
+      "language_name": "C",
+      "tagline": "Nothing is hidden, nothing is provided.",
+      "intro": "C gives you no containers, no bounds checking and no memory management — which is exactly why it teaches data structures better than any other language. You cannot use a hash map without building one, so you learn what one is. It is a poor choice for timed interviews (you will out-type yourself in C++ or Python) but an excellent one for understanding what those languages are doing for you.",
+      "sections": [
+        {
+          "order": 1,
+          "title": "Setup & Program Skeleton",
+          "body_md": "Use GCC or Clang and always compile with warnings on — `-Wall -Wextra` catches a large share of beginner bugs at compile time rather than as a mysterious crash. Add `-fsanitize=address,undefined` while learning: it turns silent memory corruption into a clear error message with a line number, which is the single most useful thing you can do for yourself in C.",
+          "code": "#include <stdio.h>\n\nint main(void) {          /* (void), not () — it means 'takes no arguments' */\n    printf(\"Hello\\n\");\n    return 0;\n}\n\n/* Compile like this while learning:\n     gcc -std=c17 -Wall -Wextra -g -fsanitize=address,undefined main.c -o main\n   The sanitizers turn undefined behaviour into a readable error instead of\n   a wrong answer that only fails on the judge. */"
+        },
+        {
+          "order": 2,
+          "title": "Input / Output",
+          "body_md": "`scanf`/`printf` are format-string based, and getting the specifier wrong is undefined behaviour rather than a type error. `scanf` returns the number of items it successfully read — check it. For large inputs, character-level parsing with `getchar` is dramatically faster than `scanf`.",
+          "code": "int n;\nif (scanf(\"%d\", &n) != 1) return 1;    /* ALWAYS check the return value */\n\nlong long big;\nscanf(\"%lld\", &big);                    /* %lld for long long, not %d */\ndouble d;\nscanf(\"%lf\", &d);                       /* %lf to READ, %f to print */\n\nchar buf[128];\nscanf(\"%127s\", buf);                    /* bound it, or you overflow */\n\n/* Reading a whole line: fgets keeps the '\\n', so strip it. */\nif (fgets(buf, sizeof buf, stdin)) {\n    buf[strcspn(buf, \"\\n\")] = '\\0';\n}\n\n/* Fast integer reader for large inputs. */\nint readInt(void) {\n    int c = getchar(), sign = 1, x = 0;\n    while (c == ' ' || c == '\\n' || c == '\\r') c = getchar();\n    if (c == '-') { sign = -1; c = getchar(); }\n    while (c >= '0' && c <= '9') { x = x * 10 + (c - '0'); c = getchar(); }\n    return x * sign;\n}"
+        },
+        {
+          "order": 3,
+          "title": "Types, Overflow & Undefined Behaviour",
+          "body_md": "Signed integer overflow in C is *undefined behaviour*, not wraparound — the compiler is permitted to assume it never happens and optimise accordingly, so the symptom can be far stranger than a wrong number. Use `long long` for anything that might exceed ~2.1e9, and prefer `unsigned` for bit manipulation, where wraparound IS defined.",
+          "code": "#include <stdint.h>\n#include <limits.h>\n\nint i = 42;\nlong long big = 1000000007LL;\nunsigned u = 0u;\ndouble d = 3.14;\nchar c = 'a';\n\n/* Fixed-width types when size matters. */\nint32_t exact32;\nint64_t exact64;\n\n/* Overflow: promote BEFORE multiplying. */\nint a = 100000, b = 100000;\nlong long ok = (long long) a * b;      /* correct */\n/* int bad = a * b;  <- UNDEFINED behaviour, not just wrong */\n\nprintf(\"%d\\n\", INT_MAX);               /* 2147483647 */\n\n/* Integer division truncates toward zero (unlike Python's floor). */\nprintf(\"%d\\n\", -7 / 2);                /* -3 */\nprintf(\"%d\\n\", -7 % 2);                /* -1 */\n\n/* sizeof yields size_t — print it with %zu. */\nprintf(\"%zu\\n\", sizeof(int));"
+        },
+        {
+          "order": 4,
+          "title": "Control Flow",
+          "body_md": "Standard C-family control flow. The classic traps: `switch` falls through unless you `break`, an `if` without braces controls only the next statement, and assignment inside a condition (`if (x = 5)`) compiles happily. Turn on `-Wall` and it warns about most of these.",
+          "code": "for (int i = 0; i < n; i++) { }\nwhile (cond) { }\ndo { } while (cond);\n\n/* switch falls through — deliberate here, a bug otherwise. */\nswitch (op) {\n    case '+': r = a + b; break;\n    case '-': r = a - b; break;\n    case 'x':\n    case '*': r = a * b; break;    /* intentional fall-through */\n    default:  r = 0;\n}\n\n/* Always brace your bodies. Without braces only ONE statement is guarded. */\nif (cond) {\n    doThis();\n    doThat();          /* without braces this runs unconditionally */\n}\n\n/* goto is genuinely idiomatic in C for breaking out of nested loops\n   and for centralised cleanup. */\nfor (int r = 0; r < rows; r++)\n    for (int col = 0; col < cols; col++)\n        if (grid[r][col] == target) goto found;\nfound:;"
+        },
+        {
+          "order": 5,
+          "title": "Pointers & Functions",
+          "body_md": "A pointer holds an address. `*p` reads through it, `&x` takes the address of `x`. C is strictly pass-by-value, so to let a function modify your variable you pass its address. Arrays decay to pointers when passed, which means the function has no idea how long the array is — you must pass the length too.",
+          "code": "int x = 5;\nint *p = &x;      /* p points at x */\n*p = 10;          /* x is now 10 */\n\n/* Pass by address to mutate the caller's variable. */\nvoid increment(int *v) { (*v)++; }\nincrement(&x);\n\nvoid swap(int *a, int *b) { int t = *a; *a = *b; *b = t; }\n\n/* Arrays decay to pointers: sizeof(a) inside the function is the POINTER\n   size, not the array size. Always pass n. */\nint sum(const int *a, int n) {\n    int s = 0;\n    for (int i = 0; i < n; i++) s += a[i];\n    return s;\n}\n\n/* const says 'I will not modify this' — use it; it documents and it catches\n   mistakes at compile time. */\n\n/* Function pointers — how qsort takes a comparator. */\nint cmp(const void *p, const void *q) {\n    int a = *(const int *) p, b = *(const int *) q;\n    return (a > b) - (a < b);   /* not a - b: that can overflow */\n}"
+        },
+        {
+          "order": 6,
+          "title": "Arrays & 2-D Arrays",
+          "body_md": "Arrays are contiguous and have no length field, and there is no bounds checking whatsoever — reading `a[n]` is undefined behaviour that usually appears to work, which is why bugs surface far from their cause. For 2-D data, prefer one flat block with your own index arithmetic: it is one allocation and it is cache-friendly.",
+          "code": "int a[5] = {0};              /* all zeros */\nint b[] = {3, 1, 2};         /* size inferred: 3 */\nint n = (int) (sizeof b / sizeof b[0]);   /* works only in this scope */\n\n/* NO bounds checking. This is UB and may silently 'work'. */\n/* printf(\"%d\", b[10]); */\n\n/* Fixed 2-D array — rows are contiguous. */\nint grid[3][4] = {{0}};\ngrid[1][2] = 7;\n\n/* Dynamic 2-D: one flat block plus a macro. Preferred. */\n#include <stdlib.h>\nint rows = 3, cols = 4;\nint *flat = calloc((size_t) rows * cols, sizeof *flat);   /* calloc zeroes */\n#define AT(i, j) flat[(size_t)(i) * cols + (j)]\nAT(1, 2) = 7;\nfree(flat);\n\n/* Variable-length arrays exist (C99) but live on the stack — a large one\n   overflows it. Use malloc for anything big or input-sized. */"
+        },
+        {
+          "order": 7,
+          "title": "Strings & the NUL Terminator",
+          "body_md": "A C string is just a `char` array whose end is marked by a `'\\0'` byte. Everything follows from that: `strlen` walks the whole string to find the terminator (so never call it in a loop condition), a buffer must have room for the terminator as well as the characters, and forgetting to write it produces a string with no end.",
+          "code": "#include <string.h>\n\nchar s[] = \"hello\";        /* 6 bytes: 5 chars + '\\0' */\nchar *lit = \"hello\";        /* points at read-only memory — do NOT modify */\n\nsize_t n = strlen(s);       /* O(n): compute ONCE, not per iteration */\n\nstrcpy(dst, src);           /* no bounds check — overflows silently */\nsnprintf(dst, sizeof dst, \"%s\", src);   /* bounded and always terminated */\n\nstrcmp(a, b) == 0;          /* equality: strcmp returns 0 when EQUAL */\nstrchr(s, 'l');\nstrstr(s, \"ell\");\n\n/* Building a string manually — remember the terminator. */\nchar buf[16];\nint k = 0;\nfor (int i = 0; i < 5; i++) buf[k++] = 'a' + i;\nbuf[k] = '\\0';              /* forget this and you have no string */\n\n/* ctype functions take an int and must receive an unsigned char —\n   passing a negative char is undefined behaviour. */\n#include <ctype.h>\nif (isalpha((unsigned char) s[0])) { }"
+        },
+        {
+          "order": 8,
+          "title": "Dynamic Memory",
+          "body_md": "`malloc` gives you uninitialised bytes, `calloc` gives you zeroed bytes, `realloc` grows a block and may move it. Every allocation is yours to `free` exactly once. The three classic failures are: using memory after freeing it, freeing twice, and losing the only pointer to a block (a leak). Address Sanitizer catches all three.",
+          "code": "#include <stdlib.h>\n\nint *a = malloc((size_t) n * sizeof *a);   /* sizeof *a, not sizeof(int) —\n                                             survives a type change */\nif (!a) { /* malloc CAN fail; handle it */ return 1; }\n/* a[i] is uninitialised garbage here */\n\nint *z = calloc((size_t) n, sizeof *z);   /* zeroed — what DP tables want */\n\n/* realloc may move the block. Assign to a TEMP: on failure it returns NULL\n   and the original pointer is still valid — 'a = realloc(a, ...)' leaks it. */\nint *grown = realloc(a, (size_t) (2 * n) * sizeof *a);\nif (!grown) { free(a); return 1; }\na = grown;\n\nfree(a);\na = NULL;                  /* defensive: double-free of NULL is a no-op */\n\n/* Never return a pointer to a local — its stack frame is gone. */\nint *broken(void) { int x = 5; return &x; }        /* dangling */\nint *fine(void)   { int *p = malloc(sizeof *p); *p = 5; return p; }"
+        },
+        {
+          "order": 9,
+          "title": "Structs & Building Containers",
+          "body_md": "`struct` groups fields; `typedef` saves you writing `struct` everywhere. Since C ships no containers, a struct plus a few functions IS your container. Growable arrays, stacks, queues, hash tables and tries are all a few dozen lines — and writing them once teaches you more than using them a hundred times elsewhere.",
+          "code": "#include <stdlib.h>\n\ntypedef struct { int x, y; } Point;\n\nPoint p = {1, 2};\nPoint q = {.x = 1, .y = 2};      /* designated initialisers, clearer */\np.x = 5;\n\n/* Through a pointer, use -> */\nPoint *pp = &p;\npp->x = 7;                       /* same as (*pp).x */\n\n/* Self-referential structs need the tag name. */\ntypedef struct Node {\n    int val;\n    struct Node *next;           /* 'Node *next' is not yet valid here */\n} Node;\n\n/* A growable array — the vector you don't get. */\ntypedef struct { int *data; size_t len, cap; } Vec;\n\nvoid vec_push(Vec *v, int x) {\n    if (v->len == v->cap) {\n        v->cap = v->cap ? v->cap * 2 : 4;    /* double: amortised O(1) */\n        int *g = realloc(v->data, v->cap * sizeof *v->data);\n        if (!g) { free(v->data); exit(1); }\n        v->data = g;\n    }\n    v->data[v->len++] = x;\n}"
+        },
+        {
+          "order": 10,
+          "title": "Common Gotchas",
+          "body_md": "C's failure mode is that mistakes usually *appear to work*. Out-of-bounds reads return plausible garbage, use-after-free often returns the old value, and uninitialised variables are frequently zero by luck. This is why the sanitizers are not optional while learning: they convert 'works on my machine' into a precise error.",
+          "code": "/* 1. Uninitialised memory is garbage, not zero. malloc does NOT clear. */\nint *dp = calloc(n, sizeof *dp);        /* use calloc for tables */\n\n/* 2. sizeof on a parameter gives the pointer size. */\nvoid f(int a[]) { /* sizeof a == 8, not the array length */ }\n\n/* 3. = vs ==. This assigns and is always true. */\nif (x == 5) { }                         /* compare */\n\n/* 4. Comparing strings with == compares ADDRESSES. */\nif (strcmp(a, b) == 0) { }\n\n/* 5. Off-by-one on the terminator: a 5-char string needs 6 bytes. */\nchar buf[6];\nsnprintf(buf, sizeof buf, \"hello\");\n\n/* 6. %d for a long long, or %f to read a double — both UB.\n      -Wall catches format mismatches; leave it on. */\n\n/* 7. Signed overflow is UB. Use unsigned for bit twiddling. */\nunsigned mask = 1u << 31;               /* 1 << 31 on int is UB */\n\n/* 8. Modifying a string literal is UB, even though it compiles. */\nchar *lit = \"hello\";\n/* lit[0] = 'H';   <- crashes on most platforms */\nchar mut[] = \"hello\";\nmut[0] = 'H';                           /* fine: this is an array */"
+        }
+      ]
+    },
     "cpp": {
       "language": "cpp",
       "language_name": "C++",
@@ -2256,6 +2640,210 @@
           "code": "// overflow: int * int can overflow before assignment\nlong long product = 1LL * a * b;    // force 64-bit\n\n// division: cast to get a decimal\ndouble avg = (double)sum / n;\n\n// always size vectors before indexing\nvector<int> v(n);   // not: vector<int> v; v[0] = ...;"
         }
       ]
+    },
+    "go": {
+      "language": "go",
+      "language_name": "Go",
+      "tagline": "Small language, few surprises, fast enough.",
+      "intro": "Go is deliberately small — you can hold the whole language in your head — and it compiles to fast native code, so algorithmic solutions comfortably pass. The trade for DSA practice is a thin standard library: no priority queue you can just use, and until recently no generics, so you write a little more by hand than in C++ or Java. In exchange, nothing is hidden and nothing is magic.",
+      "sections": [
+        {
+          "order": 1,
+          "title": "Setup & Program Skeleton",
+          "body_md": "Install Go and check `go version` — 1.21 or newer, which added the builtin `min`/`max` and the `slices`/`maps` packages that make DSA code far less verbose. Run a single file with `go run main.go`. Every file declares a package; the entry point is `func main()` in `package main`. Unused imports and unused local variables are compile ERRORS, not warnings.",
+          "code": "package main\n\nimport \"fmt\"\n\nfunc main() {\n\tfmt.Println(\"Hello\")\n}\n\n// gofmt is not optional in practice — the whole ecosystem uses it, and\n// tabs-vs-spaces arguments simply don't happen. Run: gofmt -w main.go\n\n// Unused variables won't compile. Assign to _ when you genuinely mean it.\n_ = someValueIDontNeedYet"
+        },
+        {
+          "order": 2,
+          "title": "Input / Output",
+          "body_md": "`fmt.Scan` is convenient but slow. For competitive input use a `bufio.Scanner` split on words, and give it a large buffer — the default maximum token/line size is only 64KB and it fails silently past that. Buffer output too, with `bufio.Writer` and a deferred `Flush`.",
+          "code": "package main\n\nimport (\n\t\"bufio\"\n\t\"fmt\"\n\t\"os\"\n\t\"strconv\"\n)\n\nvar sc = bufio.NewScanner(os.Stdin)\nvar w = bufio.NewWriter(os.Stdout)\n\nfunc readInt() int {\n\tsc.Scan()\n\tn, _ := strconv.Atoi(sc.Text())\n\treturn n\n}\n\nfunc main() {\n\t// The default 64KB limit silently truncates big inputs — raise it.\n\tsc.Buffer(make([]byte, 1024*1024), 1024*1024)\n\tsc.Split(bufio.ScanWords)\n\tdefer w.Flush() // without this, buffered output is never written\n\n\tn := readInt()\n\tfmt.Fprintln(w, n)\n}"
+        },
+        {
+          "order": 3,
+          "title": "Types, Variables & Zero Values",
+          "body_md": "Every variable has a zero value — `0`, `\"\"`, `false`, `nil` — so declarations are never uninitialised. `int` is 64-bit on modern platforms, which removes most overflow worry, though it still wraps rather than erroring. Go has NO implicit numeric conversion: mixing `int` and `int64` is a compile error, which is verbose but catches real bugs.",
+          "code": "var i int = 42\nj := 42               // short declaration, type inferred\nvar s string          // \"\" — zero value, not nil\nvar f float64 = 3.14\nvar b bool            // false\nvar p *int            // nil\n\nconst MOD = 1_000_000_007\n\n// No implicit conversion — this is a compile error:\n//   var x int64 = i\nvar x int64 = int64(i)   // explicit, always\n\n// Integer division truncates toward zero.\nfmt.Println(7 / 2)       // 3\nfmt.Println(-7 / 2)      // -3  (Python would floor to -4)\nfmt.Println(7 % 2)       // 1\nfmt.Println(float64(7) / 2)\n\n// min/max are builtins since 1.21 — no more hand-written helpers.\nfmt.Println(max(3, 7), min(3, 7))\n\n// Multiple return values are pervasive, especially (value, ok).\nfunc divide(a, b int) (int, error) {\n\tif b == 0 {\n\t\treturn 0, fmt.Errorf(\"divide by zero\")\n\t}\n\treturn a / b, nil\n}"
+        },
+        {
+          "order": 4,
+          "title": "Control Flow",
+          "body_md": "There is exactly one loop keyword: `for`. It covers the C-style loop, the while loop, the infinite loop, and iteration via `range`. `if` can declare a variable scoped to the statement, which is the idiomatic way to handle a `(value, ok)` pair. `switch` does NOT fall through by default — the opposite of C.",
+          "code": "for i := 0; i < n; i++ { }\nfor i < n { }                 // this is Go's 'while'\nfor { break }                 // infinite\n\nfor i, x := range nums { }    // index and value\nfor _, x := range nums { }    // value only\nfor k, v := range m { }       // map: order is RANDOMISED by design\nfor i := range 10 { }         // 1.22+: 0..9\n\n// if with a scoped declaration — the standard (value, ok) shape.\nif v, ok := m[key]; ok {\n\tfmt.Println(v)\n}\n\n// switch: no fall-through; use 'fallthrough' explicitly if you want it.\nswitch {\ncase x < 0:\n\tsign = -1\ncase x > 0:\n\tsign = 1\ndefault:\n\tsign = 0\n}\n\n// Labelled break to escape nested loops.\nouter:\nfor r := range grid {\n\tfor c := range grid[r] {\n\t\tif grid[r][c] == target {\n\t\t\tbreak outer\n\t\t}\n\t}\n}"
+        },
+        {
+          "order": 5,
+          "title": "Functions, Closures & defer",
+          "body_md": "Functions are values, so closures are the natural way to write a recursive helper that needs shared state — declare the variable first, then assign the function, or the recursive call cannot see the name. `defer` runs on function exit and is the standard way to guarantee a flush or unlock.",
+          "code": "func add(a, b int) int { return a + b }\n\n// Named results, and multiple returns.\nfunc divmod(a, b int) (q, r int) {\n\tq, r = a/b, a%b\n\treturn // naked return uses the named results\n}\n\n// Recursive closure: declare, THEN assign. Writing\n//   dfs := func(u int) { dfs(...) }\n// fails because dfs isn't in scope inside its own literal.\nvar dfs func(u int)\ndfs = func(u int) {\n\tvisited[u] = true\n\tfor _, v := range adj[u] {\n\t\tif !visited[v] {\n\t\t\tdfs(v)\n\t\t}\n\t}\n}\ndfs(0)\n\n// defer: runs when the function returns, LIFO order.\nfunc process() {\n\tdefer w.Flush()\n\t// ... work\n}\n\n// Generics (1.18+) for the helpers the stdlib doesn't give you.\nfunc abs[T int | int64 | float64](x T) T {\n\tif x < 0 {\n\t\treturn -x\n\t}\n\treturn x\n}"
+        },
+        {
+          "order": 6,
+          "title": "Arrays, Slices & the Aliasing Trap",
+          "body_md": "An array has a fixed length that is part of its type; a slice is a view (pointer, length, capacity) over a backing array — and slices are what you actually use. The crucial consequence: two slices can share one backing array, so writing through one is visible through the other. `append` may or may not reallocate, which makes this intermittent and therefore easy to miss.",
+          "code": "var arr [5]int              // ARRAY: length is part of the type, copied on assign\ns := []int{3, 1, 2}         // SLICE: a view, cheap to pass\ns = append(s, 4)\n\nmade := make([]int, 5)      // len 5, zeroed\nbuf := make([]int, 0, 100)  // len 0, cap 100 — avoids regrowth\n\nfmt.Println(len(s), cap(s))\n\n// Slicing shares memory — this is the trap.\na := []int{1, 2, 3, 4}\nb := a[1:3]                 // [2 3], SAME backing array\nb[0] = 99                   // a is now [1 99 3 4]\n\n// Copy when you need independence.\nc := make([]int, len(a))\ncopy(c, a)\nd := append([]int(nil), a...)   // idiomatic clone\n\n// This bites hardest in backtracking: append the slice itself and every\n// result aliases the same buffer.\nout = append(out, append([]int(nil), cur...))   // copy, always\n\n// 2-D: allocate each row.\ngrid := make([][]int, rows)\nfor i := range grid {\n\tgrid[i] = make([]int, cols)\n}"
+        },
+        {
+          "order": 7,
+          "title": "Strings, Bytes & Runes",
+          "body_md": "A string is an immutable slice of BYTES. Indexing gives a byte; `range` gives runes (Unicode code points) along with their byte offsets. For ASCII interview input the two coincide, so it is easy to write byte-indexing code that quietly breaks on anything else. Build strings with `strings.Builder`, never `+=` in a loop.",
+          "code": "import (\n\t\"strings\"\n\t\"strconv\"\n)\n\ns := \"hello\"\ns[0]                       // byte 104, NOT \"h\"\nstring(s[0])               // \"h\"\nlen(s)                     // BYTES\nlen([]rune(s))             // characters\n\nfor i, r := range s {      // i is a BYTE offset; r is a rune\n\t_ = i\n\t_ = r\n}\n\nstrings.Split(\"a,b\", \",\")\nstrings.Join([]string{\"a\", \"b\"}, \"-\")\nstrings.Contains(s, \"ell\")\nstrings.ToUpper(s)\nstrings.TrimSpace(s)\nstrings.Repeat(\"ab\", 3)\nstrconv.Itoa(42)\nn, _ := strconv.Atoi(\"42\")\n\n// Build with a Builder: strings are immutable, so += is O(n^2).\nvar sb strings.Builder\nfor i := 0; i < n; i++ {\n\tsb.WriteByte('a')\n}\nresult := sb.String()\n\n// Mutating: convert to []byte (or []rune for non-ASCII), edit, convert back.\nbs := []byte(s)\nbs[0] = 'H'\ns = string(bs)"
+        },
+        {
+          "order": 8,
+          "title": "Maps & Sets",
+          "body_md": "Maps are hash tables with O(1) average access. Two things to internalise: reading a missing key returns the zero value rather than an error (so `m[k]++` just works, but you cannot tell absent from zero without the two-value form), and iteration order is deliberately randomised so you must sort keys for deterministic output.",
+          "code": "import (\n\t\"slices\"\n\t\"maps\"\n)\n\nm := map[string]int{}          // or make(map[string]int)\nm[\"a\"] = 1\nm[\"b\"]++                       // zero value means no initialisation needed\n\nv, ok := m[\"c\"]                 // ok distinguishes absent from zero\ndelete(m, \"a\")\nlen(m)\n\n// Writing to a NIL map panics; reading one is fine. Always make() it.\nvar nilMap map[string]int\n// nilMap[\"x\"] = 1   <- panic: assignment to entry in nil map\n\n// Iteration order is RANDOM by design. Sort keys when output must be stable.\nkeys := slices.Collect(maps.Keys(m))   // 1.23+; else a manual loop\nslices.Sort(keys)\nfor _, k := range keys {\n\t_ = m[k]\n}\n\n// A set is a map to empty structs — struct{} takes zero bytes.\nseen := map[int]struct{}{}\nseen[42] = struct{}{}\nif _, exists := seen[42]; exists { }\n\n// Adjacency list.\nadj := map[int][]int{}\nadj[u] = append(adj[u], v)      // append works on a nil slice"
+        },
+        {
+          "order": 9,
+          "title": "Sorting, slices & container/heap",
+          "body_md": "The `slices` package (1.21+) is what you want: `slices.Sort`, `slices.BinarySearch`, `slices.Contains`, `slices.Reverse` — all generic, all concise. For a priority queue there is no ready-made type: `container/heap` supplies the algorithms and you implement five methods to supply the storage.",
+          "code": "import (\n\t\"container/heap\"\n\t\"slices\"\n\t\"sort\"\n)\n\nslices.Sort(nums)\nslices.Reverse(nums)\nslices.Contains(nums, 3)\ni, found := slices.BinarySearch(nums, 3)\nslices.Max(nums); slices.Min(nums)\n\n// Custom order: return negative / zero / positive.\nslices.SortFunc(people, func(a, b Person) int {\n\tif a.Age != b.Age {\n\t\treturn a.Age - b.Age\n\t}\n\treturn b.Score - a.Score      // tie-break, descending\n})\n\n// Stable sort when equal elements must keep their order.\nsort.SliceStable(xs, func(i, j int) bool { return xs[i].K < xs[j].K })\n\n// Priority queue: implement heap.Interface.\ntype IntHeap []int\n\nfunc (h IntHeap) Len() int           { return len(h) }\nfunc (h IntHeap) Less(i, j int) bool { return h[i] < h[j] }  // min-heap\nfunc (h IntHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }\nfunc (h *IntHeap) Push(x any)        { *h = append(*h, x.(int)) }\nfunc (h *IntHeap) Pop() any {\n\told := *h\n\tn := len(old)\n\tx := old[n-1]\n\t*h = old[:n-1]\n\treturn x\n}\n\n// Call heap.Push/heap.Pop — never the methods directly, or the invariant\n// is not maintained.\nh := &IntHeap{}\nheap.Init(h)\nheap.Push(h, 5)\nsmallest := heap.Pop(h).(int)"
+        },
+        {
+          "order": 10,
+          "title": "Common Gotchas",
+          "body_md": "Go has fewer traps than C++ or Python, and the ones it has are mostly about slices sharing memory and nil maps. The compiler catches a surprising amount — unused variables, unused imports, missing conversions — so lean on it rather than fighting it.",
+          "code": "// 1. Slice aliasing: append the slice itself in backtracking and every\n//    result points at the same buffer.\nout = append(out, append([]int(nil), cur...))   // copy\n\n// 2. append may or may not reallocate, so whether the caller sees your\n//    writes is not predictable. Return the slice.\nfunc add(s []int) []int { return append(s, 1) }\ns = add(s)\n\n// 3. Writing to a nil map panics.\nm := make(map[string]int)   // not: var m map[string]int\n\n// 4. Map iteration order is randomised — never rely on it.\n\n// 5. Loop variable capture. Before Go 1.22 every goroutine/closure shared\n//    ONE loop variable; 1.22+ gives each iteration its own.\nfor _, x := range nums {\n\tx := x                  // the pre-1.22 fix, harmless afterwards\n\tfuncs = append(funcs, func() int { return x })\n}\n\n// 6. Integer division truncates; convert before dividing for a real result.\navg := float64(sum) / float64(len(nums))\n\n// 7. Comparing slices with == is a compile error (only to nil is allowed).\nslices.Equal(a, b)\n\n// 8. defer runs at FUNCTION exit, not at end of block — a defer inside a\n//    loop accumulates until the function returns."
+        }
+      ]
+    },
+    "java": {
+      "language": "java",
+      "language_name": "Java",
+      "tagline": "Verbose, predictable, and everywhere in placements.",
+      "intro": "Java is the safe default for Indian placement drives: nearly every online assessment platform supports it, the standard library is deep, and the JVM is fast enough that a clean O(n log n) solution never times out. The cost is ceremony — you will type more than in Python. Learn the Collections framework properly and most of that verbosity turns into muscle memory.",
+      "sections": [
+        {
+          "order": 1,
+          "title": "Setup & Program Skeleton",
+          "body_md": "Install a JDK (21 LTS is a good default) and check `java -version`. Since JDK 11 you can run a single file directly with `java Main.java` — no separate `javac` step — which is ideal for practice. Online judges expect the class to be named `Main` and the file to match. Everything lives inside a class; there are no free functions.",
+          "code": "public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"Hello\");\n    }\n}\n\n// Helper methods must be static to be called from static main.\nstatic int add(int a, int b) { return a + b; }"
+        },
+        {
+          "order": 2,
+          "title": "Fast Input / Output",
+          "body_md": "`Scanner` is convenient and far too slow: it does regex parsing per token and will time out past roughly 10^5 values. Use `BufferedReader` with `StringTokenizer` for input, and buffer your output too — `System.out.println` in a tight loop flushes constantly and is a common cause of a mysterious TLE.",
+          "code": "import java.io.*;\nimport java.util.*;\n\nBufferedReader br = new BufferedReader(new InputStreamReader(System.in));\nint n = Integer.parseInt(br.readLine().trim());\n\n// Several integers on one line.\nStringTokenizer st = new StringTokenizer(br.readLine());\nint a = Integer.parseInt(st.nextToken());\nint b = Integer.parseInt(st.nextToken());\n\n// Buffered output — build up, then flush once.\nStringBuilder sb = new StringBuilder();\nfor (int i = 0; i < n; i++) sb.append(i).append('\\n');\nSystem.out.print(sb);"
+        },
+        {
+          "order": 3,
+          "title": "Types, Variables & Operators",
+          "body_md": "`int` is 32-bit and overflows silently at about 2.1 billion — no exception, just a wrong answer. Use `long` the moment sums or products could exceed that. Integer division truncates. `char` is a 16-bit UTF-16 code unit, and `char` arithmetic works, which is why `c - 'a'` is the standard way to index an alphabet array.",
+          "code": "int i = 42;\nlong big = 1_000_000_007L;        // underscores are legal separators\ndouble d = 3.14;\nchar c = 'a';\nboolean flag = true;\n\n// Overflow: promote BEFORE multiplying, not after.\nint a = 100000, b = 100000;\nlong bad  = a * b;                // overflows as int, then widens — wrong\nlong good = (long) a * b;         // correct\n\n// Integer division truncates toward zero.\nSystem.out.println(5 / 2);        // 2\nSystem.out.println(5 / 2.0);      // 2.5\n\n// Ceiling division without floating point.\nint ceilDiv = (x + y - 1) / y;\n\n// Alphabet indexing.\nint idx = c - 'a';                // 0..25"
+        },
+        {
+          "order": 4,
+          "title": "Control Flow",
+          "body_md": "Standard C-family syntax. The enhanced `for` (`for (int x : arr)`) is cleaner when you don't need the index. Labelled `break` lets you exit nested loops in one step, which is genuinely useful in grid problems. Modern `switch` expressions remove the fall-through footgun.",
+          "code": "for (int i = 0; i < n; i++) { }\nfor (int x : arr) { }            // enhanced for — no index\nwhile (cond) { }\ndo { } while (cond);\n\n// Labelled break: escape both loops at once.\nouter:\nfor (int r = 0; r < rows; r++) {\n    for (int c = 0; c < cols; c++) {\n        if (grid[r][c] == target) break outer;\n    }\n}\n\n// switch expression (JDK 14+) — arrow form, no fall-through, returns a value.\nint days = switch (month) {\n    case 2 -> 28;\n    case 4, 6, 9, 11 -> 30;\n    default -> 31;\n};"
+        },
+        {
+          "order": 5,
+          "title": "Methods, References & Scope",
+          "body_md": "Java is always pass-by-value — but for objects the value passed is the reference. So a method can mutate the array or list you hand it, yet cannot make your variable point at a different object. This distinction explains most surprises about \"why did my array change?\" and \"why didn't my swap work?\".",
+          "code": "// Mutating through the reference: the caller SEES this.\nstatic void fill(int[] a) { a[0] = 99; }\n\n// Reassigning the parameter: the caller does NOT see this.\nstatic void reassign(int[] a) { a = new int[]{1, 2, 3}; }\n\n// So you cannot write swap(int, int) — primitives are copied.\n// Return a value, or swap inside an array.\nstatic void swap(int[] a, int i, int j) { int t = a[i]; a[i] = a[j]; a[j] = t; }\n\n// Varargs for a variable number of arguments.\nstatic int sum(int... xs) {\n    int s = 0;\n    for (int x : xs) s += x;\n    return s;\n}"
+        },
+        {
+          "order": 6,
+          "title": "Arrays & 2-D Arrays",
+          "body_md": "Arrays are fixed-length objects with a `.length` field (not a method). They are zero-initialised: `0`, `false`, or `null`. A 2-D array is an array of row references, so rows can differ in length — and copying a 2-D array with `clone()` copies only the row references, not the rows themselves.",
+          "code": "int[] a = new int[5];             // all zeros\nint[] b = {3, 1, 2};\nSystem.out.println(b.length);     // field, not length()\n\nint[][] grid = new int[3][4];      // 3 rows, 4 cols\nint[][] jagged = new int[3][];     // rows allocated separately\n\nArrays.sort(b);\nArrays.fill(a, -1);\nint[] copy = Arrays.copyOf(b, b.length);\nint pos = Arrays.binarySearch(b, 2);   // array MUST be sorted\nSystem.out.println(Arrays.toString(b));\nSystem.out.println(Arrays.deepToString(grid));   // for nested arrays\n\n// Shallow copy trap: rows are shared.\nint[][] shallow = grid.clone();\nshallow[0][0] = 99;               // also changes grid[0][0]"
+        },
+        {
+          "order": 7,
+          "title": "Strings",
+          "body_md": "`String` is immutable, so every concatenation allocates a new object — building a string with `+=` in a loop is O(n^2) and is the single most common performance mistake in Java interview code. Use `StringBuilder`. Compare with `.equals()`, never `==`: `==` compares references, and it appears to work for short literals because of the string pool, which makes the bug intermittent.",
+          "code": "String s = \"hello\";\ns.charAt(0);\ns.length();\ns.substring(1, 3);                // [1, 3)\ns.indexOf('l');\ns.toCharArray();\nString.valueOf(42);\nInteger.parseInt(\"42\");\n\n// Comparison: .equals for value, == for identity.\nString x = \"ab\", y = \"a\" + \"b\";\nSystem.out.println(x.equals(y));  // true — what you want\n\n// Building: StringBuilder, not +=.\nStringBuilder sb = new StringBuilder();\nfor (int i = 0; i < n; i++) sb.append(i);\nsb.reverse();\nString out = sb.toString();\n\n// Char frequency over an alphabet.\nint[] freq = new int[26];\nfor (char c : s.toCharArray()) freq[c - 'a']++;"
+        },
+        {
+          "order": 8,
+          "title": "The Collections Framework",
+          "body_md": "Java's answer to the STL. Declare variables by the interface (`List`, `Map`, `Set`, `Deque`) and instantiate the implementation — it keeps your code flexible and reads better in interviews. Collections hold objects, not primitives, so `List<Integer>` autoboxes; that costs memory and time, and it means `==` between two `Integer` objects can be false.",
+          "code": "List<Integer> list = new ArrayList<>();      // vector\nMap<String, Integer> map = new HashMap<>();   // unordered_map\nSet<Integer> set = new HashSet<>();           // unordered_set\nDeque<Integer> dq = new ArrayDeque<>();       // stack AND queue\nMap<String, Integer> ordered = new TreeMap<>();  // sorted, O(log n)\nPriorityQueue<Integer> pq = new PriorityQueue<>(); // MIN-heap by default\n\n// Counting idiom.\nmap.merge(key, 1, Integer::sum);\nmap.getOrDefault(key, 0);\nmap.computeIfAbsent(key, k -> new ArrayList<>()).add(v);\n\n// Iterate a map.\nfor (Map.Entry<String, Integer> e : map.entrySet())\n    System.out.println(e.getKey() + \" \" + e.getValue());\n\n// Autoboxing trap: compare boxed values with .equals or intValue().\nInteger p = 1000, q = 1000;\nSystem.out.println(p == q);        // false — different objects\nSystem.out.println(p.equals(q));   // true"
+        },
+        {
+          "order": 9,
+          "title": "Sorting & Comparators",
+          "body_md": "`Arrays.sort` on primitives is a dual-pivot quicksort with no stability guarantee and an O(n^2) adversarial worst case; on objects it is a stable merge sort. If worst-case matters on primitive input, box to `Integer[]`. `Comparator` has fluent factory methods that read far better than a hand-written `compare`, and `comparingInt` avoids boxing.",
+          "code": "int[] a = {3, 1, 2};\nArrays.sort(a);                                   // ascending only\nArrays.sort(boxed, Comparator.reverseOrder());     // descending needs objects\n\nList<String> names = new ArrayList<>(List.of(\"bb\", \"a\", \"ccc\"));\nnames.sort(Comparator.comparingInt(String::length));\nnames.sort(Comparator.comparingInt(String::length).reversed());\n\n// Multi-key: age ascending, then score descending.\npeople.sort(Comparator.comparingInt(Person::age)\n                      .thenComparing(Person::score, Comparator.reverseOrder()));\n\n// Sorting a 2-D array by the second column.\nArrays.sort(intervals, Comparator.comparingInt(r -> r[1]));\n\n// NEVER write (a, b) -> a - b for ints that can be large: the subtraction\n// itself overflows and the comparator starts lying.\nComparator<Integer> safe = Integer::compare;"
+        },
+        {
+          "order": 10,
+          "title": "Common Gotchas",
+          "body_md": "The bugs that cost real interview time: silent `int` overflow, `==` on strings and boxed integers, `+=` string building, and `NullPointerException` from a map lookup that returned `null` and was then unboxed. Also remember arrays print as a hash unless you use `Arrays.toString`, and that removing from a list while iterating throws `ConcurrentModificationException`.",
+          "code": "// 1. Overflow — cast before multiplying.\nlong ok = (long) a * b;\n\n// 2. Unboxing null: map.get on a missing key returns null, and assigning it\n//    to an int throws NPE at the assignment, not at the lookup.\nint bad = map.get(\"missing\");            // NullPointerException\nint good = map.getOrDefault(\"missing\", 0);\n\n// 3. Printing arrays.\nSystem.out.println(arr);                 // [I@1b6d3586\nSystem.out.println(Arrays.toString(arr));\n\n// 4. Mutating while iterating — use an Iterator or removeIf.\nlist.removeIf(x -> x < 0);\n\n// 5. List.of(...) is IMMUTABLE. Wrap it to modify.\nList<Integer> fixed = List.of(1, 2, 3);  // add() throws\nList<Integer> mutable = new ArrayList<>(List.of(1, 2, 3));\n\n// 6. char + char promotes to int.\nchar c = 'a';\nSystem.out.println(c + 1);               // 98, not 'b'\nSystem.out.println((char) (c + 1));      // b"
+        }
+      ]
+    },
+    "py": {
+      "language": "py",
+      "language_name": "Python",
+      "tagline": "Least code between you and the idea.",
+      "intro": "Python lets you write a solution almost as fast as you can think of it, which is exactly what you want while learning patterns. The trade-off is speed: it is roughly 30-100x slower than C++, so a solution that is algorithmically correct can still time out. That is not a reason to avoid it — it is a reason to learn which built-ins are implemented in C, and to reach for them.",
+      "sections": [
+        {
+          "order": 1,
+          "title": "Setup & Program Skeleton",
+          "body_md": "Install CPython 3.11 or newer (`python3 --version`) — 3.11 was a large performance release and 3.12+ improves error messages further. There is no boilerplate: a bare script runs top to bottom. The `if __name__ == '__main__'` guard matters when a file might be imported; for judge submissions it is optional but harmless.",
+          "code": "def solve() -> None:\n    print(\"Hello\")\n\nif __name__ == '__main__':\n    solve()\n\n# Type hints are optional and ignored at runtime, but they make interview\n# code much easier to read — and force you to say what you mean.\ndef two_sum(nums: list[int], target: int) -> tuple[int, int] | None:\n    ..."
+        },
+        {
+          "order": 2,
+          "title": "Fast Input / Output",
+          "body_md": "`input()` is slow because it handles prompts and line editing. For competitive input, read the whole of stdin at once and split it. Likewise, `print` per line flushes often — collect lines and join them. This single change is frequently the difference between TLE and accepted.",
+          "code": "import sys\n\ninput = sys.stdin.readline          # cheap upgrade; note it KEEPS the '\\n'\nn = int(input())\na = list(map(int, input().split()))\n\n# Fastest: consume everything, then walk a token list.\ndata = sys.stdin.buffer.read().split()\nn = int(data[0])\nnums = list(map(int, data[1:1 + n]))\n\n# Buffered output.\nout = []\nfor x in nums:\n    out.append(str(x))\nsys.stdout.write('\\n'.join(out) + '\\n')"
+        },
+        {
+          "order": 3,
+          "title": "Types, Variables & Operators",
+          "body_md": "Integers are arbitrary precision — there is no overflow, ever, which removes a whole class of bug that C++ and Java suffer from. The trap is division: `/` always produces a float, so use `//` for integer division. And `//` floors toward negative infinity, so `-7 // 2` is `-4`, not `-3` as in C++ or Java.",
+          "code": "i = 42\nbig = 2 ** 200                    # no overflow, arbitrary precision\nd = 3.14\ns = 'text'\nflag = True                        # capital T\nnothing = None\n\nprint(7 / 2)                       # 3.5   — always float\nprint(7 // 2)                      # 3     — floor division\nprint(-7 // 2)                     # -4    — FLOORS, unlike C++/Java (-3)\nprint(-7 % 2)                      # 1     — result takes the divisor's sign\nprint(divmod(7, 2))                # (3, 1)\n\n# Chained comparison and multiple assignment.\nif 0 <= i < 100:\n    pass\na, b = b, a                        # swap, no temp\n\n# Truthiness: empty containers, 0, '' and None are all falsy.\nif not nums:\n    return 0"
+        },
+        {
+          "order": 4,
+          "title": "Control Flow",
+          "body_md": "Indentation is the block structure — four spaces, consistently. `range(a, b, step)` is half-open. `enumerate` gives index and value together, `zip` walks several sequences in lockstep, and `for ... else` runs the `else` only if the loop finished without `break`, which is occasionally exactly what you want.",
+          "code": "for i in range(n):                 # 0 .. n-1\n    pass\nfor i in range(n - 1, -1, -1):     # countdown to 0\n    pass\nfor i, x in enumerate(nums):\n    pass\nfor x, y in zip(xs, ys):\n    pass\n\nwhile cond:\n    pass\n\n# for/else — else runs only if no break happened.\nfor p in primes:\n    if n % p == 0:\n        break\nelse:\n    print('no factor found')\n\n# match (3.10+), for when a chain of elifs gets unreadable.\nmatch op:\n    case '+': r = a + b\n    case '-': r = a - b\n    case _:   r = 0"
+        },
+        {
+          "order": 5,
+          "title": "Functions, Closures & Mutable Defaults",
+          "body_md": "Nested functions can read enclosing variables, which makes recursive helpers inside a solution function very natural. Two traps: a mutable default argument is created ONCE and shared across all calls, and assigning to a name inside a function makes it local unless you declare `nonlocal`.",
+          "code": "def outer(nums: list[int]) -> int:\n    best = 0\n\n    def helper(i: int) -> None:\n        nonlocal best              # without this, 'best = ...' makes a LOCAL\n        best = max(best, nums[i])\n\n    for i in range(len(nums)):\n        helper(i)\n    return best\n\n# Mutable default trap — the list is created once, at definition time.\ndef bad(x, acc=[]):               # DON'T\n    acc.append(x)\n    return acc\n\ndef good(x, acc=None):            # DO\n    if acc is None:\n        acc = []\n    acc.append(x)\n    return acc\n\n# Memoisation for free.\nfrom functools import cache\n\n@cache\ndef fib(n: int) -> int:\n    return n if n <= 1 else fib(n - 1) + fib(n - 2)"
+        },
+        {
+          "order": 6,
+          "title": "Lists & Slicing",
+          "body_md": "A list is a dynamic array: O(1) append and pop from the END, but O(n) insert or pop at the front — use `collections.deque` when you need both ends. Slicing always COPIES, which is why `a[:]` is a quick clone and why slicing inside a loop can turn an O(n) algorithm into O(n^2).",
+          "code": "a = [3, 1, 2]\na.append(4)\na.pop()                            # from the end, O(1)\na.pop(0)                           # from the front, O(n) — prefer deque\na.insert(0, 9)                     # O(n)\na.extend([5, 6])\n\na[1:3]                             # [1, 3) — a COPY\na[::-1]                            # reversed copy\na[::2]                             # every other element\nb = a[:]                           # shallow clone\n\nlen(a); sum(a); max(a); min(a)\nsorted(a); sorted(a, reverse=True)\na.sort()                           # in place\n\n# Comprehensions — the idiomatic map/filter.\nsquares = [x * x for x in a]\nevens = [x for x in a if x % 2 == 0]\ngrid = [[0] * cols for _ in range(rows)]\n\n# 2-D trap: [[0] * cols] * rows shares ONE row object.\nbad = [[0] * 3] * 3\nbad[0][0] = 1                      # every row now starts with 1"
+        },
+        {
+          "order": 7,
+          "title": "Strings",
+          "body_md": "Strings are immutable sequences, so `+=` in a loop is O(n^2) — build a list and `join`. Otherwise they behave like lists: index, slice, and iterate. `str` methods cover most of what interview problems need, and f-strings are the modern way to format.",
+          "code": "s = 'hello world'\ns[0]; s[-1]; s[1:4]\ns.upper(); s.lower()\ns.split()                          # on whitespace\ns.split(',')\n', '.join(['a', 'b'])\ns.strip(); s.replace('l', 'L')\ns.startswith('he'); s.find('lo')   # find returns -1 when absent\ns.isalnum(); s.isdigit()\nord('a'); chr(97)\n\n# Build with join, not +=.\nparts = [c.upper() for c in s if c.isalpha()]\nresult = ''.join(parts)\n\n# f-strings.\nprint(f'{n} items, {ratio:.2f} ratio')\n\n# Frequency counting.\nfrom collections import Counter\nfreq = Counter(s)\nfreq.most_common(3)"
+        },
+        {
+          "order": 8,
+          "title": "Dicts, Sets & collections",
+          "body_md": "`dict` and `set` are hash tables with average O(1) lookup, and dicts have preserved insertion order since 3.7. `collections` adds the three types you will reach for constantly: `defaultdict` (no KeyError on first touch), `Counter` (counting, done) and `deque` (O(1) at both ends).",
+          "code": "d = {'a': 1}\nd['b'] = 2\nd.get('c', 0)                      # default instead of KeyError\nd.setdefault('c', [])\nd.keys(); d.values(); d.items()\n'a' in d                           # O(1)\ndel d['a']\n\nseen = {1, 2, 3}                   # set literal\nempty = set()                      # {} is an empty DICT, not a set\nseen.add(4); seen.discard(9)       # discard won't raise\nseen & other; seen | other; seen - other\n\nfrom collections import defaultdict, Counter, deque\n\ng = defaultdict(list)              # adjacency list in one line\ng[u].append(v)\n\ncnt = defaultdict(int)\ncnt[x] += 1                        # no initialisation needed\n\nfreq = Counter(nums)\n\ndq = deque([1, 2, 3])\ndq.appendleft(0); dq.popleft()      # both O(1)"
+        },
+        {
+          "order": 9,
+          "title": "Sorting, heapq & bisect",
+          "body_md": "`sorted`/`list.sort` are Timsort: O(n log n), stable, and implemented in C so they are genuinely fast. The `key` function is how you sort by anything; return a tuple for multi-key ordering. `heapq` gives a min-heap over a plain list, and `bisect` gives binary search — reach for these rather than hand-rolling.",
+          "code": "nums.sort()\nnums.sort(reverse=True)\nwords.sort(key=len)\n# Multi-key: age ascending, then score descending.\npeople.sort(key=lambda p: (p.age, -p.score))\n\n# Sorting a dict by value.\ntop = sorted(freq.items(), key=lambda kv: kv[1], reverse=True)\n\nimport heapq\nheap = []\nheapq.heappush(heap, 3)\nheapq.heappop(heap)                # smallest\nheapq.heapify(xs)                  # O(n), in place\nheapq.nlargest(3, xs)\n# No max-heap: negate on the way in and out.\n\nimport bisect\ni = bisect.bisect_left(sorted_xs, x)    # lower_bound\nj = bisect.bisect_right(sorted_xs, x)   # upper_bound\nbisect.insort(sorted_xs, x)             # insert keeping order (O(n) move)"
+        },
+        {
+          "order": 10,
+          "title": "Common Gotchas",
+          "body_md": "The ones that bite in interviews: the default recursion limit of 1000, `[[0]*c]*r` sharing rows, mutable default arguments, `//` flooring on negatives, and mutating a list while iterating it. Also: Python is slow enough that you should prefer built-ins (`sum`, `max`, `sorted`, `any`) over hand-written loops, since those run in C.",
+          "code": "# 1. Recursion depth — trees and graphs with 10^5 nodes will blow the stack.\nimport sys\nsys.setrecursionlimit(300_000)\n\n# 2. 2-D grids: build rows independently.\ngrid = [[0] * cols for _ in range(rows)]     # correct\n# grid = [[0] * cols] * rows                 # WRONG — one shared row\n\n# 3. Don't mutate while iterating; build a new list.\nnums = [x for x in nums if x > 0]\n\n# 4. Floor division on negatives.\nprint(-7 // 2)                    # -4, not -3\nimport math\nprint(int(-7 / 2))                # -3, if you wanted truncation\nprint(math.ceil(7 / 2))           # 4\n\n# 5. Copying: assignment aliases, it does not copy.\nb = a                             # same list\nb = a[:]                          # shallow copy\nimport copy\nb = copy.deepcopy(nested)         # independent nested structure\n\n# 6. Prefer built-ins — they run in C.\ntotal = sum(nums)                 # much faster than a Python loop\nif any(x < 0 for x in nums):\n    pass"
+        }
+      ]
     }
   },
   "companies": [
@@ -2275,7 +2863,11 @@
     "topicCount": 19,
     "problemCount": 139,
     "languages": [
-      "cpp"
+      "c",
+      "cpp",
+      "go",
+      "java",
+      "py"
     ]
   }
 }

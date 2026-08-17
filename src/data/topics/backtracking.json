@@ -2,17 +2,39 @@
   "slug": "backtracking",
   "order": 7,
   "title": "Backtracking",
-  "explainer_md": "Backtracking is recursion that explores a decision tree, and **undoes** each choice before trying the next \u2014 'try, recurse, un-try'. It's how you enumerate all valid configurations (permutations, board placements, path fillings) without generating invalid ones. Whenever a partial solution can't possibly lead to a valid one, you prune that whole branch.\n\nThe defining move is the undo: you mutate shared state going down, then restore it coming back up. This is what lets one data structure serve the entire search instead of copying at every node.\n\nMental model: exploring a maze with a ball of string. At each junction you try a path; if it dead-ends, you follow the string back and try the next one.",
-  "patterns_md": "**The universal template**: `if (goal) record; else for each choice: apply \u2192 recurse \u2192 undo`. Almost every backtracking problem is this shape.\n\n**Pruning** \u2014 before recursing into a choice, check if it can still lead to a solution (e.g. is this queen placement safe?). Good pruning is the difference between fast and hopeless.\n\n**Used-set / in-place marking** \u2014 track which options are taken with a boolean array or by mutating the grid, and unmark on the way out.\n\n**Choice ordering** \u2014 sometimes sorting choices or fixing an order avoids duplicate solutions (e.g. `start` index in combinations).",
-  "complexity_md": "| Problem | Time (worst) | Space |\n|---|---|---|\n| Subsets | O(2^n) | O(n) depth |\n| Permutations | O(n! \u00b7 n) | O(n) |\n| N-Queens | O(n!) | O(n) |\n| Sudoku | O(9^(empty cells)) | O(1) board |\n\nBacktracking is exponential by nature \u2014 its value is *pruning* the search so the real running time is far below the worst case. Space is the recursion depth plus whatever state you carry.",
+  "explainer_md": "Backtracking is recursion that explores a decision tree, and **undoes** each choice before trying the next — 'try, recurse, un-try'. It's how you enumerate all valid configurations (permutations, board placements, path fillings) without generating invalid ones. Whenever a partial solution can't possibly lead to a valid one, you prune that whole branch.\n\nThe defining move is the undo: you mutate shared state going down, then restore it coming back up. This is what lets one data structure serve the entire search instead of copying at every node.\n\nMental model: exploring a maze with a ball of string. At each junction you try a path; if it dead-ends, you follow the string back and try the next one.",
+  "patterns_md": "**The universal template**: `if (goal) record; else for each choice: apply → recurse → undo`. Almost every backtracking problem is this shape.\n\n**Pruning** — before recursing into a choice, check if it can still lead to a solution (e.g. is this queen placement safe?). Good pruning is the difference between fast and hopeless.\n\n**Used-set / in-place marking** — track which options are taken with a boolean array or by mutating the grid, and unmark on the way out.\n\n**Choice ordering** — sometimes sorting choices or fixing an order avoids duplicate solutions (e.g. `start` index in combinations).",
+  "complexity_md": "| Problem | Time (worst) | Space |\n|---|---|---|\n| Subsets | O(2^n) | O(n) depth |\n| Permutations | O(n! · n) | O(n) |\n| N-Queens | O(n!) | O(n) |\n| Sudoku | O(9^(empty cells)) | O(1) board |\n\nBacktracking is exponential by nature — its value is *pruning* the search so the real running time is far below the worst case. Space is the recursion depth plus whatever state you carry.",
   "code": [
     {
+      "lang": "cpp",
       "label": "Universal backtracking template",
       "code": "void backtrack(State& s, vector<Solution>& out) {\n    if (isGoal(s)) { out.push_back(extract(s)); return; }\n    for (auto& choice : choices(s)) {\n        apply(s, choice);        // try\n        backtrack(s, out);       // recurse\n        undo(s, choice);         // un-try\n    }\n}"
     },
     {
-      "label": "N-Queens \u2014 safety check + placement",
+      "lang": "cpp",
+      "label": "N-Queens — safety check + placement",
       "code": "bool safe(vector<int>& col, int r, int c) {\n    for (int i = 0; i < r; i++)\n        if (col[i] == c || abs(col[i]-c) == abs(i-r)) return false;\n    return true;\n}\nvoid solve(int r, int n, vector<int>& col, int& count) {\n    if (r == n) { count++; return; }\n    for (int c = 0; c < n; c++)\n        if (safe(col, r, c)) {\n            col[r] = c;          // place\n            solve(r+1, n, col, count);\n            col[r] = -1;         // remove (backtrack)\n        }\n}"
+    },
+    {
+      "lang": "java",
+      "label": "Backtracking template",
+      "code": "// choose -> explore -> un-choose. The un-choose is what makes it\n// backtracking rather than plain recursion.\nstatic void permute(int[] nums, boolean[] used, List<Integer> cur, List<List<Integer>> out) {\n    if (cur.size() == nums.length) { out.add(new ArrayList<>(cur)); return; }\n    for (int i = 0; i < nums.length; i++) {\n        if (used[i]) continue;\n        used[i] = true; cur.add(nums[i]);        // choose\n        permute(nums, used, cur, out);           // explore\n        cur.remove(cur.size() - 1); used[i] = false; // un-choose\n    }\n}\n\n// N-Queens: the pruning is the whole algorithm. Track occupied columns and\n// both diagonals so a conflict is O(1) to detect.\nboolean[] col = new boolean[n], diag = new boolean[2 * n], anti = new boolean[2 * n];\n// for cell (r, c): diag index r + c, anti index r - c + n"
+    },
+    {
+      "lang": "py",
+      "label": "Backtracking template",
+      "code": "# choose -> explore -> un-choose. The un-choose is what makes it backtracking.\ndef permutations(nums: list[int]) -> list[list[int]]:\n    out: list[list[int]] = []\n    used = [False] * len(nums)\n\n    def go(cur: list[int]) -> None:\n        if len(cur) == len(nums):\n            out.append(cur[:])\n            return\n        for i, x in enumerate(nums):\n            if used[i]:\n                continue\n            used[i] = True\n            cur.append(x)           # choose\n            go(cur)                 # explore\n            cur.pop()               # un-choose\n            used[i] = False\n\n    go([])\n    return out\n\n# Combination sum: allow reuse by passing i (not i + 1); prune when over target.\ndef combination_sum(nums: list[int], target: int) -> list[list[int]]:\n    out: list[list[int]] = []\n\n    def go(i: int, remaining: int, cur: list[int]) -> None:\n        if remaining == 0:\n            out.append(cur[:]); return\n        if i == len(nums) or remaining < 0:\n            return\n        cur.append(nums[i])\n        go(i, remaining - nums[i], cur)   # reuse the same element\n        cur.pop()\n        go(i + 1, remaining, cur)         # move on\n\n    go(0, target, [])\n    return out"
+    },
+    {
+      "lang": "c",
+      "label": "Backtracking template",
+      "code": "#include <string.h>\n\n/* choose -> explore -> un-choose. With manual memory the un-choose is\n   usually just decrementing a length. */\nvoid permute(int *nums, int n, int *used, int *cur, int curLen,\n             void (*emit)(const int *, int)) {\n    if (curLen == n) { emit(cur, curLen); return; }\n    for (int i = 0; i < n; i++) {\n        if (used[i]) continue;\n        used[i] = 1; cur[curLen] = nums[i];          /* choose */\n        permute(nums, n, used, cur, curLen + 1, emit); /* explore */\n        used[i] = 0;                                  /* un-choose */\n    }\n}\n\n/* N-Queens: the pruning IS the algorithm. Track occupied columns and both\n   diagonals so a conflict is O(1) to test.\n   For cell (r, c): diagonal r + c, anti-diagonal r - c + n. */\nint solveQueens(int n, int row, char *col, char *diag, char *anti) {\n    if (row == n) return 1;\n    int count = 0;\n    for (int c = 0; c < n; c++) {\n        int d = row + c, ad = row - c + n;\n        if (col[c] || diag[d] || anti[ad]) continue;\n        col[c] = diag[d] = anti[ad] = 1;\n        count += solveQueens(n, row + 1, col, diag, anti);\n        col[c] = diag[d] = anti[ad] = 0;\n    }\n    return count;\n}"
+    },
+    {
+      "lang": "go",
+      "label": "Backtracking template",
+      "code": "// choose -> explore -> un-choose.\nfunc permute(nums []int) [][]int {\n\tvar out [][]int\n\tvar cur []int\n\tused := make([]bool, len(nums))\n\n\tvar rec func()\n\trec = func() {\n\t\tif len(cur) == len(nums) {\n\t\t\tout = append(out, append([]int(nil), cur...)) // copy\n\t\t\treturn\n\t\t}\n\t\tfor i, x := range nums {\n\t\t\tif used[i] {\n\t\t\t\tcontinue\n\t\t\t}\n\t\t\tused[i] = true\n\t\t\tcur = append(cur, x) // choose\n\t\t\trec()                // explore\n\t\t\tcur = cur[:len(cur)-1]\n\t\t\tused[i] = false // un-choose\n\t\t}\n\t}\n\trec()\n\treturn out\n}\n\n// N-Queens pruning: track occupied columns and both diagonals so a conflict\n// is O(1) to test. For cell (r,c): diagonal r+c, anti-diagonal r-c+n.\ncol := make([]bool, n)\ndiag := make([]bool, 2*n)\nanti := make([]bool, 2*n)"
     }
   ],
   "problems": [
@@ -22,10 +44,8 @@
       "platform": "LeetCode",
       "difficulty": "Medium",
       "tier": "warmup",
-      "companies": [
-        "Amazon",
-        "Meta"
-      ]
+      "companies": [],
+      "video": "https://www.youtube.com/watch?v=REOH22Xwdkk"
     },
     {
       "name": "Combination Sum",
@@ -34,9 +54,9 @@
       "difficulty": "Medium",
       "tier": "core",
       "companies": [
-        "Amazon",
         "Adobe"
-      ]
+      ],
+      "video": "https://www.youtube.com/watch?v=GBKI9VSKdGg"
     },
     {
       "name": "Permutations",
@@ -45,9 +65,9 @@
       "difficulty": "Medium",
       "tier": "core",
       "companies": [
-        "Amazon",
         "Microsoft"
-      ]
+      ],
+      "video": "https://www.youtube.com/watch?v=s7AvT7cGdSo"
     },
     {
       "name": "Word Search",

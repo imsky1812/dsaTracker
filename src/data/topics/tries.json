@@ -2,13 +2,34 @@
   "slug": "tries",
   "order": 18,
   "title": "Tries",
-  "explainer_md": "A trie (prefix tree) stores strings by sharing common prefixes: each node represents a character, and a path from the root spells a prefix. Insert and lookup take O(L) where L is the word length \u2014 independent of how many words are stored. That makes tries ideal for autocomplete, spell-check, prefix matching, and dictionary problems.\n\nThe payoff over a hash set: a trie answers 'is any stored word a prefix of X?' or 'how many words start with this prefix?' efficiently, which hashing can't do without extra work. The cost is memory \u2014 each node holds an array (or map) of child pointers.\n\nMental model: a branching dictionary. To find a word you spell it out letter by letter, walking down shared branches; words with the same start share the same path until they diverge.",
-  "patterns_md": "**Prefix insertion & search** \u2014 walk/create one child per character; mark the final node as end-of-word. Search follows the same path and checks the end flag.\n\n**Prefix counting** \u2014 store a counter at each node to answer 'how many words share this prefix?' in O(L).\n\n**Word-search on a grid + trie** \u2014 combine a trie of the dictionary with DFS/backtracking on a board to find all words at once (Word Search II), far faster than searching each word separately.\n\n**Bitwise trie (XOR)** \u2014 store numbers as binary strings to solve maximum-XOR-pair problems in O(32\u00b7n).",
-  "complexity_md": "| Operation | Time | Space |\n|---|---|---|\n| Insert word | O(L) | O(L \u00b7 alphabet) worst |\n| Search word | O(L) | O(1) |\n| Prefix query | O(L) | O(1) |\n| Build from n words | O(n \u00b7 L) | up to O(n \u00b7 L \u00b7 \u03a3) |\n\nL = word length, \u03a3 = alphabet size. Time is independent of the number of stored words \u2014 the trie's key advantage. Memory is the trade-off; use a `map` of children instead of a fixed array for sparse alphabets.",
+  "explainer_md": "A trie (prefix tree) stores strings by sharing common prefixes: each node represents a character, and a path from the root spells a prefix. Insert and lookup take O(L) where L is the word length — independent of how many words are stored. That makes tries ideal for autocomplete, spell-check, prefix matching, and dictionary problems.\n\nThe payoff over a hash set: a trie answers 'is any stored word a prefix of X?' or 'how many words start with this prefix?' efficiently, which hashing can't do without extra work. The cost is memory — each node holds an array (or map) of child pointers.\n\nMental model: a branching dictionary. To find a word you spell it out letter by letter, walking down shared branches; words with the same start share the same path until they diverge.",
+  "patterns_md": "**Prefix insertion & search** — walk/create one child per character; mark the final node as end-of-word. Search follows the same path and checks the end flag.\n\n**Prefix counting** — store a counter at each node to answer 'how many words share this prefix?' in O(L).\n\n**Word-search on a grid + trie** — combine a trie of the dictionary with DFS/backtracking on a board to find all words at once (Word Search II), far faster than searching each word separately.\n\n**Bitwise trie (XOR)** — store numbers as binary strings to solve maximum-XOR-pair problems in O(32·n).",
+  "complexity_md": "| Operation | Time | Space |\n|---|---|---|\n| Insert word | O(L) | O(L · alphabet) worst |\n| Search word | O(L) | O(1) |\n| Prefix query | O(L) | O(1) |\n| Build from n words | O(n · L) | up to O(n · L · Σ) |\n\nL = word length, Σ = alphabet size. Time is independent of the number of stored words — the trie's key advantage. Memory is the trade-off; use a `map` of children instead of a fixed array for sparse alphabets.",
   "code": [
     {
+      "lang": "cpp",
       "label": "Trie node + insert/search",
       "code": "struct TrieNode {\n    TrieNode* child[26] = {};\n    bool isEnd = false;\n};\nstruct Trie {\n    TrieNode* root = new TrieNode();\n    void insert(const string& w) {\n        TrieNode* cur = root;\n        for (char c : w) {\n            int i = c - 'a';\n            if (!cur->child[i]) cur->child[i] = new TrieNode();\n            cur = cur->child[i];\n        }\n        cur->isEnd = true;\n    }\n    bool search(const string& w) {\n        TrieNode* cur = root;\n        for (char c : w) {\n            int i = c - 'a';\n            if (!cur->child[i]) return false;\n            cur = cur->child[i];\n        }\n        return cur->isEnd;\n    }\n};"
+    },
+    {
+      "lang": "java",
+      "label": "Trie — insert, search, prefix",
+      "code": "// A trie trades memory for prefix queries in O(length) regardless of how\n// many words are stored.\nstatic class Trie {\n    private final Trie[] next = new Trie[26];\n    private boolean end;\n\n    void insert(String w) {\n        Trie cur = this;\n        for (char c : w.toCharArray()) {\n            int i = c - 'a';\n            if (cur.next[i] == null) cur.next[i] = new Trie();\n            cur = cur.next[i];\n        }\n        cur.end = true;\n    }\n\n    private Trie walk(String w) {\n        Trie cur = this;\n        for (char c : w.toCharArray()) {\n            cur = cur.next[c - 'a'];\n            if (cur == null) return null;\n        }\n        return cur;\n    }\n\n    boolean search(String w)     { Trie n = walk(w); return n != null && n.end; }\n    boolean startsWith(String p) { return walk(p) != null; }\n}"
+    },
+    {
+      "lang": "py",
+      "label": "Trie — insert, search, prefix",
+      "code": "# A trie trades memory for prefix queries in O(len) regardless of how many\n# words are stored. A dict per node keeps it simple and handles any alphabet.\nclass Trie:\n    def __init__(self) -> None:\n        self.children: dict[str, 'Trie'] = {}\n        self.end = False\n\n    def insert(self, word: str) -> None:\n        node = self\n        for c in word:\n            node = node.children.setdefault(c, Trie())\n        node.end = True\n\n    def _walk(self, prefix: str) -> 'Trie | None':\n        node = self\n        for c in prefix:\n            node = node.children.get(c)\n            if node is None:\n                return None\n        return node\n\n    def search(self, word: str) -> bool:\n        node = self._walk(word)\n        return node is not None and node.end\n\n    def starts_with(self, prefix: str) -> bool:\n        return self._walk(prefix) is not None"
+    },
+    {
+      "lang": "c",
+      "label": "Trie — insert, search, prefix",
+      "code": "#include <stdlib.h>\n#include <string.h>\n\n/* A trie node is 26 child pointers plus an end flag. That is 200+ bytes per\n   node on 64-bit — tries trade memory for O(len) prefix queries. */\ntypedef struct TrieNode {\n    struct TrieNode *children[26];\n    int end;\n} TrieNode;\n\nTrieNode *trie_new(void) {\n    TrieNode *t = calloc(1, sizeof *t);   /* calloc: children start NULL */\n    if (!t) exit(1);\n    return t;\n}\n\nvoid trie_insert(TrieNode *root, const char *w) {\n    TrieNode *cur = root;\n    for (int i = 0; w[i]; i++) {\n        int c = w[i] - 'a';\n        if (!cur->children[c]) cur->children[c] = trie_new();\n        cur = cur->children[c];\n    }\n    cur->end = 1;\n}\n\nstatic TrieNode *trie_walk(TrieNode *root, const char *s) {\n    TrieNode *cur = root;\n    for (int i = 0; s[i]; i++) {\n        cur = cur->children[s[i] - 'a'];\n        if (!cur) return NULL;\n    }\n    return cur;\n}\n\nint trie_search(TrieNode *root, const char *w) {\n    TrieNode *n = trie_walk(root, w);\n    return n && n->end;\n}\n\nint trie_starts_with(TrieNode *root, const char *p) {\n    return trie_walk(root, p) != NULL;\n}\n\nvoid trie_free(TrieNode *t) {\n    if (!t) return;\n    for (int i = 0; i < 26; i++) trie_free(t->children[i]);\n    free(t);\n}"
+    },
+    {
+      "lang": "go",
+      "label": "Trie — insert, search, prefix",
+      "code": "// A trie trades memory for prefix queries in O(len), independent of how many\n// words are stored.\ntype Trie struct {\n\tchildren [26]*Trie\n\tend      bool\n}\n\nfunc NewTrie() *Trie { return &Trie{} }\n\nfunc (t *Trie) Insert(word string) {\n\tcur := t\n\tfor i := 0; i < len(word); i++ {\n\t\tc := word[i] - 'a'\n\t\tif cur.children[c] == nil {\n\t\t\tcur.children[c] = &Trie{}\n\t\t}\n\t\tcur = cur.children[c]\n\t}\n\tcur.end = true\n}\n\nfunc (t *Trie) walk(s string) *Trie {\n\tcur := t\n\tfor i := 0; i < len(s); i++ {\n\t\tcur = cur.children[s[i]-'a']\n\t\tif cur == nil {\n\t\t\treturn nil\n\t\t}\n\t}\n\treturn cur\n}\n\nfunc (t *Trie) Search(word string) bool {\n\tn := t.walk(word)\n\treturn n != nil && n.end\n}\n\nfunc (t *Trie) StartsWith(prefix string) bool { return t.walk(prefix) != nil }"
     }
   ],
   "problems": [
@@ -18,11 +39,8 @@
       "platform": "LeetCode",
       "difficulty": "Medium",
       "tier": "warmup",
-      "companies": [
-        "Amazon",
-        "Google",
-        "Microsoft"
-      ]
+      "companies": [],
+      "video": "https://www.youtube.com/watch?v=oobqoCJlHA0"
     },
     {
       "name": "Design Add and Search Words Data Structure",
@@ -31,7 +49,6 @@
       "difficulty": "Medium",
       "tier": "core",
       "companies": [
-        "Amazon",
         "Google",
         "Meta"
       ]

@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Palette, spacing, radius, type, tabInset } from '../../src/theme/tokens';
 import { useColors, useThemedStyles } from '../../src/theme/theme';
 import { Card, Eyebrow, Pill, GhostButton } from '../../src/components/ui';
-import { plan } from '../../src/lib/content';
+import { plan, LANGUAGES } from '../../src/lib/content';
 import { useProgress } from '../../src/store/progress';
 import { supabaseEnabled } from '../../src/lib/supabase';
 import { checkRemoteContent, ContentCheck } from '../../src/lib/remoteContent';
@@ -12,15 +12,6 @@ import { useSession } from '../../src/store/session';
 import { signOut } from '../../src/lib/auth';
 import { syncNow } from '../../src/lib/syncManager';
 import { scheduleDailyReminder, parseReminderTime } from '../../src/lib/notifications';
-
-// Languages the data model supports. Only those actually present in the bundle
-// are selectable; the rest show as "soon" (content is authored per M0).
-const LANGUAGES = [
-  { code: 'cpp', name: 'C++' },
-  { code: 'java', name: 'Java' },
-  { code: 'py', name: 'Python' },
-  { code: 'js', name: 'JavaScript' },
-];
 
 export default function Profile() {
   const c = useColors();
@@ -56,7 +47,8 @@ export default function Profile() {
 
   useEffect(() => { void runCheck(); }, [runCheck]);
 
-  const available = (code: string) => Boolean(plan.primers[code]) || code === 'cpp';
+  // A language is selectable when its primer is actually bundled.
+  const available = (code: string) => Boolean(plan.primers[code]);
 
   // Takes the value explicitly rather than reading `time` state: setTime() is
   // async, so "turn off" would otherwise re-read the value it just cleared.

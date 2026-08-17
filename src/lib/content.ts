@@ -21,7 +21,20 @@ export interface Problem {
   video?: string;
 }
 
+/** Languages the app has authored content for. */
+export const LANGUAGES = [
+  { code: 'cpp',  name: 'C++' },
+  { code: 'java', name: 'Java' },
+  { code: 'py',   name: 'Python' },
+  { code: 'c',    name: 'C' },
+  { code: 'go',   name: 'Go' },
+] as const;
+
+export type LangCode = (typeof LANGUAGES)[number]['code'];
+
 export interface CodeBlock {
+  /** Which language this snippet is written in. */
+  lang: LangCode;
   label: string;
   code: string;
 }
@@ -84,6 +97,22 @@ export const plan: PlanBundle = bundle as PlanBundle;
 
 // Stable global problem id = "<topicSlug>::<problemName>"
 export const problemId = (topicSlug: string, name: string) => `${topicSlug}::${name}`;
+
+/**
+ * Snippets for one language, falling back to C++ when a language has no
+ * snippet for this topic yet. Returning nothing would leave the Code tab blank
+ * with no explanation; C++ is the reference implementation, so showing it
+ * (clearly labelled by the caller) beats an empty screen.
+ */
+export const codeFor = (topic: Topic, lang: string): { blocks: CodeBlock[]; fellBack: boolean } => {
+  const own = topic.code.filter((c) => c.lang === lang);
+  if (own.length) return { blocks: own, fellBack: false };
+  return { blocks: topic.code.filter((c) => c.lang === 'cpp'), fellBack: true };
+};
+
+/** Human name for a language code. */
+export const langName = (code: string) =>
+  LANGUAGES.find((l) => l.code === code)?.name ?? code.toUpperCase();
 
 export const allProblems = (): Array<Problem & { topicSlug: string; id: string }> =>
   plan.topics.flatMap((t) =>

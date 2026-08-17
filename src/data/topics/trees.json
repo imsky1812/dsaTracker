@@ -2,21 +2,44 @@
   "slug": "trees",
   "order": 11,
   "title": "Binary Trees",
-  "explainer_md": "A binary tree is a hierarchy where each node has up to two children (left, right). Trees model anything with nesting or hierarchy \u2014 file systems, decision processes, parse trees. They're **heavily** tested because they force you to think recursively and reveal whether you truly understand recursion.\n\nThe four traversals are the vocabulary: **inorder** (left-root-right), **preorder** (root-left-right), **postorder** (left-right-root), and **level-order** (BFS, row by row). Most tree problems are 'do a traversal and compute something at each node'. Height, diameter, path sums, and views all reduce to a well-chosen traversal.\n\nMental model: a family tree that branches downward \u2014 every person (node) has at most two children, and you can walk the family in different orders.",
-  "patterns_md": "**DFS recursion** \u2014 the default. Solve for a node by combining the solutions of its subtrees. Height, diameter, balanced-check, and path problems all follow 'recurse left, recurse right, combine'.\n\n**Level-order BFS** \u2014 use a queue to process the tree row by row. Powers level-averages, right-side view, zigzag traversal, and 'connect nodes at same level'.\n\n**Return-more-than-you-need** \u2014 for problems like diameter, have the recursion return one value (height) while updating a separate global (best diameter). A common and powerful trick.\n\n**Bottom-up vs top-down** \u2014 decide whether each node needs info from above (pass down as parameters) or from below (return up from children).",
+  "explainer_md": "A binary tree is a hierarchy where each node has up to two children (left, right). Trees model anything with nesting or hierarchy — file systems, decision processes, parse trees. They're **heavily** tested because they force you to think recursively and reveal whether you truly understand recursion.\n\nThe four traversals are the vocabulary: **inorder** (left-root-right), **preorder** (root-left-right), **postorder** (left-right-root), and **level-order** (BFS, row by row). Most tree problems are 'do a traversal and compute something at each node'. Height, diameter, path sums, and views all reduce to a well-chosen traversal.\n\nMental model: a family tree that branches downward — every person (node) has at most two children, and you can walk the family in different orders.",
+  "patterns_md": "**DFS recursion** — the default. Solve for a node by combining the solutions of its subtrees. Height, diameter, balanced-check, and path problems all follow 'recurse left, recurse right, combine'.\n\n**Level-order BFS** — use a queue to process the tree row by row. Powers level-averages, right-side view, zigzag traversal, and 'connect nodes at same level'.\n\n**Return-more-than-you-need** — for problems like diameter, have the recursion return one value (height) while updating a separate global (best diameter). A common and powerful trick.\n\n**Bottom-up vs top-down** — decide whether each node needs info from above (pass down as parameters) or from below (return up from children).",
   "complexity_md": "| Operation | Time | Space |\n|---|---|---|\n| Any traversal | O(n) | O(h) recursion / O(w) queue |\n| Height / diameter | O(n) | O(h) |\n| Search (unbalanced) | O(n) | O(h) |\n| Level-order (BFS) | O(n) | O(w) width |\n\n`h` = height (O(log n) if balanced, O(n) if skewed); `w` = max width. Every node is visited once, so traversals are linear; the space is the recursion depth or the widest level.",
   "code": [
     {
+      "lang": "cpp",
       "label": "Node + recursive traversals",
       "code": "struct TreeNode {\n    int val; TreeNode *left, *right;\n    TreeNode(int x): val(x), left(nullptr), right(nullptr) {}\n};\nvoid inorder(TreeNode* root, vector<int>& out) {\n    if (!root) return;\n    inorder(root->left, out);\n    out.push_back(root->val);\n    inorder(root->right, out);\n}"
     },
     {
+      "lang": "cpp",
       "label": "Level-order (BFS)",
       "code": "vector<vector<int>> levelOrder(TreeNode* root) {\n    vector<vector<int>> res;\n    if (!root) return res;\n    queue<TreeNode*> q; q.push(root);\n    while (!q.empty()) {\n        int sz = q.size();\n        vector<int> level;\n        for (int i = 0; i < sz; i++) {\n            TreeNode* n = q.front(); q.pop();\n            level.push_back(n->val);\n            if (n->left) q.push(n->left);\n            if (n->right) q.push(n->right);\n        }\n        res.push_back(level);\n    }\n    return res;\n}"
     },
     {
-      "label": "Diameter \u2014 return height, track best",
+      "lang": "cpp",
+      "label": "Diameter — return height, track best",
       "code": "int diameter(TreeNode* root, int& best) {\n    if (!root) return 0;\n    int l = diameter(root->left, best);\n    int r = diameter(root->right, best);\n    best = max(best, l + r);      // path through this node\n    return 1 + max(l, r);         // height upward\n}"
+    },
+    {
+      "lang": "java",
+      "label": "Traversals — recursive and iterative",
+      "code": "static class TreeNode { int val; TreeNode left, right; TreeNode(int v) { val = v; } }\n\n// Inorder, recursive.\nstatic void inorder(TreeNode r, List<Integer> out) {\n    if (r == null) return;\n    inorder(r.left, out); out.add(r.val); inorder(r.right, out);\n}\n\n// Inorder, iterative — worth knowing; interviewers ask for it.\nstatic List<Integer> inorderIter(TreeNode root) {\n    List<Integer> out = new ArrayList<>();\n    Deque<TreeNode> st = new ArrayDeque<>();\n    TreeNode cur = root;\n    while (cur != null || !st.isEmpty()) {\n        while (cur != null) { st.push(cur); cur = cur.left; }\n        cur = st.pop();\n        out.add(cur.val);\n        cur = cur.right;\n    }\n    return out;\n}\n\n// Level order (BFS) — the basis of every \"views\" problem.\nQueue<TreeNode> q = new ArrayDeque<>();\nif (root != null) q.offer(root);\nwhile (!q.isEmpty()) {\n    int size = q.size();                 // fix the level boundary first\n    for (int i = 0; i < size; i++) {\n        TreeNode n = q.poll();\n        if (n.left != null) q.offer(n.left);\n        if (n.right != null) q.offer(n.right);\n    }\n}"
+    },
+    {
+      "lang": "py",
+      "label": "Traversals — recursive and iterative",
+      "code": "class TreeNode:\n    def __init__(self, val: int = 0, left=None, right=None):\n        self.val, self.left, self.right = val, left, right\n\ndef inorder(root: TreeNode | None) -> list[int]:\n    if not root:\n        return []\n    return inorder(root.left) + [root.val] + inorder(root.right)\n\n# Iterative inorder — asked for explicitly in interviews.\ndef inorder_iter(root: TreeNode | None) -> list[int]:\n    out, stack, cur = [], [], root\n    while cur or stack:\n        while cur:\n            stack.append(cur)\n            cur = cur.left\n        cur = stack.pop()\n        out.append(cur.val)\n        cur = cur.right\n    return out\n\n# Level order (BFS) — fix the level size before the inner loop, or you will\n# consume nodes belonging to the next level.\nfrom collections import deque\n\ndef level_order(root: TreeNode | None) -> list[list[int]]:\n    if not root:\n        return []\n    out, q = [], deque([root])\n    while q:\n        level = []\n        for _ in range(len(q)):\n            n = q.popleft()\n            level.append(n.val)\n            if n.left:  q.append(n.left)\n            if n.right: q.append(n.right)\n        out.append(level)\n    return out"
+    },
+    {
+      "lang": "c",
+      "label": "Traversals — recursive and iterative",
+      "code": "#include <stdlib.h>\n\ntypedef struct TreeNode {\n    int val;\n    struct TreeNode *left, *right;\n} TreeNode;\n\nvoid inorder(TreeNode *r, int *out, int *k) {\n    if (!r) return;\n    inorder(r->left, out, k);\n    out[(*k)++] = r->val;\n    inorder(r->right, out, k);\n}\n\n/* Iterative inorder with an explicit stack — the same shape the recursive\n   version builds implicitly. */\nvoid inorderIter(TreeNode *root, int *out, int *k) {\n    TreeNode **st = malloc(1024 * sizeof *st);\n    int top = -1;\n    TreeNode *cur = root;\n    while (cur || top >= 0) {\n        while (cur) { st[++top] = cur; cur = cur->left; }\n        cur = st[top--];\n        out[(*k)++] = cur->val;\n        cur = cur->right;\n    }\n    free(st);\n}\n\nint maxDepth(TreeNode *r) {\n    if (!r) return 0;\n    int l = maxDepth(r->left), rr = maxDepth(r->right);\n    return 1 + (l > rr ? l : rr);\n}\n\n/* Post-order is the only safe order in which to free a tree: you must not\n   touch a node's children after freeing the node. */\nvoid tree_free(TreeNode *r) {\n    if (!r) return;\n    tree_free(r->left);\n    tree_free(r->right);\n    free(r);\n}"
+    },
+    {
+      "lang": "go",
+      "label": "Traversals — recursive and iterative",
+      "code": "type TreeNode struct {\n\tVal         int\n\tLeft, Right *TreeNode\n}\n\nfunc inorder(root *TreeNode, out *[]int) {\n\tif root == nil {\n\t\treturn\n\t}\n\tinorder(root.Left, out)\n\t*out = append(*out, root.Val)\n\tinorder(root.Right, out)\n}\n\n// Iterative inorder — interviewers ask for this explicitly.\nfunc inorderIter(root *TreeNode) []int {\n\tvar out []int\n\tvar stack []*TreeNode\n\tcur := root\n\tfor cur != nil || len(stack) > 0 {\n\t\tfor cur != nil {\n\t\t\tstack = append(stack, cur)\n\t\t\tcur = cur.Left\n\t\t}\n\t\tcur = stack[len(stack)-1]\n\t\tstack = stack[:len(stack)-1]\n\t\tout = append(out, cur.Val)\n\t\tcur = cur.Right\n\t}\n\treturn out\n}\n\n// Level order (BFS). Capture the level size BEFORE the inner loop or you\n// consume nodes from the next level.\nfunc levelOrder(root *TreeNode) [][]int {\n\tif root == nil {\n\t\treturn nil\n\t}\n\tvar out [][]int\n\tq := []*TreeNode{root}\n\tfor len(q) > 0 {\n\t\tn := len(q)\n\t\tlevel := make([]int, 0, n)\n\t\tfor i := 0; i < n; i++ {\n\t\t\tnode := q[0]\n\t\t\tq = q[1:]\n\t\t\tlevel = append(level, node.Val)\n\t\t\tif node.Left != nil {\n\t\t\t\tq = append(q, node.Left)\n\t\t\t}\n\t\t\tif node.Right != nil {\n\t\t\t\tq = append(q, node.Right)\n\t\t\t}\n\t\t}\n\t\tout = append(out, level)\n\t}\n\treturn out\n}"
     }
   ],
   "problems": [
@@ -26,10 +49,8 @@
       "platform": "LeetCode",
       "difficulty": "Easy",
       "tier": "warmup",
-      "companies": [
-        "Amazon",
-        "Google"
-      ]
+      "companies": [],
+      "video": "https://www.youtube.com/watch?v=hTM3phVI6YQ"
     },
     {
       "name": "Invert Binary Tree",
@@ -37,10 +58,8 @@
       "platform": "LeetCode",
       "difficulty": "Easy",
       "tier": "warmup",
-      "companies": [
-        "Google",
-        "Amazon"
-      ]
+      "companies": [],
+      "video": "https://www.youtube.com/watch?v=OnSn2XEQ4MY"
     },
     {
       "name": "Diameter of Binary Tree",
@@ -49,7 +68,6 @@
       "difficulty": "Easy",
       "tier": "core",
       "companies": [
-        "Amazon",
         "Meta",
         "Google"
       ]
@@ -61,10 +79,10 @@
       "difficulty": "Medium",
       "tier": "core",
       "companies": [
-        "Amazon",
         "Microsoft",
         "Meta"
-      ]
+      ],
+      "video": "https://www.youtube.com/watch?v=6ZnyEApgFYg"
     },
     {
       "name": "Binary Tree Right Side View",

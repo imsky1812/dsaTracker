@@ -1,0 +1,68 @@
+{
+  "language": "java",
+  "language_name": "Java",
+  "tagline": "Verbose, predictable, and everywhere in placements.",
+  "intro": "Java is the safe default for Indian placement drives: nearly every online assessment platform supports it, the standard library is deep, and the JVM is fast enough that a clean O(n log n) solution never times out. The cost is ceremony — you will type more than in Python. Learn the Collections framework properly and most of that verbosity turns into muscle memory.",
+  "sections": [
+    {
+      "order": 1,
+      "title": "Setup & Program Skeleton",
+      "body_md": "Install a JDK (21 LTS is a good default) and check `java -version`. Since JDK 11 you can run a single file directly with `java Main.java` — no separate `javac` step — which is ideal for practice. Online judges expect the class to be named `Main` and the file to match. Everything lives inside a class; there are no free functions.",
+      "code": "public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"Hello\");\n    }\n}\n\n// Helper methods must be static to be called from static main.\nstatic int add(int a, int b) { return a + b; }"
+    },
+    {
+      "order": 2,
+      "title": "Fast Input / Output",
+      "body_md": "`Scanner` is convenient and far too slow: it does regex parsing per token and will time out past roughly 10^5 values. Use `BufferedReader` with `StringTokenizer` for input, and buffer your output too — `System.out.println` in a tight loop flushes constantly and is a common cause of a mysterious TLE.",
+      "code": "import java.io.*;\nimport java.util.*;\n\nBufferedReader br = new BufferedReader(new InputStreamReader(System.in));\nint n = Integer.parseInt(br.readLine().trim());\n\n// Several integers on one line.\nStringTokenizer st = new StringTokenizer(br.readLine());\nint a = Integer.parseInt(st.nextToken());\nint b = Integer.parseInt(st.nextToken());\n\n// Buffered output — build up, then flush once.\nStringBuilder sb = new StringBuilder();\nfor (int i = 0; i < n; i++) sb.append(i).append('\\n');\nSystem.out.print(sb);"
+    },
+    {
+      "order": 3,
+      "title": "Types, Variables & Operators",
+      "body_md": "`int` is 32-bit and overflows silently at about 2.1 billion — no exception, just a wrong answer. Use `long` the moment sums or products could exceed that. Integer division truncates. `char` is a 16-bit UTF-16 code unit, and `char` arithmetic works, which is why `c - 'a'` is the standard way to index an alphabet array.",
+      "code": "int i = 42;\nlong big = 1_000_000_007L;        // underscores are legal separators\ndouble d = 3.14;\nchar c = 'a';\nboolean flag = true;\n\n// Overflow: promote BEFORE multiplying, not after.\nint a = 100000, b = 100000;\nlong bad  = a * b;                // overflows as int, then widens — wrong\nlong good = (long) a * b;         // correct\n\n// Integer division truncates toward zero.\nSystem.out.println(5 / 2);        // 2\nSystem.out.println(5 / 2.0);      // 2.5\n\n// Ceiling division without floating point.\nint ceilDiv = (x + y - 1) / y;\n\n// Alphabet indexing.\nint idx = c - 'a';                // 0..25"
+    },
+    {
+      "order": 4,
+      "title": "Control Flow",
+      "body_md": "Standard C-family syntax. The enhanced `for` (`for (int x : arr)`) is cleaner when you don't need the index. Labelled `break` lets you exit nested loops in one step, which is genuinely useful in grid problems. Modern `switch` expressions remove the fall-through footgun.",
+      "code": "for (int i = 0; i < n; i++) { }\nfor (int x : arr) { }            // enhanced for — no index\nwhile (cond) { }\ndo { } while (cond);\n\n// Labelled break: escape both loops at once.\nouter:\nfor (int r = 0; r < rows; r++) {\n    for (int c = 0; c < cols; c++) {\n        if (grid[r][c] == target) break outer;\n    }\n}\n\n// switch expression (JDK 14+) — arrow form, no fall-through, returns a value.\nint days = switch (month) {\n    case 2 -> 28;\n    case 4, 6, 9, 11 -> 30;\n    default -> 31;\n};"
+    },
+    {
+      "order": 5,
+      "title": "Methods, References & Scope",
+      "body_md": "Java is always pass-by-value — but for objects the value passed is the reference. So a method can mutate the array or list you hand it, yet cannot make your variable point at a different object. This distinction explains most surprises about \"why did my array change?\" and \"why didn't my swap work?\".",
+      "code": "// Mutating through the reference: the caller SEES this.\nstatic void fill(int[] a) { a[0] = 99; }\n\n// Reassigning the parameter: the caller does NOT see this.\nstatic void reassign(int[] a) { a = new int[]{1, 2, 3}; }\n\n// So you cannot write swap(int, int) — primitives are copied.\n// Return a value, or swap inside an array.\nstatic void swap(int[] a, int i, int j) { int t = a[i]; a[i] = a[j]; a[j] = t; }\n\n// Varargs for a variable number of arguments.\nstatic int sum(int... xs) {\n    int s = 0;\n    for (int x : xs) s += x;\n    return s;\n}"
+    },
+    {
+      "order": 6,
+      "title": "Arrays & 2-D Arrays",
+      "body_md": "Arrays are fixed-length objects with a `.length` field (not a method). They are zero-initialised: `0`, `false`, or `null`. A 2-D array is an array of row references, so rows can differ in length — and copying a 2-D array with `clone()` copies only the row references, not the rows themselves.",
+      "code": "int[] a = new int[5];             // all zeros\nint[] b = {3, 1, 2};\nSystem.out.println(b.length);     // field, not length()\n\nint[][] grid = new int[3][4];      // 3 rows, 4 cols\nint[][] jagged = new int[3][];     // rows allocated separately\n\nArrays.sort(b);\nArrays.fill(a, -1);\nint[] copy = Arrays.copyOf(b, b.length);\nint pos = Arrays.binarySearch(b, 2);   // array MUST be sorted\nSystem.out.println(Arrays.toString(b));\nSystem.out.println(Arrays.deepToString(grid));   // for nested arrays\n\n// Shallow copy trap: rows are shared.\nint[][] shallow = grid.clone();\nshallow[0][0] = 99;               // also changes grid[0][0]"
+    },
+    {
+      "order": 7,
+      "title": "Strings",
+      "body_md": "`String` is immutable, so every concatenation allocates a new object — building a string with `+=` in a loop is O(n^2) and is the single most common performance mistake in Java interview code. Use `StringBuilder`. Compare with `.equals()`, never `==`: `==` compares references, and it appears to work for short literals because of the string pool, which makes the bug intermittent.",
+      "code": "String s = \"hello\";\ns.charAt(0);\ns.length();\ns.substring(1, 3);                // [1, 3)\ns.indexOf('l');\ns.toCharArray();\nString.valueOf(42);\nInteger.parseInt(\"42\");\n\n// Comparison: .equals for value, == for identity.\nString x = \"ab\", y = \"a\" + \"b\";\nSystem.out.println(x.equals(y));  // true — what you want\n\n// Building: StringBuilder, not +=.\nStringBuilder sb = new StringBuilder();\nfor (int i = 0; i < n; i++) sb.append(i);\nsb.reverse();\nString out = sb.toString();\n\n// Char frequency over an alphabet.\nint[] freq = new int[26];\nfor (char c : s.toCharArray()) freq[c - 'a']++;"
+    },
+    {
+      "order": 8,
+      "title": "The Collections Framework",
+      "body_md": "Java's answer to the STL. Declare variables by the interface (`List`, `Map`, `Set`, `Deque`) and instantiate the implementation — it keeps your code flexible and reads better in interviews. Collections hold objects, not primitives, so `List<Integer>` autoboxes; that costs memory and time, and it means `==` between two `Integer` objects can be false.",
+      "code": "List<Integer> list = new ArrayList<>();      // vector\nMap<String, Integer> map = new HashMap<>();   // unordered_map\nSet<Integer> set = new HashSet<>();           // unordered_set\nDeque<Integer> dq = new ArrayDeque<>();       // stack AND queue\nMap<String, Integer> ordered = new TreeMap<>();  // sorted, O(log n)\nPriorityQueue<Integer> pq = new PriorityQueue<>(); // MIN-heap by default\n\n// Counting idiom.\nmap.merge(key, 1, Integer::sum);\nmap.getOrDefault(key, 0);\nmap.computeIfAbsent(key, k -> new ArrayList<>()).add(v);\n\n// Iterate a map.\nfor (Map.Entry<String, Integer> e : map.entrySet())\n    System.out.println(e.getKey() + \" \" + e.getValue());\n\n// Autoboxing trap: compare boxed values with .equals or intValue().\nInteger p = 1000, q = 1000;\nSystem.out.println(p == q);        // false — different objects\nSystem.out.println(p.equals(q));   // true"
+    },
+    {
+      "order": 9,
+      "title": "Sorting & Comparators",
+      "body_md": "`Arrays.sort` on primitives is a dual-pivot quicksort with no stability guarantee and an O(n^2) adversarial worst case; on objects it is a stable merge sort. If worst-case matters on primitive input, box to `Integer[]`. `Comparator` has fluent factory methods that read far better than a hand-written `compare`, and `comparingInt` avoids boxing.",
+      "code": "int[] a = {3, 1, 2};\nArrays.sort(a);                                   // ascending only\nArrays.sort(boxed, Comparator.reverseOrder());     // descending needs objects\n\nList<String> names = new ArrayList<>(List.of(\"bb\", \"a\", \"ccc\"));\nnames.sort(Comparator.comparingInt(String::length));\nnames.sort(Comparator.comparingInt(String::length).reversed());\n\n// Multi-key: age ascending, then score descending.\npeople.sort(Comparator.comparingInt(Person::age)\n                      .thenComparing(Person::score, Comparator.reverseOrder()));\n\n// Sorting a 2-D array by the second column.\nArrays.sort(intervals, Comparator.comparingInt(r -> r[1]));\n\n// NEVER write (a, b) -> a - b for ints that can be large: the subtraction\n// itself overflows and the comparator starts lying.\nComparator<Integer> safe = Integer::compare;"
+    },
+    {
+      "order": 10,
+      "title": "Common Gotchas",
+      "body_md": "The bugs that cost real interview time: silent `int` overflow, `==` on strings and boxed integers, `+=` string building, and `NullPointerException` from a map lookup that returned `null` and was then unboxed. Also remember arrays print as a hash unless you use `Arrays.toString`, and that removing from a list while iterating throws `ConcurrentModificationException`.",
+      "code": "// 1. Overflow — cast before multiplying.\nlong ok = (long) a * b;\n\n// 2. Unboxing null: map.get on a missing key returns null, and assigning it\n//    to an int throws NPE at the assignment, not at the lookup.\nint bad = map.get(\"missing\");            // NullPointerException\nint good = map.getOrDefault(\"missing\", 0);\n\n// 3. Printing arrays.\nSystem.out.println(arr);                 // [I@1b6d3586\nSystem.out.println(Arrays.toString(arr));\n\n// 4. Mutating while iterating — use an Iterator or removeIf.\nlist.removeIf(x -> x < 0);\n\n// 5. List.of(...) is IMMUTABLE. Wrap it to modify.\nList<Integer> fixed = List.of(1, 2, 3);  // add() throws\nList<Integer> mutable = new ArrayList<>(List.of(1, 2, 3));\n\n// 6. char + char promotes to int.\nchar c = 'a';\nSystem.out.println(c + 1);               // 98, not 'b'\nSystem.out.println((char) (c + 1));      // b"
+    }
+  ]
+}

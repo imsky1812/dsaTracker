@@ -2,21 +2,44 @@
   "slug": "dynamic-programming",
   "order": 17,
   "title": "Dynamic Programming",
-  "explainer_md": "Dynamic programming solves problems with **overlapping subproblems** and **optimal substructure** by solving each subproblem once and reusing the answer. It's the highest-leverage interview topic and the one most people find hardest \u2014 the difficulty is recognizing the recurrence, not writing the code.\n\nThe reliable path: (1) write a plain recursion that tries all options; (2) notice the same arguments recur, and cache them \u2014 that's **memoization** (top-down); (3) optionally flip it to fill a table from the base cases up \u2014 that's **tabulation** (bottom-up). Same recurrence, three levels of optimization. If you can define the state and the transition, the rest is mechanical.\n\nMental model: climbing stairs where each step's answer depends on earlier steps. Instead of recomputing, you jot each answer on the step so you never solve it twice.",
-  "patterns_md": "**Recursion \u2192 memo \u2192 tabulation** \u2014 always start from a brute-force recursion. Add a cache keyed by the state. Then, if useful, convert to an iterative table. This staged approach is how you *derive* a DP instead of memorizing one.\n\n**Define state precisely** \u2014 'dp[i] = the answer considering the first i items'. Getting the state definition right is 80% of the battle.\n\n**Standard families** \u2014 1D (climbing stairs, house robber), knapsack (subset-sum, coin change), sequence DP (LIS, LCS, edit distance), grid DP (unique paths, min path sum), and interval/partition DP.\n\n**Space optimization** \u2014 many DPs only need the previous row/few states, so O(n) space collapses to O(1). Do it after correctness, not before.",
-  "complexity_md": "| Problem family | Time | Space |\n|---|---|---|\n| 1D DP (stairs, robber) | O(n) | O(1) optimizable |\n| 0/1 Knapsack | O(n\u00b7W) | O(W) optimizable |\n| LCS / edit distance | O(n\u00b7m) | O(min(n,m)) |\n| LIS | O(n log n) | O(n) |\n| Grid DP | O(n\u00b7m) | O(m) optimizable |\n\nGeneral rule: DP time = (number of states) \u00d7 (work per transition). Identify those two and you have the complexity before writing a line.",
+  "explainer_md": "Dynamic programming solves problems with **overlapping subproblems** and **optimal substructure** by solving each subproblem once and reusing the answer. It's the highest-leverage interview topic and the one most people find hardest — the difficulty is recognizing the recurrence, not writing the code.\n\nThe reliable path: (1) write a plain recursion that tries all options; (2) notice the same arguments recur, and cache them — that's **memoization** (top-down); (3) optionally flip it to fill a table from the base cases up — that's **tabulation** (bottom-up). Same recurrence, three levels of optimization. If you can define the state and the transition, the rest is mechanical.\n\nMental model: climbing stairs where each step's answer depends on earlier steps. Instead of recomputing, you jot each answer on the step so you never solve it twice.",
+  "patterns_md": "**Recursion → memo → tabulation** — always start from a brute-force recursion. Add a cache keyed by the state. Then, if useful, convert to an iterative table. This staged approach is how you *derive* a DP instead of memorizing one.\n\n**Define state precisely** — 'dp[i] = the answer considering the first i items'. Getting the state definition right is 80% of the battle.\n\n**Standard families** — 1D (climbing stairs, house robber), knapsack (subset-sum, coin change), sequence DP (LIS, LCS, edit distance), grid DP (unique paths, min path sum), and interval/partition DP.\n\n**Space optimization** — many DPs only need the previous row/few states, so O(n) space collapses to O(1). Do it after correctness, not before.",
+  "complexity_md": "| Problem family | Time | Space |\n|---|---|---|\n| 1D DP (stairs, robber) | O(n) | O(1) optimizable |\n| 0/1 Knapsack | O(n·W) | O(W) optimizable |\n| LCS / edit distance | O(n·m) | O(min(n,m)) |\n| LIS | O(n log n) | O(n) |\n| Grid DP | O(n·m) | O(m) optimizable |\n\nGeneral rule: DP time = (number of states) × (work per transition). Identify those two and you have the complexity before writing a line.",
   "code": [
     {
-      "label": "Recursion \u2192 memoization (top-down)",
+      "lang": "cpp",
+      "label": "Recursion → memoization (top-down)",
       "code": "int rob(vector<int>& nums, int i, vector<int>& memo) {\n    if (i >= (int)nums.size()) return 0;\n    if (memo[i] != -1) return memo[i];\n    int take = nums[i] + rob(nums, i + 2, memo);\n    int skip = rob(nums, i + 1, memo);\n    return memo[i] = max(take, skip);\n}"
     },
     {
+      "lang": "cpp",
       "label": "Tabulation (bottom-up) + O(1) space",
       "code": "int rob(vector<int>& nums) {\n    int prev2 = 0, prev1 = 0;\n    for (int x : nums) {\n        int cur = max(prev1, prev2 + x);\n        prev2 = prev1;\n        prev1 = cur;\n    }\n    return prev1;\n}"
     },
     {
-      "label": "LCS \u2014 classic 2D table",
+      "lang": "cpp",
+      "label": "LCS — classic 2D table",
       "code": "int lcs(string a, string b) {\n    int n = a.size(), m = b.size();\n    vector<vector<int>> dp(n+1, vector<int>(m+1, 0));\n    for (int i = 1; i <= n; i++)\n        for (int j = 1; j <= m; j++)\n            dp[i][j] = (a[i-1] == b[j-1])\n                ? dp[i-1][j-1] + 1\n                : max(dp[i-1][j], dp[i][j-1]);\n    return dp[n][m];\n}"
+    },
+    {
+      "lang": "java",
+      "label": "Memoisation to tabulation to rolling array",
+      "code": "// The progression to practise on every DP: recursion -> memo -> table -> O(1) space.\n\n// 1. Top-down (memoised recursion).\nstatic int robMemo(int[] a, int i, Integer[] memo) {\n    if (i >= a.length) return 0;\n    if (memo[i] != null) return memo[i];\n    return memo[i] = Math.max(a[i] + robMemo(a, i + 2, memo), robMemo(a, i + 1, memo));\n}\n\n// 2. Bottom-up table.\nstatic int robTab(int[] a) {\n    int n = a.length;\n    int[] dp = new int[n + 2];\n    for (int i = n - 1; i >= 0; i--) dp[i] = Math.max(a[i] + dp[i + 2], dp[i + 1]);\n    return dp[0];\n}\n\n// 3. Rolling — only the last two states are ever read.\nstatic int rob(int[] a) {\n    int take = 0, skip = 0;\n    for (int i = a.length - 1; i >= 0; i--) {\n        int cur = Math.max(a[i] + skip, take);\n        skip = take; take = cur;\n    }\n    return take;\n}\n\n// 0/1 knapsack, 1-D. Iterate weight DOWNWARD so each item is used once.\nint[] dp = new int[cap + 1];\nfor (int i = 0; i < n; i++)\n    for (int w = cap; w >= wt[i]; w--)\n        dp[w] = Math.max(dp[w], val[i] + dp[w - wt[i]]);"
+    },
+    {
+      "lang": "py",
+      "label": "Memoisation to tabulation to rolling array",
+      "code": "from functools import cache\n\n# 1. Top-down. @cache turns naive recursion into memoised DP for free —\n#    the fastest way to get a correct baseline in an interview.\n@cache\ndef rob(i: int) -> int:\n    if i >= len(nums):\n        return 0\n    return max(nums[i] + rob(i + 2), rob(i + 1))\n\n# 2. Bottom-up table.\ndef rob_tab(nums: list[int]) -> int:\n    n = len(nums)\n    dp = [0] * (n + 2)\n    for i in range(n - 1, -1, -1):\n        dp[i] = max(nums[i] + dp[i + 2], dp[i + 1])\n    return dp[0]\n\n# 3. Rolling — only two states are ever read.\ndef rob_rolling(nums: list[int]) -> int:\n    take = skip = 0\n    for x in reversed(nums):\n        take, skip = max(x + skip, take), take\n    return take\n\n# 0/1 knapsack, 1-D. Iterate weight DOWNWARD so each item is used at most once;\n# going upward silently turns it into the unbounded version.\ndef knapsack(wt: list[int], val: list[int], cap: int) -> int:\n    dp = [0] * (cap + 1)\n    for w_i, v_i in zip(wt, val):\n        for w in range(cap, w_i - 1, -1):\n            dp[w] = max(dp[w], v_i + dp[w - w_i])\n    return dp[cap]\n\n# LCS — the template for most string DP.\ndef lcs(a: str, b: str) -> int:\n    dp = [[0] * (len(b) + 1) for _ in range(len(a) + 1)]\n    for i in range(1, len(a) + 1):\n        for j in range(1, len(b) + 1):\n            dp[i][j] = dp[i - 1][j - 1] + 1 if a[i - 1] == b[j - 1] \\\n                       else max(dp[i - 1][j], dp[i][j - 1])\n    return dp[len(a)][len(b)]"
+    },
+    {
+      "lang": "c",
+      "label": "Tabulation and rolling arrays",
+      "code": "#include <stdlib.h>\n#include <string.h>\n\n/* In C, prefer bottom-up tables: no recursion depth risk, and the memory is\n   explicit. Note calloc zeroes for you; malloc does NOT — reading\n   uninitialised memory is the classic DP bug here. */\nint climbStairs(int n) {\n    if (n <= 2) return n;\n    int prev = 1, cur = 2;\n    for (int i = 3; i <= n; i++) {\n        int next = prev + cur;      /* rolling: only two states are read */\n        prev = cur; cur = next;\n    }\n    return cur;\n}\n\n/* 0/1 knapsack, 1-D. Iterate weight DOWNWARD so each item is used at most\n   once; upward silently becomes the unbounded version. */\nint knapsack(const int *wt, const int *val, int n, int cap) {\n    int *dp = calloc((size_t) cap + 1, sizeof *dp);\n    for (int i = 0; i < n; i++)\n        for (int w = cap; w >= wt[i]; w--) {\n            int cand = val[i] + dp[w - wt[i]];\n            if (cand > dp[w]) dp[w] = cand;\n        }\n    int best = dp[cap];\n    free(dp);\n    return best;\n}\n\n/* 2-D tables: allocate one flat block and index it yourself. An array of\n   row pointers costs an extra indirection and fragments the heap. */\nint *dp = calloc((size_t) rows * cols, sizeof *dp);\n#define DP(i, j) dp[(size_t)(i) * cols + (j)]"
+    },
+    {
+      "lang": "go",
+      "label": "Memoisation to tabulation to rolling array",
+      "code": "// 1. Top-down with a memo map (or slice, when the state is a small int).\nfunc robMemo(a []int, i int, memo []int) int {\n\tif i >= len(a) {\n\t\treturn 0\n\t}\n\tif memo[i] != -1 {\n\t\treturn memo[i]\n\t}\n\tmemo[i] = max(a[i]+robMemo(a, i+2, memo), robMemo(a, i+1, memo))\n\treturn memo[i]\n}\n\n// 2. Bottom-up table.\nfunc robTab(a []int) int {\n\tn := len(a)\n\tdp := make([]int, n+2)\n\tfor i := n - 1; i >= 0; i-- {\n\t\tdp[i] = max(a[i]+dp[i+2], dp[i+1])\n\t}\n\treturn dp[0]\n}\n\n// 3. Rolling — only two states are ever read.\nfunc rob(a []int) int {\n\ttake, skip := 0, 0\n\tfor i := len(a) - 1; i >= 0; i-- {\n\t\ttake, skip = max(a[i]+skip, take), take\n\t}\n\treturn take\n}\n\n// 0/1 knapsack, 1-D. Iterate weight DOWNWARD so each item is used once;\n// upward silently becomes the unbounded version.\nfunc knapsack(wt, val []int, cap int) int {\n\tdp := make([]int, cap+1)\n\tfor i := range wt {\n\t\tfor w := cap; w >= wt[i]; w-- {\n\t\t\tdp[w] = max(dp[w], val[i]+dp[w-wt[i]])\n\t\t}\n\t}\n\treturn dp[cap]\n}"
     }
   ],
   "problems": [
@@ -26,10 +49,8 @@
       "platform": "LeetCode",
       "difficulty": "Easy",
       "tier": "warmup",
-      "companies": [
-        "Amazon",
-        "Adobe"
-      ]
+      "companies": [],
+      "video": "https://www.youtube.com/watch?v=Y0lT9Fck7qI"
     },
     {
       "name": "House Robber",
@@ -37,11 +58,8 @@
       "platform": "LeetCode",
       "difficulty": "Medium",
       "tier": "warmup",
-      "companies": [
-        "Amazon",
-        "Google",
-        "Microsoft"
-      ]
+      "companies": [],
+      "video": "https://www.youtube.com/watch?v=73r3KWiEvyk"
     },
     {
       "name": "Coin Change",
@@ -50,10 +68,10 @@
       "difficulty": "Medium",
       "tier": "core",
       "companies": [
-        "Amazon",
         "Google",
         "Uber"
-      ]
+      ],
+      "video": "https://www.youtube.com/watch?v=H9bfqozjoqs"
     },
     {
       "name": "Longest Increasing Subsequence",
@@ -62,10 +80,10 @@
       "difficulty": "Medium",
       "tier": "core",
       "companies": [
-        "Amazon",
         "Google",
         "Microsoft"
-      ]
+      ],
+      "video": "https://www.youtube.com/watch?v=cjWnW0hdF1Y"
     },
     {
       "name": "Unique Paths",
@@ -74,7 +92,6 @@
       "difficulty": "Medium",
       "tier": "core",
       "companies": [
-        "Amazon",
         "Google",
         "Adobe"
       ]
@@ -89,7 +106,8 @@
         "Amazon",
         "Google",
         "Microsoft"
-      ]
+      ],
+      "video": "https://www.youtube.com/watch?v=Ua0GhsJSlWM"
     },
     {
       "name": "Word Break",
@@ -102,7 +120,8 @@
         "Google",
         "Meta",
         "Uber"
-      ]
+      ],
+      "video": "https://www.youtube.com/watch?v=Sx9NNgInc3A"
     },
     {
       "name": "Edit Distance",

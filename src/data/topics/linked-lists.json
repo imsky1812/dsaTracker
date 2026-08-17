@@ -2,21 +2,44 @@
   "slug": "linked-lists",
   "order": 9,
   "title": "Linked Lists",
-  "explainer_md": "A linked list stores elements in nodes, each holding a value and a pointer to the next node. Unlike arrays, nodes aren't contiguous \u2014 so you lose O(1) random access, but gain O(1) insertion/deletion once you're at a position (just rewire pointers, no shifting). This trade-off is the whole reason linked lists exist.\n\nInterviews use linked lists to test **pointer manipulation** under pressure: reversing, detecting cycles, finding the middle, merging. The recurring tools are the dummy head node (simplifies edge cases at the front) and the two-pointer / fast-slow technique.\n\nMental model: a treasure hunt where each clue points to the location of the next. You can't jump to clue #5 \u2014 you must follow from the start.",
-  "patterns_md": "**Fast & slow pointers** \u2014 advance one pointer 2\u00d7 as fast as the other. When fast reaches the end, slow is at the middle. If they ever meet, there's a cycle (Floyd's algorithm). Foundational for cycle, middle, and palindrome problems.\n\n**Dummy head node** \u2014 allocate a placeholder before the real head so insertions/deletions at the front need no special-casing. Return `dummy.next`.\n\n**Iterative reversal** \u2014 three pointers (prev, curr, next) walk the list rewiring each link. Memorize this; it appears everywhere.\n\n**Two-pass or gap technique** \u2014 for 'nth from end', advance one pointer n steps first, then move both until it hits the end.",
-  "complexity_md": "| Operation | Time | Notes |\n|---|---|---|\n| Access by index | O(n) | Must traverse |\n| Insert/delete at head | O(1) | Rewire pointers |\n| Insert/delete at known node | O(1) | No shifting |\n| Search | O(n) | Linear scan |\n| Reverse | O(n) | Single pass |\n| Cycle detection | O(n) | Fast-slow, O(1) space |\n\nSpace: O(1) for in-place pointer work \u2014 a key advantage interviewers look for over O(n) copy-based solutions.",
+  "explainer_md": "A linked list stores elements in nodes, each holding a value and a pointer to the next node. Unlike arrays, nodes aren't contiguous — so you lose O(1) random access, but gain O(1) insertion/deletion once you're at a position (just rewire pointers, no shifting). This trade-off is the whole reason linked lists exist.\n\nInterviews use linked lists to test **pointer manipulation** under pressure: reversing, detecting cycles, finding the middle, merging. The recurring tools are the dummy head node (simplifies edge cases at the front) and the two-pointer / fast-slow technique.\n\nMental model: a treasure hunt where each clue points to the location of the next. You can't jump to clue #5 — you must follow from the start.",
+  "patterns_md": "**Fast & slow pointers** — advance one pointer 2× as fast as the other. When fast reaches the end, slow is at the middle. If they ever meet, there's a cycle (Floyd's algorithm). Foundational for cycle, middle, and palindrome problems.\n\n**Dummy head node** — allocate a placeholder before the real head so insertions/deletions at the front need no special-casing. Return `dummy.next`.\n\n**Iterative reversal** — three pointers (prev, curr, next) walk the list rewiring each link. Memorize this; it appears everywhere.\n\n**Two-pass or gap technique** — for 'nth from end', advance one pointer n steps first, then move both until it hits the end.",
+  "complexity_md": "| Operation | Time | Notes |\n|---|---|---|\n| Access by index | O(n) | Must traverse |\n| Insert/delete at head | O(1) | Rewire pointers |\n| Insert/delete at known node | O(1) | No shifting |\n| Search | O(n) | Linear scan |\n| Reverse | O(n) | Single pass |\n| Cycle detection | O(n) | Fast-slow, O(1) space |\n\nSpace: O(1) for in-place pointer work — a key advantage interviewers look for over O(n) copy-based solutions.",
   "code": [
     {
+      "lang": "cpp",
       "label": "Node definition",
       "code": "struct ListNode {\n    int val;\n    ListNode* next;\n    ListNode(int x) : val(x), next(nullptr) {}\n};"
     },
     {
+      "lang": "cpp",
       "label": "Iterative reversal",
       "code": "ListNode* reverse(ListNode* head) {\n    ListNode* prev = nullptr;\n    while (head) {\n        ListNode* next = head->next;\n        head->next = prev;   // rewire\n        prev = head;\n        head = next;\n    }\n    return prev;             // new head\n}"
     },
     {
+      "lang": "cpp",
       "label": "Floyd's cycle detection",
       "code": "bool hasCycle(ListNode* head) {\n    ListNode *slow = head, *fast = head;\n    while (fast && fast->next) {\n        slow = slow->next;\n        fast = fast->next->next;\n        if (slow == fast) return true;\n    }\n    return false;\n}"
+    },
+    {
+      "lang": "java",
+      "label": "Reverse, and Floyd's cycle detection",
+      "code": "static class ListNode { int val; ListNode next; ListNode(int v) { val = v; } }\n\n// Reverse: walk forward rewiring each next pointer backwards.\nstatic ListNode reverse(ListNode head) {\n    ListNode prev = null;\n    while (head != null) {\n        ListNode next = head.next;   // save before clobbering\n        head.next = prev;\n        prev = head;\n        head = next;\n    }\n    return prev;\n}\n\n// Floyd: slow moves 1, fast moves 2. If they meet there is a cycle.\n// Reset one to head and advance both by 1 to find the cycle entry.\nstatic ListNode cycleStart(ListNode head) {\n    ListNode slow = head, fast = head;\n    while (fast != null && fast.next != null) {\n        slow = slow.next; fast = fast.next.next;\n        if (slow == fast) {\n            slow = head;\n            while (slow != fast) { slow = slow.next; fast = fast.next; }\n            return slow;\n        }\n    }\n    return null;\n}"
+    },
+    {
+      "lang": "py",
+      "label": "Reverse, and Floyd's cycle detection",
+      "code": "class ListNode:\n    def __init__(self, val: int = 0, nxt: 'ListNode | None' = None):\n        self.val, self.next = val, nxt\n\n# Reverse: rewire each next pointer backwards as you walk forward.\ndef reverse(head: ListNode | None) -> ListNode | None:\n    prev = None\n    while head:\n        head.next, prev, head = prev, head, head.next   # save-rewire-advance\n    return prev\n\n# Floyd: slow moves 1, fast moves 2. Meeting means a cycle. Reset one pointer\n# to head, advance both by 1, and they meet at the cycle entry.\ndef cycle_start(head: ListNode | None) -> ListNode | None:\n    slow = fast = head\n    while fast and fast.next:\n        slow, fast = slow.next, fast.next.next\n        if slow is fast:\n            slow = head\n            while slow is not fast:\n                slow, fast = slow.next, fast.next\n            return slow\n    return None\n\n# Middle of the list — the same fast/slow idea.\ndef middle(head: ListNode | None) -> ListNode | None:\n    slow = fast = head\n    while fast and fast.next:\n        slow, fast = slow.next, fast.next.next\n    return slow"
+    },
+    {
+      "lang": "c",
+      "label": "Reverse, Floyd's cycle detection, and freeing",
+      "code": "#include <stdlib.h>\n\ntypedef struct Node { int val; struct Node *next; } Node;\n\nNode *node_new(int v) {\n    Node *n = malloc(sizeof *n);\n    if (!n) exit(1);\n    n->val = v; n->next = NULL;\n    return n;\n}\n\n/* Reverse: rewire each next backwards while walking forward. */\nNode *reverse(Node *head) {\n    Node *prev = NULL;\n    while (head) {\n        Node *next = head->next;   /* save before clobbering */\n        head->next = prev;\n        prev = head;\n        head = next;\n    }\n    return prev;\n}\n\n/* Floyd: meeting means a cycle. Reset one pointer to head, step both by 1,\n   and they meet at the cycle entry. */\nNode *cycleStart(Node *head) {\n    Node *slow = head, *fast = head;\n    while (fast && fast->next) {\n        slow = slow->next; fast = fast->next->next;\n        if (slow == fast) {\n            slow = head;\n            while (slow != fast) { slow = slow->next; fast = fast->next; }\n            return slow;\n        }\n    }\n    return NULL;\n}\n\n/* You own the memory. Save next BEFORE freeing — reading n->next after\n   free(n) is undefined behaviour, and it often appears to work. */\nvoid list_free(Node *head) {\n    while (head) {\n        Node *next = head->next;\n        free(head);\n        head = next;\n    }\n}"
+    },
+    {
+      "lang": "go",
+      "label": "Reverse, and Floyd's cycle detection",
+      "code": "type ListNode struct {\n\tVal  int\n\tNext *ListNode\n}\n\n// Reverse: rewire each Next backwards while walking forward.\nfunc reverse(head *ListNode) *ListNode {\n\tvar prev *ListNode\n\tfor head != nil {\n\t\thead.Next, prev, head = prev, head, head.Next\n\t}\n\treturn prev\n}\n\n// Floyd: slow moves 1, fast moves 2. Meeting means a cycle; reset one to head\n// and step both by 1 to land on the cycle entry.\nfunc cycleStart(head *ListNode) *ListNode {\n\tslow, fast := head, head\n\tfor fast != nil && fast.Next != nil {\n\t\tslow, fast = slow.Next, fast.Next.Next\n\t\tif slow == fast {\n\t\t\tslow = head\n\t\t\tfor slow != fast {\n\t\t\t\tslow, fast = slow.Next, fast.Next\n\t\t\t}\n\t\t\treturn slow\n\t\t}\n\t}\n\treturn nil\n}\n\n// A dummy head removes the \"is this the first node?\" special case from\n// every insert and delete.\nfunc removeVal(head *ListNode, v int) *ListNode {\n\tdummy := &ListNode{Next: head}\n\tfor cur := dummy; cur.Next != nil; {\n\t\tif cur.Next.Val == v {\n\t\t\tcur.Next = cur.Next.Next\n\t\t} else {\n\t\t\tcur = cur.Next\n\t\t}\n\t}\n\treturn dummy.Next\n}"
     }
   ],
   "problems": [
@@ -26,11 +49,8 @@
       "platform": "LeetCode",
       "difficulty": "Easy",
       "tier": "warmup",
-      "companies": [
-        "Amazon",
-        "Microsoft",
-        "Adobe"
-      ]
+      "companies": [],
+      "video": "https://www.youtube.com/watch?v=G0_I-ZF0S38"
     },
     {
       "name": "Middle of the Linked List",
@@ -38,9 +58,7 @@
       "platform": "LeetCode",
       "difficulty": "Easy",
       "tier": "warmup",
-      "companies": [
-        "Amazon"
-      ]
+      "companies": []
     },
     {
       "name": "Merge Two Sorted Lists",
@@ -48,11 +66,8 @@
       "platform": "LeetCode",
       "difficulty": "Easy",
       "tier": "warmup",
-      "companies": [
-        "Amazon",
-        "Microsoft",
-        "Adobe"
-      ]
+      "companies": [],
+      "video": "https://www.youtube.com/watch?v=XIdigk956u0"
     },
     {
       "name": "Linked List Cycle",
@@ -61,9 +76,9 @@
       "difficulty": "Easy",
       "tier": "core",
       "companies": [
-        "Amazon",
         "Microsoft"
-      ]
+      ],
+      "video": "https://www.youtube.com/watch?v=gBTe7lFR3vc"
     },
     {
       "name": "Remove Nth Node From End of List",
@@ -72,7 +87,6 @@
       "difficulty": "Medium",
       "tier": "core",
       "companies": [
-        "Amazon",
         "Meta"
       ]
     },
@@ -110,7 +124,8 @@
         "Google",
         "Microsoft",
         "Uber"
-      ]
+      ],
+      "video": "https://www.youtube.com/watch?v=q5a5OiGbT6Q"
     }
   ]
 }
