@@ -1,7 +1,7 @@
 # DSA Mastery
 
 An offline-first DSA learning and tracking app for Android and iOS. Not just a
-tracker — it ships an authored roadmap, full-depth topic modules, a C++ primer,
+tracker — it ships an authored roadmap, full-depth topic modules, primers for five languages,
 and 139 company-tagged interview problems, with the progress system built around
 them.
 
@@ -19,9 +19,9 @@ Built with Expo + React Native + TypeScript, backed by Supabase.
 </td>
 <td>
 
-**[⬇ Download the APK directly](https://expo.dev/artifacts/eas/rYfqo_Vwt9pr9NrXGjmKIDacWBTFb9Eg3XtJFCYWlH8.apk)**
+**[⬇ Download the APK directly](https://expo.dev/artifacts/eas/EnSZILV4fPNDpwdUIPWEap0kNWZfgrcrLNS15N5USZI.apk)**
 
-or open the **[install page](https://expo.dev/accounts/imsky1812/projects/dsa-mastery/builds/23892b8b-8377-4f16-8850-761692398199)**
+or open the **[install page](https://expo.dev/accounts/imsky1812/projects/dsa-mastery/builds/896e07ac-20e2-4a56-aa50-3a652421adb5)**
 on your phone.
 
 1. Tap the APK to download it.
@@ -55,8 +55,9 @@ contents: each stage reports real completion from the topics assigned to it, a
 rail fills in behind you, and exactly one stage is marked **Now** and opens to
 show what's left in it. Nineteen topic modules each carry a written explainer,
 the patterns that topic is really about, a complexity table, idiomatic C++, and
-a problem ladder tiered *warmup → core → interview → hard*. A ten-section C++
-primer covers the language itself.
+a problem ladder tiered *warmup → core → interview → hard*. Each of five languages —
+C++, Java, Python, C and Go — gets a ten-section primer and its own snippets
+per topic, switchable from Profile.
 
 **Practise deliberately.** All 139 problems in one list, filterable by status,
 difficulty, platform, company, and topic. Every link was verified — no
@@ -79,14 +80,15 @@ the entire app keeps working with no signal — see [Offline-first](#offline-fir
 
 | | |
 |---|---|
-| **Content** | 8-phase roadmap · 19 topic modules · 10-section C++ primer · 139 verified problems · 48 code samples |
+| **Content** | 8-phase roadmap · 19 topic modules · 139 verified problems · 124 code samples |
+| **Languages** | C++, Java, Python, C, Go — a 10-section primer each, snippets per topic |
 | **Companies** | Amazon, Google, Microsoft, Meta, Adobe, Uber, LinkedIn, Flipkart, TCS, Infosys, Wipro |
 | **Tracking** | contribution heatmap · streaks · per-problem notes · revisit flags · topic completion |
 | **Filtering** | status · difficulty · platform · company · topic |
 | **Accounts** | email/password sign-up, sign-in, password reset — or use it with no account at all |
 | **Sync** | progress mirrors to Supabase and reconciles across devices |
 | **Reminders** | one local daily notification at a time you choose |
-| **Stuck?** | every problem links straight to a video explanation |
+| **Stuck?** | 42 problems have a verified explanation video; the rest fall back to a scoped search |
 | **Roadmap** | a progress journey — per-stage completion, one stage marked *Now* |
 
 ---
