@@ -1,0 +1,89 @@
+{
+  "slug": "bst",
+  "order": 12,
+  "title": "Binary Search Trees",
+  "explainer_md": "A binary search tree is a binary tree with an ordering invariant: for every node, all values in its left subtree are smaller and all in its right subtree are larger. That invariant means search, insert, and delete each follow a single root-to-leaf path \u2014 O(h) time, which is O(log n) when the tree stays balanced.\n\nThe single most important BST fact: an **inorder traversal yields the values in sorted order**. A huge fraction of BST problems are solved by exploiting this \u2014 validating a BST, finding the k-th smallest, finding the closest value, or spotting a swapped pair all lean on inorder order.\n\nMental model: a decision tree for 'guess the number' \u2014 at each node you go left (smaller) or right (larger), halving the search space when balanced.",
+  "patterns_md": "**Ordered navigation** \u2014 to find/insert/delete, compare with the current node and go left or right. One path, O(h).\n\n**Inorder = sorted** \u2014 leverage it for k-th smallest (inorder and stop at k), validate BST (inorder must be strictly increasing), or find two swapped nodes.\n\n**Range exploitation** \u2014 pass down `(low, high)` bounds to validate or to prune search to a value range.\n\n**Balanced-tree awareness** \u2014 a naive BST degrades to O(n) if inserted in sorted order. Self-balancing variants (AVL, Red-Black) keep O(log n); `std::set`/`std::map` are Red-Black trees under the hood.",
+  "complexity_md": "| Operation | Balanced | Worst (skewed) |\n|---|---|---|\n| Search | O(log n) | O(n) |\n| Insert | O(log n) | O(n) |\n| Delete | O(log n) | O(n) |\n| Inorder traversal | O(n) | O(n) |\n| k-th smallest | O(h + k) | O(n) |\n\nEverything hinges on height. Balanced \u21d2 O(log n); a sorted-order insertion sequence makes it a linked list \u21d2 O(n).",
+  "code": [
+    {
+      "label": "Search & insert",
+      "code": "TreeNode* insert(TreeNode* root, int val) {\n    if (!root) return new TreeNode(val);\n    if (val < root->val) root->left = insert(root->left, val);\n    else root->right = insert(root->right, val);\n    return root;\n}\nbool search(TreeNode* root, int val) {\n    while (root) {\n        if (root->val == val) return true;\n        root = val < root->val ? root->left : root->right;\n    }\n    return false;\n}"
+    },
+    {
+      "label": "Validate BST \u2014 range bounds",
+      "code": "bool valid(TreeNode* root, long lo, long hi) {\n    if (!root) return true;\n    if (root->val <= lo || root->val >= hi) return false;\n    return valid(root->left, lo, root->val) &&\n           valid(root->right, root->val, hi);\n}\n// call: valid(root, LONG_MIN, LONG_MAX)"
+    }
+  ],
+  "problems": [
+    {
+      "name": "Search in a Binary Search Tree",
+      "url": "https://leetcode.com/problems/search-in-a-binary-search-tree/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [
+        "Amazon"
+      ]
+    },
+    {
+      "name": "Insert into a Binary Search Tree",
+      "url": "https://leetcode.com/problems/insert-into-a-binary-search-tree/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "warmup",
+      "companies": [
+        "Amazon",
+        "Microsoft"
+      ]
+    },
+    {
+      "name": "Validate Binary Search Tree",
+      "url": "https://leetcode.com/problems/validate-binary-search-tree/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "Amazon",
+        "Meta",
+        "Microsoft",
+        "Adobe"
+      ]
+    },
+    {
+      "name": "Kth Smallest Element in a BST",
+      "url": "https://leetcode.com/problems/kth-smallest-element-in-a-bst/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Uber"
+      ]
+    },
+    {
+      "name": "Lowest Common Ancestor of a BST",
+      "url": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Amazon",
+        "Microsoft",
+        "Meta"
+      ]
+    },
+    {
+      "name": "Convert Sorted Array to BST",
+      "url": "https://leetcode.com/problems/convert-sorted-array-to-binary-search-tree/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "interview",
+      "companies": [
+        "Amazon",
+        "Google"
+      ]
+    }
+  ]
+}

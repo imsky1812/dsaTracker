@@ -1,0 +1,101 @@
+{
+  "slug": "heaps",
+  "order": 13,
+  "title": "Heaps & Priority Queues",
+  "explainer_md": "A heap is a binary tree kept in a specific partial order: in a **min-heap**, every parent is \u2264 its children (so the minimum sits at the root); a max-heap is the mirror. It's stored compactly in an array \u2014 no pointers \u2014 and gives you the smallest (or largest) element in O(1), with insert and extract in O(log n).\n\nHeaps shine on 'top-K', 'k-th largest', 'merge k sorted', and 'running median' problems \u2014 anything where you repeatedly need the best remaining element without fully sorting. In C++ it's `priority_queue` (max-heap by default; use `greater<>` for a min-heap).\n\nMental model: a tournament bracket that always keeps the current champion (min or max) at the top and reorganizes cheaply when players come and go.",
+  "patterns_md": "**Top-K with a bounded heap** \u2014 to find the k largest, keep a **min**-heap of size k; if it overflows, pop the smallest. O(n log k), better than sorting when k \u226a n.\n\n**k-way merge** \u2014 push the heads of k sorted lists into a heap; repeatedly pop the min and push its successor. Merges k lists in O(N log k).\n\n**Two-heap median** \u2014 a max-heap for the lower half and a min-heap for the upper half; balance them to read the median in O(1).\n\n**Greedy scheduling** \u2014 heaps power interval/task scheduling where you always process the nearest deadline or highest priority next.",
+  "complexity_md": "| Operation | Time |\n|---|---|\n| Peek min/max (top) | O(1) |\n| Insert (push) | O(log n) |\n| Extract (pop) | O(log n) |\n| Build heap from array | O(n) |\n| Top-K (size-k heap) | O(n log k) |\n\nBuilding a heap by successive sift-down is O(n), not O(n log n) \u2014 a common interview gotcha. Space is O(n) for the heap, or O(k) for a bounded top-K heap.",
+  "code": [
+    {
+      "label": "Min-heap & max-heap declarations",
+      "code": "priority_queue<int> maxHeap;                       // max on top\npriority_queue<int, vector<int>, greater<int>> minHeap;  // min on top\nmaxHeap.push(5); maxHeap.push(1);\nint top = maxHeap.top();   // 5\nmaxHeap.pop();"
+    },
+    {
+      "label": "Top-K largest with bounded min-heap",
+      "code": "int findKthLargest(vector<int>& nums, int k) {\n    priority_queue<int, vector<int>, greater<int>> h;\n    for (int x : nums) {\n        h.push(x);\n        if ((int)h.size() > k) h.pop();  // drop smallest\n    }\n    return h.top();   // k-th largest\n}"
+    }
+  ],
+  "problems": [
+    {
+      "name": "Kth Largest Element in a Stream",
+      "url": "https://leetcode.com/problems/kth-largest-element-in-a-stream/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [
+        "Amazon",
+        "Meta"
+      ]
+    },
+    {
+      "name": "Last Stone Weight",
+      "url": "https://leetcode.com/problems/last-stone-weight/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [
+        "Amazon"
+      ]
+    },
+    {
+      "name": "K Closest Points to Origin",
+      "url": "https://leetcode.com/problems/k-closest-points-to-origin/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "Amazon",
+        "Meta",
+        "Google"
+      ]
+    },
+    {
+      "name": "Top K Frequent Elements",
+      "url": "https://leetcode.com/problems/top-k-frequent-elements/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Meta"
+      ]
+    },
+    {
+      "name": "Task Scheduler",
+      "url": "https://leetcode.com/problems/task-scheduler/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Amazon",
+        "Meta",
+        "Microsoft"
+      ]
+    },
+    {
+      "name": "Merge k Sorted Lists",
+      "url": "https://leetcode.com/problems/merge-k-sorted-lists/",
+      "platform": "LeetCode",
+      "difficulty": "Hard",
+      "tier": "interview",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Microsoft"
+      ]
+    },
+    {
+      "name": "Find Median from Data Stream",
+      "url": "https://leetcode.com/problems/find-median-from-data-stream/",
+      "platform": "LeetCode",
+      "difficulty": "Hard",
+      "tier": "hard",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Microsoft"
+      ]
+    }
+  ]
+}

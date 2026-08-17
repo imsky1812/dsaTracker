@@ -1,0 +1,93 @@
+{
+  "slug": "stl",
+  "order": 5,
+  "title": "STL & Collections",
+  "explainer_md": "The Standard Template Library is C++'s toolbox of ready-made containers and algorithms. Knowing it cold is a massive time-saver in interviews \u2014 you implement the *idea*, not the data structure. The four containers you'll reach for constantly: `vector` (dynamic array), `map`/`set` (sorted, tree-backed, O(log n)), `unordered_map`/`unordered_set` (hash-backed, O(1) average), and `pair`/`tuple` for grouping.\n\nThe algorithms header gives you `sort`, `lower_bound`, `upper_bound`, `next_permutation`, `accumulate`, and more \u2014 each replacing a chunk of hand-written code. Add `priority_queue` (a heap) and `stack`/`queue` and you can express most solutions concisely.\n\nMental model: the STL is a set of Lego blocks \u2014 pick the container whose complexity matches your access pattern, and let the library handle the internals.",
+  "patterns_md": "**Choose by access pattern**: need ordering + range queries \u2192 `map`/`set`. Need pure fast lookup \u2192 `unordered_map`/`unordered_set`. Need top/min element repeatedly \u2192 `priority_queue`. Need LIFO/FIFO \u2192 `stack`/`queue`.\n\n**Custom sorting** \u2014 pass a comparator lambda to `sort`: `sort(v.begin(), v.end(), [](auto&a, auto&b){ return a.second < b.second; })`.\n\n**Binary search helpers** \u2014 `lower_bound`/`upper_bound` on a sorted vector give O(log n) boundary queries without writing the loop.\n\n**Frequency + ordering combos** \u2014 `map<int,int>` keeps counts in sorted key order; pair it with iteration for 'k-th' style problems.",
+  "complexity_md": "| Container | Access | Insert | Search | Ordered? |\n|---|---|---|---|---|\n| vector | O(1) | O(1)* end | O(n) | insertion |\n| map / set | O(log n) | O(log n) | O(log n) | yes (sorted) |\n| unordered_map / set | O(1) avg | O(1) avg | O(1) avg | no |\n| priority_queue | O(1) top | O(log n) | \u2014 | heap order |\n| stack / queue | O(1) top | O(1) | \u2014 | LIFO / FIFO |\n\n*Amortized. Worst-case for unordered containers is O(n) under heavy collisions.",
+  "code": [
+    {
+      "label": "Maps & sets \u2014 count frequencies",
+      "code": "unordered_map<int,int> freq;\nfor (int x : nums) freq[x]++;\nfor (auto& [val, cnt] : freq)\n    cout << val << \" -> \" << cnt << \"\\n\";"
+    },
+    {
+      "label": "Sort with custom comparator",
+      "code": "vector<pair<string,int>> v;\n// sort by count desc, then name asc\nsort(v.begin(), v.end(), [](auto& a, auto& b){\n    if (a.second != b.second) return a.second > b.second;\n    return a.first < b.first;\n});"
+    },
+    {
+      "label": "priority_queue \u2014 min-heap of top K",
+      "code": "priority_queue<int, vector<int>, greater<int>> minHeap;\nfor (int x : nums) {\n    minHeap.push(x);\n    if ((int)minHeap.size() > k) minHeap.pop();\n}\n// minHeap.top() is the k-th largest"
+    }
+  ],
+  "problems": [
+    {
+      "name": "Two Sum",
+      "url": "https://leetcode.com/problems/two-sum/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [
+        "Amazon",
+        "Google"
+      ]
+    },
+    {
+      "name": "Contains Duplicate",
+      "url": "https://leetcode.com/problems/contains-duplicate/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [
+        "Amazon",
+        "Adobe"
+      ]
+    },
+    {
+      "name": "Valid Parentheses",
+      "url": "https://leetcode.com/problems/valid-parentheses/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Microsoft"
+      ]
+    },
+    {
+      "name": "Top K Frequent Elements",
+      "url": "https://leetcode.com/problems/top-k-frequent-elements/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Meta"
+      ]
+    },
+    {
+      "name": "Sort Characters By Frequency",
+      "url": "https://leetcode.com/problems/sort-characters-by-frequency/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "Amazon",
+        "Google"
+      ]
+    },
+    {
+      "name": "Kth Largest Element in an Array",
+      "url": "https://leetcode.com/problems/kth-largest-element-in-an-array/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Amazon",
+        "Meta",
+        "Microsoft"
+      ]
+    }
+  ]
+}

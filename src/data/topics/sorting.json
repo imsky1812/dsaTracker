@@ -1,0 +1,87 @@
+{
+  "slug": "sorting",
+  "order": 8,
+  "title": "Sorting & Divide and Conquer",
+  "explainer_md": "Sorting arranges elements in order, and the *good* sorts (merge, quick, heap) all achieve O(n log n) by a divide-and-conquer strategy: split the problem, solve the halves, combine. Understanding *why* they're O(n log n) \u2014 log n levels of splitting, O(n) work per level \u2014 is more valuable than memorizing them, because that same recursion-tree analysis applies to countless other problems.\n\nIn practice you'll call `std::sort` (an introsort \u2014 quicksort with heapsort fallback). But interviews still probe merge sort (stable, predictable, powers 'count inversions') and quicksort (in-place, powers 'quickselect' for k-th element). Divide-and-conquer as a *mindset* \u2014 not just for sorting \u2014 is the real lesson.\n\nMental model: to sort a messy pile, split it in half, get each half sorted, then zip the two sorted halves together.",
+  "patterns_md": "**Merge sort** \u2014 split to single elements, merge sorted halves. Stable, O(n log n) guaranteed, O(n) extra space. The merge step also counts inversions and merges sorted lists.\n\n**Quick sort / quickselect** \u2014 partition around a pivot; recurse on the relevant side. In-place; average O(n log n). Quickselect finds the k-th smallest in O(n) average without full sorting.\n\n**Counting / bucket sort** \u2014 when values are bounded integers, sort in O(n) by counting occurrences. Beats the O(n log n) comparison lower bound by not comparing.\n\n**Sort-then-scan** \u2014 many problems become trivial after sorting (meeting rooms, merge intervals, closest pairs). Sorting as a preprocessing step is a pattern in itself.",
+  "complexity_md": "| Algorithm | Best | Average | Worst | Space | Stable |\n|---|---|---|---|---|---|\n| Bubble/Insertion | O(n) | O(n\u00b2) | O(n\u00b2) | O(1) | yes |\n| Merge sort | O(n log n) | O(n log n) | O(n log n) | O(n) | yes |\n| Quick sort | O(n log n) | O(n log n) | O(n\u00b2) | O(log n) | no |\n| Heap sort | O(n log n) | O(n log n) | O(n log n) | O(1) | no |\n| Counting sort | O(n+k) | O(n+k) | O(n+k) | O(k) | yes |\n\nComparison sorts can't beat O(n log n) in the worst case \u2014 that's a proven lower bound.",
+  "code": [
+    {
+      "label": "Merge sort",
+      "code": "void merge(vector<int>& a, int l, int m, int r) {\n    vector<int> tmp;\n    int i = l, j = m + 1;\n    while (i <= m && j <= r)\n        tmp.push_back(a[i] <= a[j] ? a[i++] : a[j++]);\n    while (i <= m) tmp.push_back(a[i++]);\n    while (j <= r) tmp.push_back(a[j++]);\n    for (int k = 0; k < (int)tmp.size(); k++) a[l + k] = tmp[k];\n}\nvoid mergeSort(vector<int>& a, int l, int r) {\n    if (l >= r) return;\n    int m = l + (r - l) / 2;\n    mergeSort(a, l, m); mergeSort(a, m + 1, r);\n    merge(a, l, m, r);\n}"
+    },
+    {
+      "label": "Quickselect \u2014 k-th smallest, O(n) avg",
+      "code": "int partition(vector<int>& a, int l, int r) {\n    int pivot = a[r], i = l;\n    for (int j = l; j < r; j++)\n        if (a[j] < pivot) swap(a[i++], a[j]);\n    swap(a[i], a[r]);\n    return i;\n}\nint quickselect(vector<int>& a, int l, int r, int k) {\n    int p = partition(a, l, r);\n    if (p == k) return a[p];\n    return p < k ? quickselect(a, p+1, r, k)\n                 : quickselect(a, l, p-1, k);\n}"
+    }
+  ],
+  "problems": [
+    {
+      "name": "Sort an Array",
+      "url": "https://leetcode.com/problems/sort-an-array/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "warmup",
+      "companies": [
+        "Amazon"
+      ]
+    },
+    {
+      "name": "Merge Intervals",
+      "url": "https://leetcode.com/problems/merge-intervals/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Meta",
+        "Microsoft"
+      ]
+    },
+    {
+      "name": "Kth Largest Element in an Array",
+      "url": "https://leetcode.com/problems/kth-largest-element-in-an-array/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "Amazon",
+        "Meta"
+      ]
+    },
+    {
+      "name": "Sort Colors",
+      "url": "https://leetcode.com/problems/sort-colors/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Microsoft",
+        "Amazon"
+      ]
+    },
+    {
+      "name": "Count of Smaller Numbers After Self",
+      "url": "https://leetcode.com/problems/count-of-smaller-numbers-after-self/",
+      "platform": "LeetCode",
+      "difficulty": "Hard",
+      "tier": "hard",
+      "companies": [
+        "Google",
+        "Amazon"
+      ]
+    },
+    {
+      "name": "Count Inversions",
+      "url": "https://www.geeksforgeeks.org/problems/inversion-of-array-1587115620/1",
+      "platform": "GFG",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Amazon",
+        "Flipkart"
+      ]
+    }
+  ]
+}

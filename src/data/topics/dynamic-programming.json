@@ -1,0 +1,142 @@
+{
+  "slug": "dynamic-programming",
+  "order": 17,
+  "title": "Dynamic Programming",
+  "explainer_md": "Dynamic programming solves problems with **overlapping subproblems** and **optimal substructure** by solving each subproblem once and reusing the answer. It's the highest-leverage interview topic and the one most people find hardest \u2014 the difficulty is recognizing the recurrence, not writing the code.\n\nThe reliable path: (1) write a plain recursion that tries all options; (2) notice the same arguments recur, and cache them \u2014 that's **memoization** (top-down); (3) optionally flip it to fill a table from the base cases up \u2014 that's **tabulation** (bottom-up). Same recurrence, three levels of optimization. If you can define the state and the transition, the rest is mechanical.\n\nMental model: climbing stairs where each step's answer depends on earlier steps. Instead of recomputing, you jot each answer on the step so you never solve it twice.",
+  "patterns_md": "**Recursion \u2192 memo \u2192 tabulation** \u2014 always start from a brute-force recursion. Add a cache keyed by the state. Then, if useful, convert to an iterative table. This staged approach is how you *derive* a DP instead of memorizing one.\n\n**Define state precisely** \u2014 'dp[i] = the answer considering the first i items'. Getting the state definition right is 80% of the battle.\n\n**Standard families** \u2014 1D (climbing stairs, house robber), knapsack (subset-sum, coin change), sequence DP (LIS, LCS, edit distance), grid DP (unique paths, min path sum), and interval/partition DP.\n\n**Space optimization** \u2014 many DPs only need the previous row/few states, so O(n) space collapses to O(1). Do it after correctness, not before.",
+  "complexity_md": "| Problem family | Time | Space |\n|---|---|---|\n| 1D DP (stairs, robber) | O(n) | O(1) optimizable |\n| 0/1 Knapsack | O(n\u00b7W) | O(W) optimizable |\n| LCS / edit distance | O(n\u00b7m) | O(min(n,m)) |\n| LIS | O(n log n) | O(n) |\n| Grid DP | O(n\u00b7m) | O(m) optimizable |\n\nGeneral rule: DP time = (number of states) \u00d7 (work per transition). Identify those two and you have the complexity before writing a line.",
+  "code": [
+    {
+      "label": "Recursion \u2192 memoization (top-down)",
+      "code": "int rob(vector<int>& nums, int i, vector<int>& memo) {\n    if (i >= (int)nums.size()) return 0;\n    if (memo[i] != -1) return memo[i];\n    int take = nums[i] + rob(nums, i + 2, memo);\n    int skip = rob(nums, i + 1, memo);\n    return memo[i] = max(take, skip);\n}"
+    },
+    {
+      "label": "Tabulation (bottom-up) + O(1) space",
+      "code": "int rob(vector<int>& nums) {\n    int prev2 = 0, prev1 = 0;\n    for (int x : nums) {\n        int cur = max(prev1, prev2 + x);\n        prev2 = prev1;\n        prev1 = cur;\n    }\n    return prev1;\n}"
+    },
+    {
+      "label": "LCS \u2014 classic 2D table",
+      "code": "int lcs(string a, string b) {\n    int n = a.size(), m = b.size();\n    vector<vector<int>> dp(n+1, vector<int>(m+1, 0));\n    for (int i = 1; i <= n; i++)\n        for (int j = 1; j <= m; j++)\n            dp[i][j] = (a[i-1] == b[j-1])\n                ? dp[i-1][j-1] + 1\n                : max(dp[i-1][j], dp[i][j-1]);\n    return dp[n][m];\n}"
+    }
+  ],
+  "problems": [
+    {
+      "name": "Climbing Stairs",
+      "url": "https://leetcode.com/problems/climbing-stairs/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [
+        "Amazon",
+        "Adobe"
+      ]
+    },
+    {
+      "name": "House Robber",
+      "url": "https://leetcode.com/problems/house-robber/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "warmup",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Microsoft"
+      ]
+    },
+    {
+      "name": "Coin Change",
+      "url": "https://leetcode.com/problems/coin-change/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Uber"
+      ]
+    },
+    {
+      "name": "Longest Increasing Subsequence",
+      "url": "https://leetcode.com/problems/longest-increasing-subsequence/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Microsoft"
+      ]
+    },
+    {
+      "name": "Unique Paths",
+      "url": "https://leetcode.com/problems/unique-paths/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Adobe"
+      ]
+    },
+    {
+      "name": "Longest Common Subsequence",
+      "url": "https://leetcode.com/problems/longest-common-subsequence/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Microsoft"
+      ]
+    },
+    {
+      "name": "Word Break",
+      "url": "https://leetcode.com/problems/word-break/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Meta",
+        "Uber"
+      ]
+    },
+    {
+      "name": "Edit Distance",
+      "url": "https://leetcode.com/problems/edit-distance/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Microsoft"
+      ]
+    },
+    {
+      "name": "Best Time to Buy and Sell Stock III",
+      "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/",
+      "platform": "LeetCode",
+      "difficulty": "Hard",
+      "tier": "hard",
+      "companies": [
+        "Amazon",
+        "Adobe"
+      ]
+    },
+    {
+      "name": "Maximal Rectangle",
+      "url": "https://leetcode.com/problems/maximal-rectangle/",
+      "platform": "LeetCode",
+      "difficulty": "Hard",
+      "tier": "hard",
+      "companies": [
+        "Amazon",
+        "Google"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "slug": "bit-manipulation",
+  "order": 19,
+  "title": "Bit Manipulation",
+  "explainer_md": "Bit manipulation operates directly on the binary representation of integers using AND, OR, XOR, NOT, and shifts. It enables elegant O(1) tricks and compact state representations (bitmasks), and interviewers use it to test whether you understand what's happening beneath the abstraction.\n\nThe operator worth truly internalizing is **XOR**: `a ^ a = 0`, `a ^ 0 = a`, and it's commutative \u2014 so XOR-ing every element of an array where all but one appear twice leaves exactly the unique element. That single insight solves several classic problems in O(1) space.\n\nMental model: an integer is a row of light switches (bits). The bitwise operators flip, combine, and test switches in parallel \u2014 all bits at once, in a single instruction.",
+  "patterns_md": "**XOR cancellation** \u2014 pairs cancel to zero. Finds the single non-duplicated number, the missing number, or swaps without a temp.\n\n**Mask & shift** \u2014 `x & (1 << k)` tests bit k; `x | (1 << k)` sets it; `x & ~(1 << k)` clears it. The vocabulary for reading/writing individual bits.\n\n**Lowest set bit** \u2014 `x & -x` isolates the lowest set bit; `x & (x-1)` clears it (loop this to count set bits \u2014 Brian Kernighan's method).\n\n**Bitmask as state** \u2014 represent a subset of \u2264 ~20 items as an integer's bits. Powers subset enumeration and bitmask DP (e.g. travelling salesman).",
+  "complexity_md": "| Trick | Time |\n|---|---|\n| Any single bit op | O(1) |\n| Count set bits (Kernighan) | O(set bits) |\n| Enumerate all subsets of n items | O(2^n) |\n| XOR whole array | O(n) |\n\nBit operations are constant-time and constant-space \u2014 that's the appeal. Bitmask subset enumeration is exponential in the number of items but each step is O(1).",
+  "code": [
+    {
+      "label": "XOR \u2014 single number",
+      "code": "int singleNumber(vector<int>& nums) {\n    int x = 0;\n    for (int n : nums) x ^= n;   // pairs cancel\n    return x;\n}"
+    },
+    {
+      "label": "Bit ops \u2014 test, set, clear, count",
+      "code": "bool getBit(int x, int k)  { return (x >> k) & 1; }\nint  setBit(int x, int k)  { return x | (1 << k); }\nint  clearBit(int x, int k){ return x & ~(1 << k); }\nint countBits(int x) {        // Brian Kernighan\n    int c = 0;\n    while (x) { x &= (x - 1); c++; }\n    return c;\n}"
+    }
+  ],
+  "problems": [
+    {
+      "name": "Single Number",
+      "url": "https://leetcode.com/problems/single-number/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [
+        "Amazon",
+        "Adobe"
+      ]
+    },
+    {
+      "name": "Number of 1 Bits",
+      "url": "https://leetcode.com/problems/number-of-1-bits/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [
+        "Amazon",
+        "Microsoft"
+      ]
+    },
+    {
+      "name": "Counting Bits",
+      "url": "https://leetcode.com/problems/counting-bits/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "core",
+      "companies": [
+        "Amazon",
+        "Google"
+      ]
+    },
+    {
+      "name": "Missing Number",
+      "url": "https://leetcode.com/problems/missing-number/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "core",
+      "companies": [
+        "Amazon",
+        "Microsoft"
+      ]
+    },
+    {
+      "name": "Sum of Two Integers",
+      "url": "https://leetcode.com/problems/sum-of-two-integers/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Amazon",
+        "Google"
+      ]
+    },
+    {
+      "name": "Single Number II",
+      "url": "https://leetcode.com/problems/single-number-ii/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Amazon",
+        "Google"
+      ]
+    }
+  ]
+}

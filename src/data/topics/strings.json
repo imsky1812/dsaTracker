@@ -1,0 +1,118 @@
+{
+  "slug": "strings",
+  "order": 4,
+  "title": "Strings",
+  "explainer_md": "A string is an array of characters \u2014 so every array pattern applies \u2014 but with its own idioms. In C++, `std::string` is a dynamic array of `char` with convenient operations (`+`, `substr`, `find`). Because strings are sequences, the two-pointer and sliding-window patterns dominate here just as in arrays.\n\nThe recurring interview themes are: character frequency (usually a 26-length array or a hash map), in-place manipulation with two pointers, and window-based substring problems. A frequency array indexed by `c - 'a'` is one of the most reused tricks in the whole subject.\n\nMental model: a string is a row of letter-tiles you can count, slide a window over, or walk from both ends inward.",
+  "patterns_md": "**Frequency counting** \u2014 map each character to a count using `int freq[26]` (lowercase) or `unordered_map<char,int>`. Powers anagrams, permutation checks, and 'first unique character'.\n\n**Two pointers** \u2014 walk from both ends for palindrome checks and reversals, or same-direction for compaction.\n\n**Sliding window** \u2014 the key pattern for substring problems: 'longest substring without repeating characters', 'minimum window substring', 'longest repeating character replacement'. Expand the right edge, shrink the left when a constraint breaks.\n\n**Hashing / sorting for grouping** \u2014 sort a string's characters or use a frequency signature as a map key to group anagrams.",
+  "complexity_md": "| Operation | Time | Notes |\n|---|---|---|\n| Access char by index | O(1) | It's an array |\n| Concatenation (`+`) | O(n+m) | Copies both |\n| substr(i, len) | O(len) | Copies |\n| find / search (naive) | O(n\u00b7m) | Use KMP for O(n+m) |\n| Frequency count | O(n) | Single pass |\n| Sliding window scan | O(n) | Each char enters/leaves once |\n\nSpace: O(1) for a fixed 26-letter frequency array; O(k) for a window's character set.",
+  "code": [
+    {
+      "label": "Frequency array \u2014 anagram check",
+      "code": "bool isAnagram(string s, string t) {\n    if (s.size() != t.size()) return false;\n    int freq[26] = {0};\n    for (char c : s) freq[c - 'a']++;\n    for (char c : t) if (--freq[c - 'a'] < 0) return false;\n    return true;\n}"
+    },
+    {
+      "label": "Two pointers \u2014 valid palindrome",
+      "code": "bool isPalindrome(string s) {\n    int l = 0, r = s.size() - 1;\n    while (l < r) {\n        while (l < r && !isalnum(s[l])) l++;\n        while (l < r && !isalnum(s[r])) r--;\n        if (tolower(s[l]) != tolower(s[r])) return false;\n        l++; r--;\n    }\n    return true;\n}"
+    },
+    {
+      "label": "Sliding window \u2014 longest substring w/o repeat",
+      "code": "int lengthOfLongest(string s) {\n    vector<int> last(128, -1);\n    int l = 0, best = 0;\n    for (int r = 0; r < (int)s.size(); r++) {\n        if (last[s[r]] >= l) l = last[s[r]] + 1;\n        last[s[r]] = r;\n        best = max(best, r - l + 1);\n    }\n    return best;\n}"
+    }
+  ],
+  "problems": [
+    {
+      "name": "Valid Anagram",
+      "url": "https://leetcode.com/problems/valid-anagram/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [
+        "Amazon",
+        "Adobe"
+      ]
+    },
+    {
+      "name": "Valid Palindrome",
+      "url": "https://leetcode.com/problems/valid-palindrome/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [
+        "Meta",
+        "Amazon"
+      ]
+    },
+    {
+      "name": "Longest Common Prefix",
+      "url": "https://leetcode.com/problems/longest-common-prefix/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [
+        "Adobe",
+        "Amazon"
+      ]
+    },
+    {
+      "name": "Longest Substring Without Repeating Characters",
+      "url": "https://leetcode.com/problems/longest-substring-without-repeating-characters/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Meta",
+        "Adobe"
+      ]
+    },
+    {
+      "name": "Group Anagrams",
+      "url": "https://leetcode.com/problems/group-anagrams/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Uber"
+      ]
+    },
+    {
+      "name": "Longest Palindromic Substring",
+      "url": "https://leetcode.com/problems/longest-palindromic-substring/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Amazon",
+        "Microsoft",
+        "Adobe"
+      ]
+    },
+    {
+      "name": "Longest Repeating Character Replacement",
+      "url": "https://leetcode.com/problems/longest-repeating-character-replacement/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Google",
+        "Amazon"
+      ]
+    },
+    {
+      "name": "Minimum Window Substring",
+      "url": "https://leetcode.com/problems/minimum-window-substring/",
+      "platform": "LeetCode",
+      "difficulty": "Hard",
+      "tier": "hard",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Meta",
+        "Microsoft"
+      ]
+    }
+  ]
+}

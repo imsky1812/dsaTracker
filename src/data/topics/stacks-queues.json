@@ -1,0 +1,100 @@
+{
+  "slug": "stacks-queues",
+  "order": 10,
+  "title": "Stacks & Queues",
+  "explainer_md": "A stack is LIFO (last-in-first-out) \u2014 think a stack of plates; you add and remove from the top. A queue is FIFO (first-in-first-out) \u2014 a line at a counter. Both restrict *where* you can add/remove, and that restriction is exactly what makes them useful for modeling order-dependent processes: function calls, undo history, BFS frontiers, expression parsing.\n\nThe standout interview pattern is the **monotonic stack** \u2014 a stack kept in sorted order that answers 'next greater/smaller element' problems in O(n). It looks like magic the first time and becomes a reliable tool once internalized.\n\nMental model: a stack is a spring-loaded plate dispenser (top only); a queue is a checkout line (back to join, front to leave).",
+  "patterns_md": "**Monotonic stack** \u2014 maintain a stack that's always increasing (or decreasing). When a new element violates the order, pop and resolve \u2014 this is how you find the next greater element, daily temperatures, or histogram areas in O(n).\n\n**Matching / balancing** \u2014 push opening symbols, pop on closing ones. Powers valid-parentheses and expression evaluation.\n\n**Stack for iterative traversal** \u2014 replace recursion with an explicit stack (tree traversals, DFS) to avoid stack-overflow on deep inputs.\n\n**Two-stack / two-queue tricks** \u2014 implement a queue with two stacks (or vice versa); implement a min-stack that returns the minimum in O(1) with an auxiliary stack.",
+  "complexity_md": "| Operation | Stack | Queue |\n|---|---|---|\n| Push / enqueue | O(1) | O(1) |\n| Pop / dequeue | O(1) | O(1) |\n| Top / front | O(1) | O(1) |\n| Search | O(n) | O(n) |\n| Monotonic-stack scan | O(n) total | \u2014 |\n\nEach element is pushed and popped at most once in a monotonic-stack pass, so the total is O(n) even though there's a nested-looking loop.",
+  "code": [
+    {
+      "label": "Valid parentheses \u2014 matching stack",
+      "code": "bool isValid(string s) {\n    stack<char> st;\n    unordered_map<char,char> m{{')','('},{']','['},{'}','{'}};\n    for (char c : s) {\n        if (m.count(c)) {\n            if (st.empty() || st.top() != m[c]) return false;\n            st.pop();\n        } else st.push(c);\n    }\n    return st.empty();\n}"
+    },
+    {
+      "label": "Monotonic stack \u2014 next greater element",
+      "code": "vector<int> nextGreater(vector<int>& a) {\n    int n = a.size();\n    vector<int> res(n, -1);\n    stack<int> st;   // holds indices, decreasing values\n    for (int i = 0; i < n; i++) {\n        while (!st.empty() && a[st.top()] < a[i]) {\n            res[st.top()] = a[i];\n            st.pop();\n        }\n        st.push(i);\n    }\n    return res;\n}"
+    }
+  ],
+  "problems": [
+    {
+      "name": "Valid Parentheses",
+      "url": "https://leetcode.com/problems/valid-parentheses/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Microsoft"
+      ]
+    },
+    {
+      "name": "Implement Queue using Stacks",
+      "url": "https://leetcode.com/problems/implement-queue-using-stacks/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [
+        "Amazon",
+        "Microsoft"
+      ]
+    },
+    {
+      "name": "Min Stack",
+      "url": "https://leetcode.com/problems/min-stack/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Adobe"
+      ]
+    },
+    {
+      "name": "Daily Temperatures",
+      "url": "https://leetcode.com/problems/daily-temperatures/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "Amazon",
+        "Google"
+      ]
+    },
+    {
+      "name": "Next Greater Element I",
+      "url": "https://leetcode.com/problems/next-greater-element-i/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "interview",
+      "companies": [
+        "Amazon",
+        "Adobe"
+      ]
+    },
+    {
+      "name": "Evaluate Reverse Polish Notation",
+      "url": "https://leetcode.com/problems/evaluate-reverse-polish-notation/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Amazon",
+        "LinkedIn"
+      ]
+    },
+    {
+      "name": "Largest Rectangle in Histogram",
+      "url": "https://leetcode.com/problems/largest-rectangle-in-histogram/",
+      "platform": "LeetCode",
+      "difficulty": "Hard",
+      "tier": "hard",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Microsoft"
+      ]
+    }
+  ]
+}

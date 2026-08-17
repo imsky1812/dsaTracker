@@ -1,0 +1,40 @@
+{
+  "slug": "arrays",
+  "order": 2,
+  "title": "Arrays",
+  "explainer_md": "An array is a contiguous block of memory holding elements of the same type, indexed from 0. Contiguity is the whole point: element `i` lives at `base + i * size`, so **access by index is O(1)**. That single property — random access in constant time — is why arrays underpin almost every other data structure.\n\nThe trade-off is that size is fixed and inserting/removing in the middle is O(n) because everything after the gap must shift. In C++ you rarely use raw arrays; you use `std::vector`, a dynamic array that grows automatically while keeping O(1) indexing and amortized O(1) push_back.\n\nMental model: think of an array as a row of numbered lockers. Jumping to any locker is instant, but inserting a new locker between two existing ones means shifting every locker after it down by one.",
+  "patterns_md": "Three patterns cover the large majority of array interview problems:\n\n**Two pointers** — use two indices moving toward each other (or in the same direction) instead of nested loops. Turns many O(n²) scans into O(n). Classic on sorted arrays: pair sums, removing duplicates, partitioning.\n\n**Sliding window** — a two-pointer variant where you maintain a contiguous window `[l, r]` and expand/shrink it to satisfy a constraint (max sum of size k, longest substring without repeats). O(n) instead of recomputing every window.\n\n**Prefix sum** — precompute cumulative sums so any range sum is answered in O(1): `sum(l..r) = prefix[r+1] - prefix[l]`. Extends to prefix XOR, 2D prefix sums, and difference arrays for range updates.\n\nSecondary tools: Kadane's algorithm (running max subarray), Dutch-national-flag (3-way partition), and hashing for O(1) lookups (e.g. Two Sum).",
+  "complexity_md": "| Operation | Time | Notes |\n|---|---|---|\n| Access by index | O(1) | The core superpower |\n| Search (unsorted) | O(n) | Must scan |\n| Search (sorted) | O(log n) | Binary search |\n| Insert/remove at end | O(1)* | Amortized for vector |\n| Insert/remove in middle | O(n) | Shift elements |\n| Two-pointer / sliding window scan | O(n) | Single pass |\n| Prefix-sum build | O(n) | Then O(1) per range query |\n\nSpace: O(1) extra for in-place two-pointer work; O(n) for prefix-sum arrays.",
+  "code": [
+    {
+      "label": "Two pointers — reverse in place",
+      "code": "void reverse(vector<int>& a) {\n    int l = 0, r = a.size() - 1;\n    while (l < r) {\n        swap(a[l], a[r]);\n        l++; r--;\n    }\n}"
+    },
+    {
+      "label": "Sliding window — max sum of size k",
+      "code": "int maxSum(vector<int>& a, int k) {\n    int sum = 0;\n    for (int i = 0; i < k; i++) sum += a[i];\n    int best = sum;\n    for (int i = k; i < (int)a.size(); i++) {\n        sum += a[i] - a[i - k];   // slide: add new, drop old\n        best = max(best, sum);\n    }\n    return best;\n}"
+    },
+    {
+      "label": "Prefix sum — O(1) range queries",
+      "code": "vector<long long> buildPrefix(vector<int>& a) {\n    int n = a.size();\n    vector<long long> pre(n + 1, 0);\n    for (int i = 0; i < n; i++) pre[i + 1] = pre[i] + a[i];\n    return pre;   // sum(l..r) = pre[r+1] - pre[l]\n}"
+    },
+    {
+      "label": "Kadane — maximum subarray sum",
+      "code": "int maxSubArray(vector<int>& a) {\n    int best = a[0], cur = a[0];\n    for (int i = 1; i < (int)a.size(); i++) {\n        cur = max(a[i], cur + a[i]);\n        best = max(best, cur);\n    }\n    return best;\n}"
+    }
+  ],
+  "problems": [
+    {"name": "Two Sum", "url": "https://leetcode.com/problems/two-sum/", "platform": "LeetCode", "difficulty": "Easy", "tier": "warmup", "companies": ["Amazon", "Google", "Microsoft", "Adobe"]},
+    {"name": "Best Time to Buy and Sell Stock", "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/", "platform": "LeetCode", "difficulty": "Easy", "tier": "warmup", "companies": ["Amazon", "Microsoft", "Meta"]},
+    {"name": "Move Zeroes", "url": "https://leetcode.com/problems/move-zeroes/", "platform": "LeetCode", "difficulty": "Easy", "tier": "warmup", "companies": ["Meta", "Amazon"]},
+    {"name": "Maximum Subarray (Kadane)", "url": "https://leetcode.com/problems/maximum-subarray/", "platform": "LeetCode", "difficulty": "Medium", "tier": "core", "companies": ["Amazon", "Microsoft", "LinkedIn"]},
+    {"name": "Container With Most Water", "url": "https://leetcode.com/problems/container-with-most-water/", "platform": "LeetCode", "difficulty": "Medium", "tier": "core", "companies": ["Amazon", "Google", "Adobe"]},
+    {"name": "3Sum", "url": "https://leetcode.com/problems/3sum/", "platform": "LeetCode", "difficulty": "Medium", "tier": "interview", "companies": ["Amazon", "Google", "Meta", "Adobe"]},
+    {"name": "Product of Array Except Self", "url": "https://leetcode.com/problems/product-of-array-except-self/", "platform": "LeetCode", "difficulty": "Medium", "tier": "interview", "companies": ["Amazon", "Meta", "Microsoft"]},
+    {"name": "Sort Colors (Dutch flag)", "url": "https://leetcode.com/problems/sort-colors/", "platform": "LeetCode", "difficulty": "Medium", "tier": "interview", "companies": ["Microsoft", "Amazon"]},
+    {"name": "Subarray Sum Equals K", "url": "https://leetcode.com/problems/subarray-sum-equals-k/", "platform": "LeetCode", "difficulty": "Medium", "tier": "interview", "companies": ["Amazon", "Google", "Meta"]},
+    {"name": "Maximum Product Subarray", "url": "https://leetcode.com/problems/maximum-product-subarray/", "platform": "LeetCode", "difficulty": "Medium", "tier": "interview", "companies": ["Amazon", "Microsoft"]},
+    {"name": "Trapping Rain Water", "url": "https://leetcode.com/problems/trapping-rain-water/", "platform": "LeetCode", "difficulty": "Hard", "tier": "hard", "companies": ["Amazon", "Google", "Microsoft", "Adobe"]},
+    {"name": "First Missing Positive", "url": "https://leetcode.com/problems/first-missing-positive/", "platform": "LeetCode", "difficulty": "Hard", "tier": "hard", "companies": ["Amazon", "Microsoft"]}
+  ]
+}

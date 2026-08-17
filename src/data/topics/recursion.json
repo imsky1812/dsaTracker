@@ -1,0 +1,93 @@
+{
+  "slug": "recursion",
+  "order": 6,
+  "title": "Recursion",
+  "explainer_md": "Recursion is a function calling itself on a smaller input until it hits a **base case**. It's the conceptual foundation for backtracking, trees, and dynamic programming \u2014 which is why it's worth over-investing in until it feels natural.\n\nEvery correct recursion has two parts: a base case that stops the descent, and a recursive case that makes progress toward it. The magic is the **call stack** \u2014 each call pauses, waits for its sub-call to return, then resumes. Drawing the recursion tree (what calls what, what each returns) is the single best debugging and design tool.\n\nMental model: recursion is delegation. 'I'll solve the tiny version myself; for anything bigger, I'll ask a slightly-smaller copy of me and combine its answer with one step of work.'",
+  "patterns_md": "**Base case first** \u2014 always define when to stop before writing the recursive step. Missing or wrong base cases cause stack overflow.\n\n**Pick-or-skip (subsequences)** \u2014 at each element, branch into 'include it' and 'exclude it'. This binary choice generates all subsets and underlies knapsack DP.\n\n**Recursion tree thinking** \u2014 for any recursive function, sketch the tree of calls. The number of leaves often reveals the time complexity (e.g. 2^n for pick-or-skip).\n\n**Return vs. accumulate** \u2014 decide whether each call *returns* a value up the stack, or *mutates* a shared accumulator (passed by reference). Both are valid; be deliberate.",
+  "complexity_md": "| Aspect | Cost |\n|---|---|\n| Time | (number of nodes in recursion tree) \u00d7 (work per node) |\n| Space | O(depth of recursion) for the call stack |\n| Subsets / pick-skip | O(2^n) time |\n| Permutations | O(n! \u00b7 n) time |\n\nRecursion depth matters: deep recursion (e.g. O(n) on a 10^6 input) can overflow the stack. Convert to iteration or increase stack limits when needed.",
+  "code": [
+    {
+      "label": "Base + recursive case \u2014 factorial",
+      "code": "long long fact(int n) {\n    if (n <= 1) return 1;        // base case\n    return n * fact(n - 1);      // recursive case\n}"
+    },
+    {
+      "label": "Pick or skip \u2014 all subsequences",
+      "code": "void subseq(vector<int>& a, int i, vector<int>& cur, vector<vector<int>>& out) {\n    if (i == (int)a.size()) { out.push_back(cur); return; }\n    cur.push_back(a[i]);          // pick\n    subseq(a, i + 1, cur, out);\n    cur.pop_back();               // skip (backtrack)\n    subseq(a, i + 1, cur, out);\n}"
+    },
+    {
+      "label": "Fast exponentiation \u2014 divide & conquer",
+      "code": "long long power(long long x, long long n) {\n    if (n == 0) return 1;\n    long long half = power(x, n / 2);\n    return (n % 2) ? half * half * x : half * half;\n}"
+    }
+  ],
+  "problems": [
+    {
+      "name": "Fibonacci Number",
+      "url": "https://leetcode.com/problems/fibonacci-number/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [
+        "Amazon"
+      ]
+    },
+    {
+      "name": "Pow(x, n)",
+      "url": "https://leetcode.com/problems/powx-n/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "warmup",
+      "companies": [
+        "Google",
+        "Amazon",
+        "Meta"
+      ]
+    },
+    {
+      "name": "Subsets",
+      "url": "https://leetcode.com/problems/subsets/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "Amazon",
+        "Meta",
+        "Google"
+      ]
+    },
+    {
+      "name": "Combination Sum",
+      "url": "https://leetcode.com/problems/combination-sum/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "Amazon",
+        "Adobe"
+      ]
+    },
+    {
+      "name": "Permutations",
+      "url": "https://leetcode.com/problems/permutations/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Amazon",
+        "Microsoft",
+        "Meta"
+      ]
+    },
+    {
+      "name": "Generate Parentheses",
+      "url": "https://leetcode.com/problems/generate-parentheses/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Uber"
+      ]
+    }
+  ]
+}

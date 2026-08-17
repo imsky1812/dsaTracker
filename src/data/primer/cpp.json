@@ -1,0 +1,68 @@
+{
+  "language": "cpp",
+  "language_name": "C++",
+  "tagline": "Enough C++ to start DSA — the essential 20%",
+  "intro": "You don't need all of C++ to do DSA — you need fast I/O, the core types, control flow, functions, arrays/vectors, and the STL containers. This primer covers exactly that. Work through it once, keep it as a reference, and you'll spend your energy on algorithms instead of syntax.",
+  "sections": [
+    {
+      "order": 1,
+      "title": "Setup & Program Skeleton",
+      "body_md": "Every competitive/DSA C++ program follows the same shape: include headers, open `main`, read input, compute, print output. `#include <bits/stdc++.h>` pulls in the entire standard library in one line (fine for practice; avoid in production). `using namespace std;` lets you write `vector` instead of `std::vector`.",
+      "code": "#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n    // your code here\n    cout << \"Hello, DSA\" << endl;\n    return 0;\n}"
+    },
+    {
+      "order": 2,
+      "title": "Fast Input / Output",
+      "body_md": "Default `cin`/`cout` are slow for large inputs. Two lines at the top of `main` speed them up dramatically by unsyncing from C stdio and untying `cin` from `cout`. Use `\"\\n\"` instead of `endl` (which flushes every time) in tight loops.",
+      "code": "ios_base::sync_with_stdio(false);\ncin.tie(NULL);\n\nint n; cin >> n;\nvector<int> a(n);\nfor (int i = 0; i < n; i++) cin >> a[i];\nfor (int x : a) cout << x << \"\\n\";"
+    },
+    {
+      "order": 3,
+      "title": "Types, Variables & Operators",
+      "body_md": "Know your integer ranges: `int` holds ~±2.1×10⁹; use `long long` (~±9.2×10¹⁸) when sums or products can overflow — a frequent bug source. `double` for decimals, `char` for single characters, `bool` for true/false. Operators are the usual arithmetic (`+ - * / %`), comparison (`== != < >`), and logical (`&& || !`).",
+      "code": "int a = 5, b = 2;\nlong long big = 1LL * a * 1000000000; // force 64-bit math\ncout << a / b << \" \" << a % b << \"\\n\"; // 2 1  (integer division)\ndouble d = (double)a / b;               // 2.5 (cast to divide)\nbool ok = (a > b) && (b > 0);"
+    },
+    {
+      "order": 4,
+      "title": "Control Flow",
+      "body_md": "`if/else if/else` for branching, `for`/`while` for loops. The range-based `for (auto x : container)` is the cleanest way to iterate. Use `break` to exit a loop early and `continue` to skip to the next iteration.",
+      "code": "for (int i = 0; i < 5; i++) {\n    if (i % 2 == 0) continue;   // skip evens\n    cout << i << \" \";           // 1 3\n}\n\nint i = 0;\nwhile (i < 3) { cout << i; i++; }  // 012"
+    },
+    {
+      "order": 5,
+      "title": "Functions",
+      "body_md": "Declare the return type, name, and parameters. Pass large objects **by reference** (`vector<int>& v`) to avoid copying; add `const` if you won't modify them. Recursion is just a function calling itself — the backbone of many DSA solutions.",
+      "code": "int add(int a, int b) { return a + b; }\n\n// pass by reference: no copy, can modify\nvoid doubleAll(vector<int>& v) {\n    for (int& x : v) x *= 2;\n}\n\nlong long fact(int n) {          // recursion\n    return n <= 1 ? 1 : n * fact(n - 1);\n}"
+    },
+    {
+      "order": 6,
+      "title": "Arrays & Vectors",
+      "body_md": "Prefer `vector` (dynamic array) over raw arrays — it grows, knows its size, and works with STL algorithms. Create, size, push, index, and iterate as shown. 2D grids are a `vector<vector<int>>`.",
+      "code": "vector<int> v;             // empty\nv.push_back(10);           // [10]\nvector<int> w(5, 0);       // [0,0,0,0,0]\nw[2] = 7;                  // index like an array\ncout << w.size() << \"\\n\";  // 5\n\n// 2D grid: 3 rows x 4 cols of zeros\nvector<vector<int>> grid(3, vector<int>(4, 0));"
+    },
+    {
+      "order": 7,
+      "title": "Strings",
+      "body_md": "`std::string` behaves like a vector of characters with handy extras: concatenation with `+`, `.size()`, `.substr(pos, len)`, `.find(...)`, and index access. Iterate character by character with a range-for.",
+      "code": "string s = \"hello\";\ns += \" world\";              // concatenate\ncout << s.size() << \"\\n\";   // 11\ncout << s.substr(0, 5);      // \"hello\"\nfor (char c : s) { /* ... */ }\nif (s.find(\"world\") != string::npos) cout << \"found\";"
+    },
+    {
+      "order": 8,
+      "title": "The STL Toolkit",
+      "body_md": "The containers you'll use in almost every problem: `map`/`unordered_map` (key→value), `set`/`unordered_set` (unique elements), `pair` (two values), `stack`, `queue`, `priority_queue` (heap). The `unordered_` versions are O(1) average; the plain ones are sorted and O(log n).",
+      "code": "unordered_map<string,int> cnt;\ncnt[\"apple\"]++;                 // auto-inserts 0 then increments\n\nset<int> s = {3, 1, 2};        // stored sorted: 1 2 3\ns.insert(5); s.count(3);        // membership test\n\npair<int,int> p = {1, 2};\ncout << p.first << p.second;\n\nstack<int> st; st.push(1); st.top(); st.pop();\nqueue<int> q; q.push(1); q.front(); q.pop();"
+    },
+    {
+      "order": 9,
+      "title": "Useful STL Algorithms",
+      "body_md": "The `<algorithm>` header saves you from reinventing basics: `sort` (with an optional comparator), `reverse`, `max_element`/`min_element`, `accumulate` (sum), and the binary-search helpers `lower_bound`/`upper_bound` on sorted ranges. Learn these and your code gets shorter and less bug-prone.",
+      "code": "vector<int> v = {3, 1, 4, 1, 5};\nsort(v.begin(), v.end());                 // ascending\nsort(v.begin(), v.end(), greater<int>()); // descending\nreverse(v.begin(), v.end());\nint mx = *max_element(v.begin(), v.end());\nint sum = accumulate(v.begin(), v.end(), 0);\n// first index >= 4 in a sorted vector:\nint idx = lower_bound(v.begin(), v.end(), 4) - v.begin();"
+    },
+    {
+      "order": 10,
+      "title": "Common Gotchas",
+      "body_md": "The bugs that bite everyone: integer overflow (use `long long` for big sums/products), integer division truncating (`5/2 == 2`), out-of-bounds vector access (no automatic check — undefined behavior), and uninitialized variables holding garbage. When a number can exceed ~2×10⁹, reach for `long long` before it bites you.",
+      "code": "// overflow: int * int can overflow before assignment\nlong long product = 1LL * a * b;    // force 64-bit\n\n// division: cast to get a decimal\ndouble avg = (double)sum / n;\n\n// always size vectors before indexing\nvector<int> v(n);   // not: vector<int> v; v[0] = ...;"
+    }
+  ]
+}

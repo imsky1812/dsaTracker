@@ -1,0 +1,116 @@
+{
+  "slug": "linked-lists",
+  "order": 9,
+  "title": "Linked Lists",
+  "explainer_md": "A linked list stores elements in nodes, each holding a value and a pointer to the next node. Unlike arrays, nodes aren't contiguous \u2014 so you lose O(1) random access, but gain O(1) insertion/deletion once you're at a position (just rewire pointers, no shifting). This trade-off is the whole reason linked lists exist.\n\nInterviews use linked lists to test **pointer manipulation** under pressure: reversing, detecting cycles, finding the middle, merging. The recurring tools are the dummy head node (simplifies edge cases at the front) and the two-pointer / fast-slow technique.\n\nMental model: a treasure hunt where each clue points to the location of the next. You can't jump to clue #5 \u2014 you must follow from the start.",
+  "patterns_md": "**Fast & slow pointers** \u2014 advance one pointer 2\u00d7 as fast as the other. When fast reaches the end, slow is at the middle. If they ever meet, there's a cycle (Floyd's algorithm). Foundational for cycle, middle, and palindrome problems.\n\n**Dummy head node** \u2014 allocate a placeholder before the real head so insertions/deletions at the front need no special-casing. Return `dummy.next`.\n\n**Iterative reversal** \u2014 three pointers (prev, curr, next) walk the list rewiring each link. Memorize this; it appears everywhere.\n\n**Two-pass or gap technique** \u2014 for 'nth from end', advance one pointer n steps first, then move both until it hits the end.",
+  "complexity_md": "| Operation | Time | Notes |\n|---|---|---|\n| Access by index | O(n) | Must traverse |\n| Insert/delete at head | O(1) | Rewire pointers |\n| Insert/delete at known node | O(1) | No shifting |\n| Search | O(n) | Linear scan |\n| Reverse | O(n) | Single pass |\n| Cycle detection | O(n) | Fast-slow, O(1) space |\n\nSpace: O(1) for in-place pointer work \u2014 a key advantage interviewers look for over O(n) copy-based solutions.",
+  "code": [
+    {
+      "label": "Node definition",
+      "code": "struct ListNode {\n    int val;\n    ListNode* next;\n    ListNode(int x) : val(x), next(nullptr) {}\n};"
+    },
+    {
+      "label": "Iterative reversal",
+      "code": "ListNode* reverse(ListNode* head) {\n    ListNode* prev = nullptr;\n    while (head) {\n        ListNode* next = head->next;\n        head->next = prev;   // rewire\n        prev = head;\n        head = next;\n    }\n    return prev;             // new head\n}"
+    },
+    {
+      "label": "Floyd's cycle detection",
+      "code": "bool hasCycle(ListNode* head) {\n    ListNode *slow = head, *fast = head;\n    while (fast && fast->next) {\n        slow = slow->next;\n        fast = fast->next->next;\n        if (slow == fast) return true;\n    }\n    return false;\n}"
+    }
+  ],
+  "problems": [
+    {
+      "name": "Reverse Linked List",
+      "url": "https://leetcode.com/problems/reverse-linked-list/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [
+        "Amazon",
+        "Microsoft",
+        "Adobe"
+      ]
+    },
+    {
+      "name": "Middle of the Linked List",
+      "url": "https://leetcode.com/problems/middle-of-the-linked-list/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [
+        "Amazon"
+      ]
+    },
+    {
+      "name": "Merge Two Sorted Lists",
+      "url": "https://leetcode.com/problems/merge-two-sorted-lists/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [
+        "Amazon",
+        "Microsoft",
+        "Adobe"
+      ]
+    },
+    {
+      "name": "Linked List Cycle",
+      "url": "https://leetcode.com/problems/linked-list-cycle/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "core",
+      "companies": [
+        "Amazon",
+        "Microsoft"
+      ]
+    },
+    {
+      "name": "Remove Nth Node From End of List",
+      "url": "https://leetcode.com/problems/remove-nth-node-from-end-of-list/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "Amazon",
+        "Meta"
+      ]
+    },
+    {
+      "name": "Add Two Numbers",
+      "url": "https://leetcode.com/problems/add-two-numbers/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Amazon",
+        "Microsoft",
+        "Adobe"
+      ]
+    },
+    {
+      "name": "Reorder List",
+      "url": "https://leetcode.com/problems/reorder-list/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Amazon",
+        "Meta"
+      ]
+    },
+    {
+      "name": "Merge k Sorted Lists",
+      "url": "https://leetcode.com/problems/merge-k-sorted-lists/",
+      "platform": "LeetCode",
+      "difficulty": "Hard",
+      "tier": "hard",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Microsoft",
+        "Uber"
+      ]
+    }
+  ]
+}

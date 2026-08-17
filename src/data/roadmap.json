@@ -1,0 +1,71 @@
+{
+  "title": "DSA Mastery Roadmap",
+  "subtitle": "Zero to interview-ready, in a deliberate order",
+  "intro": "This roadmap is a sequence, not a menu. Each phase assumes the one before it. Don't jump to graphs or DP before recursion and arrays feel automatic — the advanced topics are built from the basic ones, and skipping ahead is the single most common reason people stall. Aim for understanding you can rebuild from scratch, not topics you've merely watched.",
+  "phases": [
+    {
+      "order": 1,
+      "title": "Phase 0 — Language & Foundations",
+      "est_weeks": "1-2 weeks",
+      "summary": "Get fluent enough in one language (C++ here) to stop fighting syntax. Learn I/O, variables, control flow, functions, arrays, and your language's collection toolkit (the STL in C++). Do lots of pattern-printing to make loops and nesting automatic.",
+      "learn": ["Setup & fast I/O", "Types, operators, control flow", "Functions & scope", "Arrays & vectors", "Core STL: vector, pair, string", "Pattern printing (nested loops)"],
+      "checkpoint": "You can write, compile, and debug a 40-line program without looking up basic syntax."
+    },
+    {
+      "order": 2,
+      "title": "Phase 1 — Core Linear Structures",
+      "est_weeks": "3-4 weeks",
+      "summary": "The bread-and-butter of interviews. Arrays, binary search, strings, and the STL containers. Master the fundamental patterns here — two pointers, sliding window, prefix sums — because they reappear everywhere.",
+      "learn": ["Arrays & 2D arrays", "Binary search (+ on answer)", "Strings & string algorithms", "STL containers: map, set, unordered_*", "Patterns: two pointers, sliding window, prefix sum"],
+      "checkpoint": "You can recognize when a problem is a sliding-window or two-pointer problem without being told."
+    },
+    {
+      "order": 3,
+      "title": "Phase 2 — Recursion & Sorting",
+      "est_weeks": "2-3 weeks",
+      "summary": "Recursion is the conceptual gateway to trees, backtracking, and DP. Get comfortable drawing recursion trees. Then learn the classic sorts and divide-and-conquer thinking.",
+      "learn": ["Recursion fundamentals & recursion trees", "Subsets, permutations, combinations", "Backtracking template (N-Queens, Sudoku)", "Merge sort, quick sort", "Divide & conquer"],
+      "checkpoint": "You can write a backtracking solution from the template without copying one."
+    },
+    {
+      "order": 4,
+      "title": "Phase 3 — Pointer & LIFO/FIFO Structures",
+      "est_weeks": "2-3 weeks",
+      "summary": "Linked lists teach pointer manipulation; stacks and queues teach a whole family of patterns (monotonic stack, next-greater-element). These show up constantly in interviews.",
+      "learn": ["Linked lists (singly, doubly, circular)", "Fast-slow pointers (Floyd's cycle)", "Stacks & queues", "Monotonic stack", "Deque patterns"],
+      "checkpoint": "You can reverse a linked list and detect a cycle without reference."
+    },
+    {
+      "order": 5,
+      "title": "Phase 4 — Hierarchical & Priority Structures",
+      "est_weeks": "3-4 weeks",
+      "summary": "Trees, BSTs, heaps, and hashing. Trees are heavily tested — traversals, views, path problems, LCA. Heaps unlock top-K problems; hashing unlocks O(1) lookup patterns.",
+      "learn": ["Binary trees & all traversals", "BST operations & properties", "Tree path & view problems, LCA", "Heaps / priority queue, top-K", "Hashing techniques"],
+      "checkpoint": "You can do all four traversals iteratively and solve a top-K problem with a heap."
+    },
+    {
+      "order": 6,
+      "title": "Phase 5 — Graphs & Greedy",
+      "est_weeks": "3-4 weeks",
+      "summary": "Graphs generalize trees. Learn representation, BFS/DFS, cycle detection, topological sort, and shortest paths. Greedy is a mindset — prove the local choice is safe.",
+      "learn": ["Graph representation, BFS, DFS", "Cycle detection (directed/undirected)", "Topological sort", "Shortest paths (Dijkstra, Bellman-Ford)", "MST & union-find", "Greedy strategies"],
+      "checkpoint": "You can model a word/grid problem as a graph and pick the right traversal."
+    },
+    {
+      "order": 7,
+      "title": "Phase 6 — Dynamic Programming",
+      "est_weeks": "3-4 weeks",
+      "summary": "The highest-leverage and hardest interview topic. Learn to move from recursion → memoization → tabulation, and to recognize the standard DP families (knapsack, LIS, LCS, grid, DP on strings/subsequences).",
+      "learn": ["Memoization vs tabulation", "1D DP (stairs, house robber)", "Knapsack family", "LIS, LCS", "Grid DP", "DP on strings & subsequences"],
+      "checkpoint": "You can take a fresh problem, write the recurrence, and convert it to tabulation."
+    },
+    {
+      "order": 8,
+      "title": "Phase 7 — Advanced & Interview Polish",
+      "est_weeks": "2-3 weeks",
+      "summary": "Tries, bit manipulation, and advanced patterns, then heavy revision with timed mock interviews and company-specific sets. This is where you convert knowledge into performance under pressure.",
+      "learn": ["Tries", "Bit manipulation", "Advanced patterns review", "Timed mock interviews", "Company-wise problem sets"],
+      "checkpoint": "You can solve two medium problems in 45 minutes, explaining as you go."
+    }
+  ]
+}

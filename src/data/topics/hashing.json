@@ -1,0 +1,90 @@
+{
+  "slug": "hashing",
+  "order": 14,
+  "title": "Hashing",
+  "explainer_md": "Hashing maps keys to array indices via a hash function, giving **average O(1)** insert, delete, and lookup. It's the single most useful optimization in interviews: any time you catch yourself scanning to check 'have I seen this before?' or 'what's the count of X?', a hash map turns an O(n\u00b2) solution into O(n).\n\nIn C++, `unordered_map` and `unordered_set` are your hash containers; `map`/`set` are their sorted (tree-based, O(log n)) cousins. The trade-off: hash containers are faster but unordered and have O(n) worst case under adversarial collisions.\n\nMental model: a coat-check. You hand over a coat (key), get a ticket (hash), and the attendant stores it in a numbered slot \u2014 retrieval is instant because the ticket tells you exactly where to look.",
+  "patterns_md": "**Seen-set / complement lookup** \u2014 store what you've encountered; check membership in O(1). Two Sum stores `target - x`; 'contains duplicate' stores seen values.\n\n**Frequency map** \u2014 count occurrences with `unordered_map<T,int>`. Powers anagrams, majority element, top-K, and 'first unique'.\n\n**Prefix-sum + hashmap** \u2014 store cumulative sums seen so far to count subarrays with a target sum in O(n) ('subarray sum equals k').\n\n**Grouping by signature** \u2014 map a canonical key (sorted string, shape hash) to a bucket of items ('group anagrams').",
+  "complexity_md": "| Operation | Average | Worst |\n|---|---|---|\n| Insert | O(1) | O(n) |\n| Lookup | O(1) | O(n) |\n| Delete | O(1) | O(n) |\n| Iteration | O(n) | O(n) |\n\nWorst case arises from many hash collisions; in practice with a good hash it's effectively O(1). Space is O(n) for the stored keys. Use `map`/`set` instead when you need sorted order or worst-case guarantees.",
+  "code": [
+    {
+      "label": "Complement lookup \u2014 Two Sum",
+      "code": "vector<int> twoSum(vector<int>& nums, int target) {\n    unordered_map<int,int> seen;   // value -> index\n    for (int i = 0; i < (int)nums.size(); i++) {\n        int need = target - nums[i];\n        if (seen.count(need)) return {seen[need], i};\n        seen[nums[i]] = i;\n    }\n    return {};\n}"
+    },
+    {
+      "label": "Prefix sum + map \u2014 subarrays summing to k",
+      "code": "int subarraySum(vector<int>& nums, int k) {\n    unordered_map<int,int> cnt{{0,1}};\n    int sum = 0, res = 0;\n    for (int x : nums) {\n        sum += x;\n        res += cnt[sum - k];   // seen a prefix that completes k\n        cnt[sum]++;\n    }\n    return res;\n}"
+    }
+  ],
+  "problems": [
+    {
+      "name": "Contains Duplicate",
+      "url": "https://leetcode.com/problems/contains-duplicate/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [
+        "Amazon",
+        "Adobe"
+      ]
+    },
+    {
+      "name": "Valid Anagram",
+      "url": "https://leetcode.com/problems/valid-anagram/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [
+        "Amazon",
+        "Adobe"
+      ]
+    },
+    {
+      "name": "Two Sum",
+      "url": "https://leetcode.com/problems/two-sum/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Microsoft"
+      ]
+    },
+    {
+      "name": "Group Anagrams",
+      "url": "https://leetcode.com/problems/group-anagrams/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Uber"
+      ]
+    },
+    {
+      "name": "Subarray Sum Equals K",
+      "url": "https://leetcode.com/problems/subarray-sum-equals-k/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Meta"
+      ]
+    },
+    {
+      "name": "Longest Consecutive Sequence",
+      "url": "https://leetcode.com/problems/longest-consecutive-sequence/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Meta"
+      ]
+    }
+  ]
+}

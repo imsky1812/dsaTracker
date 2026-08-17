@@ -1,0 +1,2246 @@
+{
+  "roadmap": {
+    "title": "DSA Mastery Roadmap",
+    "subtitle": "Zero to interview-ready, in a deliberate order",
+    "intro": "This roadmap is a sequence, not a menu. Each phase assumes the one before it. Don't jump to graphs or DP before recursion and arrays feel automatic — the advanced topics are built from the basic ones, and skipping ahead is the single most common reason people stall. Aim for understanding you can rebuild from scratch, not topics you've merely watched.",
+    "phases": [
+      {
+        "order": 1,
+        "title": "Phase 0 — Language & Foundations",
+        "est_weeks": "1-2 weeks",
+        "summary": "Get fluent enough in one language (C++ here) to stop fighting syntax. Learn I/O, variables, control flow, functions, arrays, and your language's collection toolkit (the STL in C++). Do lots of pattern-printing to make loops and nesting automatic.",
+        "learn": [
+          "Setup & fast I/O",
+          "Types, operators, control flow",
+          "Functions & scope",
+          "Arrays & vectors",
+          "Core STL: vector, pair, string",
+          "Pattern printing (nested loops)"
+        ],
+        "checkpoint": "You can write, compile, and debug a 40-line program without looking up basic syntax."
+      },
+      {
+        "order": 2,
+        "title": "Phase 1 — Core Linear Structures",
+        "est_weeks": "3-4 weeks",
+        "summary": "The bread-and-butter of interviews. Arrays, binary search, strings, and the STL containers. Master the fundamental patterns here — two pointers, sliding window, prefix sums — because they reappear everywhere.",
+        "learn": [
+          "Arrays & 2D arrays",
+          "Binary search (+ on answer)",
+          "Strings & string algorithms",
+          "STL containers: map, set, unordered_*",
+          "Patterns: two pointers, sliding window, prefix sum"
+        ],
+        "checkpoint": "You can recognize when a problem is a sliding-window or two-pointer problem without being told."
+      },
+      {
+        "order": 3,
+        "title": "Phase 2 — Recursion & Sorting",
+        "est_weeks": "2-3 weeks",
+        "summary": "Recursion is the conceptual gateway to trees, backtracking, and DP. Get comfortable drawing recursion trees. Then learn the classic sorts and divide-and-conquer thinking.",
+        "learn": [
+          "Recursion fundamentals & recursion trees",
+          "Subsets, permutations, combinations",
+          "Backtracking template (N-Queens, Sudoku)",
+          "Merge sort, quick sort",
+          "Divide & conquer"
+        ],
+        "checkpoint": "You can write a backtracking solution from the template without copying one."
+      },
+      {
+        "order": 4,
+        "title": "Phase 3 — Pointer & LIFO/FIFO Structures",
+        "est_weeks": "2-3 weeks",
+        "summary": "Linked lists teach pointer manipulation; stacks and queues teach a whole family of patterns (monotonic stack, next-greater-element). These show up constantly in interviews.",
+        "learn": [
+          "Linked lists (singly, doubly, circular)",
+          "Fast-slow pointers (Floyd's cycle)",
+          "Stacks & queues",
+          "Monotonic stack",
+          "Deque patterns"
+        ],
+        "checkpoint": "You can reverse a linked list and detect a cycle without reference."
+      },
+      {
+        "order": 5,
+        "title": "Phase 4 — Hierarchical & Priority Structures",
+        "est_weeks": "3-4 weeks",
+        "summary": "Trees, BSTs, heaps, and hashing. Trees are heavily tested — traversals, views, path problems, LCA. Heaps unlock top-K problems; hashing unlocks O(1) lookup patterns.",
+        "learn": [
+          "Binary trees & all traversals",
+          "BST operations & properties",
+          "Tree path & view problems, LCA",
+          "Heaps / priority queue, top-K",
+          "Hashing techniques"
+        ],
+        "checkpoint": "You can do all four traversals iteratively and solve a top-K problem with a heap."
+      },
+      {
+        "order": 6,
+        "title": "Phase 5 — Graphs & Greedy",
+        "est_weeks": "3-4 weeks",
+        "summary": "Graphs generalize trees. Learn representation, BFS/DFS, cycle detection, topological sort, and shortest paths. Greedy is a mindset — prove the local choice is safe.",
+        "learn": [
+          "Graph representation, BFS, DFS",
+          "Cycle detection (directed/undirected)",
+          "Topological sort",
+          "Shortest paths (Dijkstra, Bellman-Ford)",
+          "MST & union-find",
+          "Greedy strategies"
+        ],
+        "checkpoint": "You can model a word/grid problem as a graph and pick the right traversal."
+      },
+      {
+        "order": 7,
+        "title": "Phase 6 — Dynamic Programming",
+        "est_weeks": "3-4 weeks",
+        "summary": "The highest-leverage and hardest interview topic. Learn to move from recursion → memoization → tabulation, and to recognize the standard DP families (knapsack, LIS, LCS, grid, DP on strings/subsequences).",
+        "learn": [
+          "Memoization vs tabulation",
+          "1D DP (stairs, house robber)",
+          "Knapsack family",
+          "LIS, LCS",
+          "Grid DP",
+          "DP on strings & subsequences"
+        ],
+        "checkpoint": "You can take a fresh problem, write the recurrence, and convert it to tabulation."
+      },
+      {
+        "order": 8,
+        "title": "Phase 7 — Advanced & Interview Polish",
+        "est_weeks": "2-3 weeks",
+        "summary": "Tries, bit manipulation, and advanced patterns, then heavy revision with timed mock interviews and company-specific sets. This is where you convert knowledge into performance under pressure.",
+        "learn": [
+          "Tries",
+          "Bit manipulation",
+          "Advanced patterns review",
+          "Timed mock interviews",
+          "Company-wise problem sets"
+        ],
+        "checkpoint": "You can solve two medium problems in 45 minutes, explaining as you go."
+      }
+    ]
+  },
+  "topics": [
+    {
+      "slug": "basics-patterns",
+      "order": 1,
+      "title": "Basics & Patterns",
+      "explainer_md": "Before data structures, you need loops and nesting to feel automatic — and pattern-printing is the classic way to get there. These problems (pyramids, triangles, diamonds) look like busywork but they train the single most important beginner skill: reasoning about nested loops, where the outer loop controls rows and the inner loop controls what's printed in each row.\n\nThe mental shift to internalize: for any pattern, ask 'how many rows?' (outer loop) and 'for row i, what/how many characters?' (inner loop, expressed in terms of i). Once that clicks, nested iteration — which underlies matrices, DP tables, and brute-force scans — stops being intimidating.\n\nMental model: you're a printer head moving row by row (outer loop); within each row you decide what to stamp at each column (inner loop).",
+      "patterns_md": "**Outer = rows, inner = columns** — the universal structure. The inner loop's bound is written in terms of the outer loop variable to create shapes.\n\n**Relate content to indices** — spaces before a pyramid = `n - i`; stars = `2i - 1`. Deriving these relationships is the whole exercise.\n\n**Build up complexity** — solid square → right triangle → pyramid → diamond → hollow shapes. Each adds one idea (variable inner bound, leading spaces, conditional printing).\n\n**Number/character patterns** — same loops, but print `j`, `i`, or `'A'+j` instead of a fixed star. Reinforces index-to-value thinking.",
+      "complexity_md": "| Pattern | Time | Space |\n|---|---|---|\n| Any n-row pattern | O(n²) | O(1) |\n| Printing a full grid | O(rows · cols) | O(1) |\n\nMost pattern problems are O(n²) because you print roughly n characters across n rows. Space is O(1) — you print directly without storing. The value is conceptual, not algorithmic: fluency with nested loops.",
+      "code": [
+        {
+          "label": "Right triangle of stars",
+          "code": "void triangle(int n) {\n    for (int i = 1; i <= n; i++) {      // rows\n        for (int j = 1; j <= i; j++)     // stars in row i\n            cout << \"* \";\n        cout << \"\\n\";\n    }\n}"
+        },
+        {
+          "label": "Centered pyramid",
+          "code": "void pyramid(int n) {\n    for (int i = 1; i <= n; i++) {\n        for (int s = 0; s < n - i; s++) cout << \" \";   // leading spaces\n        for (int j = 0; j < 2*i - 1; j++) cout << \"*\"; // 2i-1 stars\n        cout << \"\\n\";\n    }\n}"
+        }
+      ],
+      "problems": [
+        {
+          "name": "Pattern Printing (collection)",
+          "url": "https://www.geeksforgeeks.org/problems/print-the-pattern-1587115620/1",
+          "platform": "GFG",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "TCS",
+            "Infosys",
+            "Wipro"
+          ]
+        },
+        {
+          "name": "FizzBuzz",
+          "url": "https://leetcode.com/problems/fizz-buzz/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Amazon",
+            "Microsoft"
+          ]
+        },
+        {
+          "name": "Number of Steps to Reduce a Number to Zero",
+          "url": "https://leetcode.com/problems/number-of-steps-to-reduce-a-number-to-zero/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Amazon"
+          ]
+        },
+        {
+          "name": "Count Primes",
+          "url": "https://leetcode.com/problems/count-primes/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Microsoft"
+          ]
+        },
+        {
+          "name": "Palindrome Number",
+          "url": "https://leetcode.com/problems/palindrome-number/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Adobe"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "arrays",
+      "order": 2,
+      "title": "Arrays",
+      "explainer_md": "An array is a contiguous block of memory holding elements of the same type, indexed from 0. Contiguity is the whole point: element `i` lives at `base + i * size`, so **access by index is O(1)**. That single property — random access in constant time — is why arrays underpin almost every other data structure.\n\nThe trade-off is that size is fixed and inserting/removing in the middle is O(n) because everything after the gap must shift. In C++ you rarely use raw arrays; you use `std::vector`, a dynamic array that grows automatically while keeping O(1) indexing and amortized O(1) push_back.\n\nMental model: think of an array as a row of numbered lockers. Jumping to any locker is instant, but inserting a new locker between two existing ones means shifting every locker after it down by one.",
+      "patterns_md": "Three patterns cover the large majority of array interview problems:\n\n**Two pointers** — use two indices moving toward each other (or in the same direction) instead of nested loops. Turns many O(n²) scans into O(n). Classic on sorted arrays: pair sums, removing duplicates, partitioning.\n\n**Sliding window** — a two-pointer variant where you maintain a contiguous window `[l, r]` and expand/shrink it to satisfy a constraint (max sum of size k, longest substring without repeats). O(n) instead of recomputing every window.\n\n**Prefix sum** — precompute cumulative sums so any range sum is answered in O(1): `sum(l..r) = prefix[r+1] - prefix[l]`. Extends to prefix XOR, 2D prefix sums, and difference arrays for range updates.\n\nSecondary tools: Kadane's algorithm (running max subarray), Dutch-national-flag (3-way partition), and hashing for O(1) lookups (e.g. Two Sum).",
+      "complexity_md": "| Operation | Time | Notes |\n|---|---|---|\n| Access by index | O(1) | The core superpower |\n| Search (unsorted) | O(n) | Must scan |\n| Search (sorted) | O(log n) | Binary search |\n| Insert/remove at end | O(1)* | Amortized for vector |\n| Insert/remove in middle | O(n) | Shift elements |\n| Two-pointer / sliding window scan | O(n) | Single pass |\n| Prefix-sum build | O(n) | Then O(1) per range query |\n\nSpace: O(1) extra for in-place two-pointer work; O(n) for prefix-sum arrays.",
+      "code": [
+        {
+          "label": "Two pointers — reverse in place",
+          "code": "void reverse(vector<int>& a) {\n    int l = 0, r = a.size() - 1;\n    while (l < r) {\n        swap(a[l], a[r]);\n        l++; r--;\n    }\n}"
+        },
+        {
+          "label": "Sliding window — max sum of size k",
+          "code": "int maxSum(vector<int>& a, int k) {\n    int sum = 0;\n    for (int i = 0; i < k; i++) sum += a[i];\n    int best = sum;\n    for (int i = k; i < (int)a.size(); i++) {\n        sum += a[i] - a[i - k];   // slide: add new, drop old\n        best = max(best, sum);\n    }\n    return best;\n}"
+        },
+        {
+          "label": "Prefix sum — O(1) range queries",
+          "code": "vector<long long> buildPrefix(vector<int>& a) {\n    int n = a.size();\n    vector<long long> pre(n + 1, 0);\n    for (int i = 0; i < n; i++) pre[i + 1] = pre[i] + a[i];\n    return pre;   // sum(l..r) = pre[r+1] - pre[l]\n}"
+        },
+        {
+          "label": "Kadane — maximum subarray sum",
+          "code": "int maxSubArray(vector<int>& a) {\n    int best = a[0], cur = a[0];\n    for (int i = 1; i < (int)a.size(); i++) {\n        cur = max(a[i], cur + a[i]);\n        best = max(best, cur);\n    }\n    return best;\n}"
+        }
+      ],
+      "problems": [
+        {
+          "name": "Two Sum",
+          "url": "https://leetcode.com/problems/two-sum/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Microsoft",
+            "Adobe"
+          ]
+        },
+        {
+          "name": "Best Time to Buy and Sell Stock",
+          "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Amazon",
+            "Microsoft",
+            "Meta"
+          ]
+        },
+        {
+          "name": "Move Zeroes",
+          "url": "https://leetcode.com/problems/move-zeroes/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Meta",
+            "Amazon"
+          ]
+        },
+        {
+          "name": "Maximum Subarray (Kadane)",
+          "url": "https://leetcode.com/problems/maximum-subarray/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Microsoft",
+            "LinkedIn"
+          ]
+        },
+        {
+          "name": "Container With Most Water",
+          "url": "https://leetcode.com/problems/container-with-most-water/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Adobe"
+          ]
+        },
+        {
+          "name": "3Sum",
+          "url": "https://leetcode.com/problems/3sum/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Meta",
+            "Adobe"
+          ]
+        },
+        {
+          "name": "Product of Array Except Self",
+          "url": "https://leetcode.com/problems/product-of-array-except-self/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Meta",
+            "Microsoft"
+          ]
+        },
+        {
+          "name": "Sort Colors (Dutch flag)",
+          "url": "https://leetcode.com/problems/sort-colors/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Microsoft",
+            "Amazon"
+          ]
+        },
+        {
+          "name": "Subarray Sum Equals K",
+          "url": "https://leetcode.com/problems/subarray-sum-equals-k/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Meta"
+          ]
+        },
+        {
+          "name": "Maximum Product Subarray",
+          "url": "https://leetcode.com/problems/maximum-product-subarray/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Microsoft"
+          ]
+        },
+        {
+          "name": "Trapping Rain Water",
+          "url": "https://leetcode.com/problems/trapping-rain-water/",
+          "platform": "LeetCode",
+          "difficulty": "Hard",
+          "tier": "hard",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Microsoft",
+            "Adobe"
+          ]
+        },
+        {
+          "name": "First Missing Positive",
+          "url": "https://leetcode.com/problems/first-missing-positive/",
+          "platform": "LeetCode",
+          "difficulty": "Hard",
+          "tier": "hard",
+          "companies": [
+            "Amazon",
+            "Microsoft"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "binary-search",
+      "order": 3,
+      "title": "Binary Search",
+      "explainer_md": "Binary search finds a target in a **sorted** search space by repeatedly halving it: check the middle, and discard the half that can't contain the answer. Each step throws away half the remaining candidates, so it runs in **O(log n)** — for a billion elements, ~30 comparisons.\n\nThe deeper idea most people miss: binary search isn't really about arrays. It works on any **monotonic** search space — anything where a predicate flips from false to true exactly once as you increase a parameter. That unlocks 'binary search on the answer': instead of searching for a value in an array, you search for the smallest/largest answer that satisfies a condition (minimum capacity, minimum time, maximum pages). Recognizing that monotonic structure is the whole skill.\n\nMental model: a guessing game where after every guess you're told 'too high' or 'too low'. You always guess the middle of what's left.",
+      "patterns_md": "**Vanilla search** — find an exact target in a sorted array. Watch the loop invariant: use `while (l <= r)` with `mid = l + (r - l) / 2` (the subtraction avoids integer overflow).\n\n**Boundary search (lower/upper bound)** — find the first element ≥ x, or the last element ≤ x. This is the workhorse; most 'find first/last position' problems reduce to it. C++ gives you `lower_bound` / `upper_bound` for free.\n\n**Binary search on the answer** — when the answer lies in a numeric range and a feasibility check is monotonic, binary-search the range and test feasibility at each mid. Signals: 'minimize the maximum', 'maximize the minimum', 'smallest capacity/speed/time such that…'. Examples: allocate books, Koko eating bananas, ship packages in D days.\n\n**Rotated / modified arrays** — a sorted array that's been rotated is still 'locally monotonic'; identify which half is sorted, then decide which half to keep.",
+      "complexity_md": "| Task | Time | Space |\n|---|---|---|\n| Search sorted array | O(log n) | O(1) |\n| Lower/upper bound | O(log n) | O(1) |\n| Binary search on answer | O(n log(range)) | O(1) |\n| Search rotated array | O(log n) | O(1) |\n\nThe `log(range)` factor in answer-search is the number of halvings of the value range; each feasibility check is usually O(n). Always prefer `mid = l + (r - l) / 2` over `(l + r) / 2` to prevent overflow on large bounds.",
+      "code": [
+        {
+          "label": "Vanilla binary search",
+          "code": "int binarySearch(vector<int>& a, int target) {\n    int l = 0, r = a.size() - 1;\n    while (l <= r) {\n        int mid = l + (r - l) / 2;\n        if (a[mid] == target) return mid;\n        if (a[mid] < target) l = mid + 1;\n        else r = mid - 1;\n    }\n    return -1;\n}"
+        },
+        {
+          "label": "Lower bound (first index >= target)",
+          "code": "int lowerBound(vector<int>& a, int target) {\n    int l = 0, r = a.size();   // note: r = n, half-open\n    while (l < r) {\n        int mid = l + (r - l) / 2;\n        if (a[mid] < target) l = mid + 1;\n        else r = mid;\n    }\n    return l;   // insertion point\n}"
+        },
+        {
+          "label": "Binary search on answer — template",
+          "code": "// smallest x in [lo, hi] such that feasible(x) is true\nint searchAnswer(int lo, int hi, function<bool(int)> feasible) {\n    while (lo < hi) {\n        int mid = lo + (hi - lo) / 2;\n        if (feasible(mid)) hi = mid;   // mid works, try smaller\n        else lo = mid + 1;             // mid fails, go bigger\n    }\n    return lo;\n}"
+        },
+        {
+          "label": "Search in rotated sorted array",
+          "code": "int search(vector<int>& a, int target) {\n    int l = 0, r = a.size() - 1;\n    while (l <= r) {\n        int mid = l + (r - l) / 2;\n        if (a[mid] == target) return mid;\n        if (a[l] <= a[mid]) {              // left half sorted\n            if (a[l] <= target && target < a[mid]) r = mid - 1;\n            else l = mid + 1;\n        } else {                          // right half sorted\n            if (a[mid] < target && target <= a[r]) l = mid + 1;\n            else r = mid - 1;\n        }\n    }\n    return -1;\n}"
+        }
+      ],
+      "problems": [
+        {
+          "name": "Binary Search",
+          "url": "https://leetcode.com/problems/binary-search/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Amazon",
+            "Microsoft"
+          ]
+        },
+        {
+          "name": "Search Insert Position",
+          "url": "https://leetcode.com/problems/search-insert-position/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Amazon",
+            "Adobe"
+          ]
+        },
+        {
+          "name": "First Bad Version",
+          "url": "https://leetcode.com/problems/first-bad-version/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Google",
+            "Meta"
+          ]
+        },
+        {
+          "name": "Find First and Last Position",
+          "url": "https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Microsoft",
+            "Google"
+          ]
+        },
+        {
+          "name": "Search in Rotated Sorted Array",
+          "url": "https://leetcode.com/problems/search-in-rotated-sorted-array/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Microsoft",
+            "Meta"
+          ]
+        },
+        {
+          "name": "Find Peak Element",
+          "url": "https://leetcode.com/problems/find-peak-element/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Google",
+            "Amazon"
+          ]
+        },
+        {
+          "name": "Koko Eating Bananas",
+          "url": "https://leetcode.com/problems/koko-eating-bananas/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Meta"
+          ]
+        },
+        {
+          "name": "Capacity To Ship Packages Within D Days",
+          "url": "https://leetcode.com/problems/capacity-to-ship-packages-within-d-days/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Google"
+          ]
+        },
+        {
+          "name": "Allocate Minimum Number of Pages",
+          "url": "https://www.geeksforgeeks.org/problems/allocate-minimum-number-of-pages0937/1",
+          "platform": "GFG",
+          "difficulty": "Hard",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Flipkart",
+            "Microsoft"
+          ]
+        },
+        {
+          "name": "Median of Two Sorted Arrays",
+          "url": "https://leetcode.com/problems/median-of-two-sorted-arrays/",
+          "platform": "LeetCode",
+          "difficulty": "Hard",
+          "tier": "hard",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Microsoft",
+            "Adobe"
+          ]
+        },
+        {
+          "name": "Split Array Largest Sum",
+          "url": "https://leetcode.com/problems/split-array-largest-sum/",
+          "platform": "LeetCode",
+          "difficulty": "Hard",
+          "tier": "hard",
+          "companies": [
+            "Amazon",
+            "Google"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "strings",
+      "order": 4,
+      "title": "Strings",
+      "explainer_md": "A string is an array of characters — so every array pattern applies — but with its own idioms. In C++, `std::string` is a dynamic array of `char` with convenient operations (`+`, `substr`, `find`). Because strings are sequences, the two-pointer and sliding-window patterns dominate here just as in arrays.\n\nThe recurring interview themes are: character frequency (usually a 26-length array or a hash map), in-place manipulation with two pointers, and window-based substring problems. A frequency array indexed by `c - 'a'` is one of the most reused tricks in the whole subject.\n\nMental model: a string is a row of letter-tiles you can count, slide a window over, or walk from both ends inward.",
+      "patterns_md": "**Frequency counting** — map each character to a count using `int freq[26]` (lowercase) or `unordered_map<char,int>`. Powers anagrams, permutation checks, and 'first unique character'.\n\n**Two pointers** — walk from both ends for palindrome checks and reversals, or same-direction for compaction.\n\n**Sliding window** — the key pattern for substring problems: 'longest substring without repeating characters', 'minimum window substring', 'longest repeating character replacement'. Expand the right edge, shrink the left when a constraint breaks.\n\n**Hashing / sorting for grouping** — sort a string's characters or use a frequency signature as a map key to group anagrams.",
+      "complexity_md": "| Operation | Time | Notes |\n|---|---|---|\n| Access char by index | O(1) | It's an array |\n| Concatenation (`+`) | O(n+m) | Copies both |\n| substr(i, len) | O(len) | Copies |\n| find / search (naive) | O(n·m) | Use KMP for O(n+m) |\n| Frequency count | O(n) | Single pass |\n| Sliding window scan | O(n) | Each char enters/leaves once |\n\nSpace: O(1) for a fixed 26-letter frequency array; O(k) for a window's character set.",
+      "code": [
+        {
+          "label": "Frequency array — anagram check",
+          "code": "bool isAnagram(string s, string t) {\n    if (s.size() != t.size()) return false;\n    int freq[26] = {0};\n    for (char c : s) freq[c - 'a']++;\n    for (char c : t) if (--freq[c - 'a'] < 0) return false;\n    return true;\n}"
+        },
+        {
+          "label": "Two pointers — valid palindrome",
+          "code": "bool isPalindrome(string s) {\n    int l = 0, r = s.size() - 1;\n    while (l < r) {\n        while (l < r && !isalnum(s[l])) l++;\n        while (l < r && !isalnum(s[r])) r--;\n        if (tolower(s[l]) != tolower(s[r])) return false;\n        l++; r--;\n    }\n    return true;\n}"
+        },
+        {
+          "label": "Sliding window — longest substring w/o repeat",
+          "code": "int lengthOfLongest(string s) {\n    vector<int> last(128, -1);\n    int l = 0, best = 0;\n    for (int r = 0; r < (int)s.size(); r++) {\n        if (last[s[r]] >= l) l = last[s[r]] + 1;\n        last[s[r]] = r;\n        best = max(best, r - l + 1);\n    }\n    return best;\n}"
+        }
+      ],
+      "problems": [
+        {
+          "name": "Valid Anagram",
+          "url": "https://leetcode.com/problems/valid-anagram/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Amazon",
+            "Adobe"
+          ]
+        },
+        {
+          "name": "Valid Palindrome",
+          "url": "https://leetcode.com/problems/valid-palindrome/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Meta",
+            "Amazon"
+          ]
+        },
+        {
+          "name": "Longest Common Prefix",
+          "url": "https://leetcode.com/problems/longest-common-prefix/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Adobe",
+            "Amazon"
+          ]
+        },
+        {
+          "name": "Longest Substring Without Repeating Characters",
+          "url": "https://leetcode.com/problems/longest-substring-without-repeating-characters/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Meta",
+            "Adobe"
+          ]
+        },
+        {
+          "name": "Group Anagrams",
+          "url": "https://leetcode.com/problems/group-anagrams/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Uber"
+          ]
+        },
+        {
+          "name": "Longest Palindromic Substring",
+          "url": "https://leetcode.com/problems/longest-palindromic-substring/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Microsoft",
+            "Adobe"
+          ]
+        },
+        {
+          "name": "Longest Repeating Character Replacement",
+          "url": "https://leetcode.com/problems/longest-repeating-character-replacement/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Google",
+            "Amazon"
+          ]
+        },
+        {
+          "name": "Minimum Window Substring",
+          "url": "https://leetcode.com/problems/minimum-window-substring/",
+          "platform": "LeetCode",
+          "difficulty": "Hard",
+          "tier": "hard",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Meta",
+            "Microsoft"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "stl",
+      "order": 5,
+      "title": "STL & Collections",
+      "explainer_md": "The Standard Template Library is C++'s toolbox of ready-made containers and algorithms. Knowing it cold is a massive time-saver in interviews — you implement the *idea*, not the data structure. The four containers you'll reach for constantly: `vector` (dynamic array), `map`/`set` (sorted, tree-backed, O(log n)), `unordered_map`/`unordered_set` (hash-backed, O(1) average), and `pair`/`tuple` for grouping.\n\nThe algorithms header gives you `sort`, `lower_bound`, `upper_bound`, `next_permutation`, `accumulate`, and more — each replacing a chunk of hand-written code. Add `priority_queue` (a heap) and `stack`/`queue` and you can express most solutions concisely.\n\nMental model: the STL is a set of Lego blocks — pick the container whose complexity matches your access pattern, and let the library handle the internals.",
+      "patterns_md": "**Choose by access pattern**: need ordering + range queries → `map`/`set`. Need pure fast lookup → `unordered_map`/`unordered_set`. Need top/min element repeatedly → `priority_queue`. Need LIFO/FIFO → `stack`/`queue`.\n\n**Custom sorting** — pass a comparator lambda to `sort`: `sort(v.begin(), v.end(), [](auto&a, auto&b){ return a.second < b.second; })`.\n\n**Binary search helpers** — `lower_bound`/`upper_bound` on a sorted vector give O(log n) boundary queries without writing the loop.\n\n**Frequency + ordering combos** — `map<int,int>` keeps counts in sorted key order; pair it with iteration for 'k-th' style problems.",
+      "complexity_md": "| Container | Access | Insert | Search | Ordered? |\n|---|---|---|---|---|\n| vector | O(1) | O(1)* end | O(n) | insertion |\n| map / set | O(log n) | O(log n) | O(log n) | yes (sorted) |\n| unordered_map / set | O(1) avg | O(1) avg | O(1) avg | no |\n| priority_queue | O(1) top | O(log n) | — | heap order |\n| stack / queue | O(1) top | O(1) | — | LIFO / FIFO |\n\n*Amortized. Worst-case for unordered containers is O(n) under heavy collisions.",
+      "code": [
+        {
+          "label": "Maps & sets — count frequencies",
+          "code": "unordered_map<int,int> freq;\nfor (int x : nums) freq[x]++;\nfor (auto& [val, cnt] : freq)\n    cout << val << \" -> \" << cnt << \"\\n\";"
+        },
+        {
+          "label": "Sort with custom comparator",
+          "code": "vector<pair<string,int>> v;\n// sort by count desc, then name asc\nsort(v.begin(), v.end(), [](auto& a, auto& b){\n    if (a.second != b.second) return a.second > b.second;\n    return a.first < b.first;\n});"
+        },
+        {
+          "label": "priority_queue — min-heap of top K",
+          "code": "priority_queue<int, vector<int>, greater<int>> minHeap;\nfor (int x : nums) {\n    minHeap.push(x);\n    if ((int)minHeap.size() > k) minHeap.pop();\n}\n// minHeap.top() is the k-th largest"
+        }
+      ],
+      "problems": [
+        {
+          "name": "Two Sum",
+          "url": "https://leetcode.com/problems/two-sum/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Amazon",
+            "Google"
+          ]
+        },
+        {
+          "name": "Contains Duplicate",
+          "url": "https://leetcode.com/problems/contains-duplicate/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Amazon",
+            "Adobe"
+          ]
+        },
+        {
+          "name": "Valid Parentheses",
+          "url": "https://leetcode.com/problems/valid-parentheses/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Microsoft"
+          ]
+        },
+        {
+          "name": "Top K Frequent Elements",
+          "url": "https://leetcode.com/problems/top-k-frequent-elements/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Meta"
+          ]
+        },
+        {
+          "name": "Sort Characters By Frequency",
+          "url": "https://leetcode.com/problems/sort-characters-by-frequency/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Google"
+          ]
+        },
+        {
+          "name": "Kth Largest Element in an Array",
+          "url": "https://leetcode.com/problems/kth-largest-element-in-an-array/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Meta",
+            "Microsoft"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "recursion",
+      "order": 6,
+      "title": "Recursion",
+      "explainer_md": "Recursion is a function calling itself on a smaller input until it hits a **base case**. It's the conceptual foundation for backtracking, trees, and dynamic programming — which is why it's worth over-investing in until it feels natural.\n\nEvery correct recursion has two parts: a base case that stops the descent, and a recursive case that makes progress toward it. The magic is the **call stack** — each call pauses, waits for its sub-call to return, then resumes. Drawing the recursion tree (what calls what, what each returns) is the single best debugging and design tool.\n\nMental model: recursion is delegation. 'I'll solve the tiny version myself; for anything bigger, I'll ask a slightly-smaller copy of me and combine its answer with one step of work.'",
+      "patterns_md": "**Base case first** — always define when to stop before writing the recursive step. Missing or wrong base cases cause stack overflow.\n\n**Pick-or-skip (subsequences)** — at each element, branch into 'include it' and 'exclude it'. This binary choice generates all subsets and underlies knapsack DP.\n\n**Recursion tree thinking** — for any recursive function, sketch the tree of calls. The number of leaves often reveals the time complexity (e.g. 2^n for pick-or-skip).\n\n**Return vs. accumulate** — decide whether each call *returns* a value up the stack, or *mutates* a shared accumulator (passed by reference). Both are valid; be deliberate.",
+      "complexity_md": "| Aspect | Cost |\n|---|---|\n| Time | (number of nodes in recursion tree) × (work per node) |\n| Space | O(depth of recursion) for the call stack |\n| Subsets / pick-skip | O(2^n) time |\n| Permutations | O(n! · n) time |\n\nRecursion depth matters: deep recursion (e.g. O(n) on a 10^6 input) can overflow the stack. Convert to iteration or increase stack limits when needed.",
+      "code": [
+        {
+          "label": "Base + recursive case — factorial",
+          "code": "long long fact(int n) {\n    if (n <= 1) return 1;        // base case\n    return n * fact(n - 1);      // recursive case\n}"
+        },
+        {
+          "label": "Pick or skip — all subsequences",
+          "code": "void subseq(vector<int>& a, int i, vector<int>& cur, vector<vector<int>>& out) {\n    if (i == (int)a.size()) { out.push_back(cur); return; }\n    cur.push_back(a[i]);          // pick\n    subseq(a, i + 1, cur, out);\n    cur.pop_back();               // skip (backtrack)\n    subseq(a, i + 1, cur, out);\n}"
+        },
+        {
+          "label": "Fast exponentiation — divide & conquer",
+          "code": "long long power(long long x, long long n) {\n    if (n == 0) return 1;\n    long long half = power(x, n / 2);\n    return (n % 2) ? half * half * x : half * half;\n}"
+        }
+      ],
+      "problems": [
+        {
+          "name": "Fibonacci Number",
+          "url": "https://leetcode.com/problems/fibonacci-number/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Amazon"
+          ]
+        },
+        {
+          "name": "Pow(x, n)",
+          "url": "https://leetcode.com/problems/powx-n/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "warmup",
+          "companies": [
+            "Google",
+            "Amazon",
+            "Meta"
+          ]
+        },
+        {
+          "name": "Subsets",
+          "url": "https://leetcode.com/problems/subsets/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Meta",
+            "Google"
+          ]
+        },
+        {
+          "name": "Combination Sum",
+          "url": "https://leetcode.com/problems/combination-sum/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Adobe"
+          ]
+        },
+        {
+          "name": "Permutations",
+          "url": "https://leetcode.com/problems/permutations/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Microsoft",
+            "Meta"
+          ]
+        },
+        {
+          "name": "Generate Parentheses",
+          "url": "https://leetcode.com/problems/generate-parentheses/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Uber"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "backtracking",
+      "order": 7,
+      "title": "Backtracking",
+      "explainer_md": "Backtracking is recursion that explores a decision tree, and **undoes** each choice before trying the next — 'try, recurse, un-try'. It's how you enumerate all valid configurations (permutations, board placements, path fillings) without generating invalid ones. Whenever a partial solution can't possibly lead to a valid one, you prune that whole branch.\n\nThe defining move is the undo: you mutate shared state going down, then restore it coming back up. This is what lets one data structure serve the entire search instead of copying at every node.\n\nMental model: exploring a maze with a ball of string. At each junction you try a path; if it dead-ends, you follow the string back and try the next one.",
+      "patterns_md": "**The universal template**: `if (goal) record; else for each choice: apply → recurse → undo`. Almost every backtracking problem is this shape.\n\n**Pruning** — before recursing into a choice, check if it can still lead to a solution (e.g. is this queen placement safe?). Good pruning is the difference between fast and hopeless.\n\n**Used-set / in-place marking** — track which options are taken with a boolean array or by mutating the grid, and unmark on the way out.\n\n**Choice ordering** — sometimes sorting choices or fixing an order avoids duplicate solutions (e.g. `start` index in combinations).",
+      "complexity_md": "| Problem | Time (worst) | Space |\n|---|---|---|\n| Subsets | O(2^n) | O(n) depth |\n| Permutations | O(n! · n) | O(n) |\n| N-Queens | O(n!) | O(n) |\n| Sudoku | O(9^(empty cells)) | O(1) board |\n\nBacktracking is exponential by nature — its value is *pruning* the search so the real running time is far below the worst case. Space is the recursion depth plus whatever state you carry.",
+      "code": [
+        {
+          "label": "Universal backtracking template",
+          "code": "void backtrack(State& s, vector<Solution>& out) {\n    if (isGoal(s)) { out.push_back(extract(s)); return; }\n    for (auto& choice : choices(s)) {\n        apply(s, choice);        // try\n        backtrack(s, out);       // recurse\n        undo(s, choice);         // un-try\n    }\n}"
+        },
+        {
+          "label": "N-Queens — safety check + placement",
+          "code": "bool safe(vector<int>& col, int r, int c) {\n    for (int i = 0; i < r; i++)\n        if (col[i] == c || abs(col[i]-c) == abs(i-r)) return false;\n    return true;\n}\nvoid solve(int r, int n, vector<int>& col, int& count) {\n    if (r == n) { count++; return; }\n    for (int c = 0; c < n; c++)\n        if (safe(col, r, c)) {\n            col[r] = c;          // place\n            solve(r+1, n, col, count);\n            col[r] = -1;         // remove (backtrack)\n        }\n}"
+        }
+      ],
+      "problems": [
+        {
+          "name": "Subsets",
+          "url": "https://leetcode.com/problems/subsets/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "warmup",
+          "companies": [
+            "Amazon",
+            "Meta"
+          ]
+        },
+        {
+          "name": "Combination Sum",
+          "url": "https://leetcode.com/problems/combination-sum/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Adobe"
+          ]
+        },
+        {
+          "name": "Permutations",
+          "url": "https://leetcode.com/problems/permutations/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Microsoft"
+          ]
+        },
+        {
+          "name": "Word Search",
+          "url": "https://leetcode.com/problems/word-search/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Microsoft",
+            "Google"
+          ]
+        },
+        {
+          "name": "Palindrome Partitioning",
+          "url": "https://leetcode.com/problems/palindrome-partitioning/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Google"
+          ]
+        },
+        {
+          "name": "N-Queens",
+          "url": "https://leetcode.com/problems/n-queens/",
+          "platform": "LeetCode",
+          "difficulty": "Hard",
+          "tier": "hard",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Adobe"
+          ]
+        },
+        {
+          "name": "Sudoku Solver",
+          "url": "https://leetcode.com/problems/sudoku-solver/",
+          "platform": "LeetCode",
+          "difficulty": "Hard",
+          "tier": "hard",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Uber"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "sorting",
+      "order": 8,
+      "title": "Sorting & Divide and Conquer",
+      "explainer_md": "Sorting arranges elements in order, and the *good* sorts (merge, quick, heap) all achieve O(n log n) by a divide-and-conquer strategy: split the problem, solve the halves, combine. Understanding *why* they're O(n log n) — log n levels of splitting, O(n) work per level — is more valuable than memorizing them, because that same recursion-tree analysis applies to countless other problems.\n\nIn practice you'll call `std::sort` (an introsort — quicksort with heapsort fallback). But interviews still probe merge sort (stable, predictable, powers 'count inversions') and quicksort (in-place, powers 'quickselect' for k-th element). Divide-and-conquer as a *mindset* — not just for sorting — is the real lesson.\n\nMental model: to sort a messy pile, split it in half, get each half sorted, then zip the two sorted halves together.",
+      "patterns_md": "**Merge sort** — split to single elements, merge sorted halves. Stable, O(n log n) guaranteed, O(n) extra space. The merge step also counts inversions and merges sorted lists.\n\n**Quick sort / quickselect** — partition around a pivot; recurse on the relevant side. In-place; average O(n log n). Quickselect finds the k-th smallest in O(n) average without full sorting.\n\n**Counting / bucket sort** — when values are bounded integers, sort in O(n) by counting occurrences. Beats the O(n log n) comparison lower bound by not comparing.\n\n**Sort-then-scan** — many problems become trivial after sorting (meeting rooms, merge intervals, closest pairs). Sorting as a preprocessing step is a pattern in itself.",
+      "complexity_md": "| Algorithm | Best | Average | Worst | Space | Stable |\n|---|---|---|---|---|---|\n| Bubble/Insertion | O(n) | O(n²) | O(n²) | O(1) | yes |\n| Merge sort | O(n log n) | O(n log n) | O(n log n) | O(n) | yes |\n| Quick sort | O(n log n) | O(n log n) | O(n²) | O(log n) | no |\n| Heap sort | O(n log n) | O(n log n) | O(n log n) | O(1) | no |\n| Counting sort | O(n+k) | O(n+k) | O(n+k) | O(k) | yes |\n\nComparison sorts can't beat O(n log n) in the worst case — that's a proven lower bound.",
+      "code": [
+        {
+          "label": "Merge sort",
+          "code": "void merge(vector<int>& a, int l, int m, int r) {\n    vector<int> tmp;\n    int i = l, j = m + 1;\n    while (i <= m && j <= r)\n        tmp.push_back(a[i] <= a[j] ? a[i++] : a[j++]);\n    while (i <= m) tmp.push_back(a[i++]);\n    while (j <= r) tmp.push_back(a[j++]);\n    for (int k = 0; k < (int)tmp.size(); k++) a[l + k] = tmp[k];\n}\nvoid mergeSort(vector<int>& a, int l, int r) {\n    if (l >= r) return;\n    int m = l + (r - l) / 2;\n    mergeSort(a, l, m); mergeSort(a, m + 1, r);\n    merge(a, l, m, r);\n}"
+        },
+        {
+          "label": "Quickselect — k-th smallest, O(n) avg",
+          "code": "int partition(vector<int>& a, int l, int r) {\n    int pivot = a[r], i = l;\n    for (int j = l; j < r; j++)\n        if (a[j] < pivot) swap(a[i++], a[j]);\n    swap(a[i], a[r]);\n    return i;\n}\nint quickselect(vector<int>& a, int l, int r, int k) {\n    int p = partition(a, l, r);\n    if (p == k) return a[p];\n    return p < k ? quickselect(a, p+1, r, k)\n                 : quickselect(a, l, p-1, k);\n}"
+        }
+      ],
+      "problems": [
+        {
+          "name": "Sort an Array",
+          "url": "https://leetcode.com/problems/sort-an-array/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "warmup",
+          "companies": [
+            "Amazon"
+          ]
+        },
+        {
+          "name": "Merge Intervals",
+          "url": "https://leetcode.com/problems/merge-intervals/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Meta",
+            "Microsoft"
+          ]
+        },
+        {
+          "name": "Kth Largest Element in an Array",
+          "url": "https://leetcode.com/problems/kth-largest-element-in-an-array/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Meta"
+          ]
+        },
+        {
+          "name": "Sort Colors",
+          "url": "https://leetcode.com/problems/sort-colors/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Microsoft",
+            "Amazon"
+          ]
+        },
+        {
+          "name": "Count of Smaller Numbers After Self",
+          "url": "https://leetcode.com/problems/count-of-smaller-numbers-after-self/",
+          "platform": "LeetCode",
+          "difficulty": "Hard",
+          "tier": "hard",
+          "companies": [
+            "Google",
+            "Amazon"
+          ]
+        },
+        {
+          "name": "Count Inversions",
+          "url": "https://www.geeksforgeeks.org/problems/inversion-of-array-1587115620/1",
+          "platform": "GFG",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Flipkart"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "linked-lists",
+      "order": 9,
+      "title": "Linked Lists",
+      "explainer_md": "A linked list stores elements in nodes, each holding a value and a pointer to the next node. Unlike arrays, nodes aren't contiguous — so you lose O(1) random access, but gain O(1) insertion/deletion once you're at a position (just rewire pointers, no shifting). This trade-off is the whole reason linked lists exist.\n\nInterviews use linked lists to test **pointer manipulation** under pressure: reversing, detecting cycles, finding the middle, merging. The recurring tools are the dummy head node (simplifies edge cases at the front) and the two-pointer / fast-slow technique.\n\nMental model: a treasure hunt where each clue points to the location of the next. You can't jump to clue #5 — you must follow from the start.",
+      "patterns_md": "**Fast & slow pointers** — advance one pointer 2× as fast as the other. When fast reaches the end, slow is at the middle. If they ever meet, there's a cycle (Floyd's algorithm). Foundational for cycle, middle, and palindrome problems.\n\n**Dummy head node** — allocate a placeholder before the real head so insertions/deletions at the front need no special-casing. Return `dummy.next`.\n\n**Iterative reversal** — three pointers (prev, curr, next) walk the list rewiring each link. Memorize this; it appears everywhere.\n\n**Two-pass or gap technique** — for 'nth from end', advance one pointer n steps first, then move both until it hits the end.",
+      "complexity_md": "| Operation | Time | Notes |\n|---|---|---|\n| Access by index | O(n) | Must traverse |\n| Insert/delete at head | O(1) | Rewire pointers |\n| Insert/delete at known node | O(1) | No shifting |\n| Search | O(n) | Linear scan |\n| Reverse | O(n) | Single pass |\n| Cycle detection | O(n) | Fast-slow, O(1) space |\n\nSpace: O(1) for in-place pointer work — a key advantage interviewers look for over O(n) copy-based solutions.",
+      "code": [
+        {
+          "label": "Node definition",
+          "code": "struct ListNode {\n    int val;\n    ListNode* next;\n    ListNode(int x) : val(x), next(nullptr) {}\n};"
+        },
+        {
+          "label": "Iterative reversal",
+          "code": "ListNode* reverse(ListNode* head) {\n    ListNode* prev = nullptr;\n    while (head) {\n        ListNode* next = head->next;\n        head->next = prev;   // rewire\n        prev = head;\n        head = next;\n    }\n    return prev;             // new head\n}"
+        },
+        {
+          "label": "Floyd's cycle detection",
+          "code": "bool hasCycle(ListNode* head) {\n    ListNode *slow = head, *fast = head;\n    while (fast && fast->next) {\n        slow = slow->next;\n        fast = fast->next->next;\n        if (slow == fast) return true;\n    }\n    return false;\n}"
+        }
+      ],
+      "problems": [
+        {
+          "name": "Reverse Linked List",
+          "url": "https://leetcode.com/problems/reverse-linked-list/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Amazon",
+            "Microsoft",
+            "Adobe"
+          ]
+        },
+        {
+          "name": "Middle of the Linked List",
+          "url": "https://leetcode.com/problems/middle-of-the-linked-list/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Amazon"
+          ]
+        },
+        {
+          "name": "Merge Two Sorted Lists",
+          "url": "https://leetcode.com/problems/merge-two-sorted-lists/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Amazon",
+            "Microsoft",
+            "Adobe"
+          ]
+        },
+        {
+          "name": "Linked List Cycle",
+          "url": "https://leetcode.com/problems/linked-list-cycle/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Microsoft"
+          ]
+        },
+        {
+          "name": "Remove Nth Node From End of List",
+          "url": "https://leetcode.com/problems/remove-nth-node-from-end-of-list/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Meta"
+          ]
+        },
+        {
+          "name": "Add Two Numbers",
+          "url": "https://leetcode.com/problems/add-two-numbers/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Microsoft",
+            "Adobe"
+          ]
+        },
+        {
+          "name": "Reorder List",
+          "url": "https://leetcode.com/problems/reorder-list/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Meta"
+          ]
+        },
+        {
+          "name": "Merge k Sorted Lists",
+          "url": "https://leetcode.com/problems/merge-k-sorted-lists/",
+          "platform": "LeetCode",
+          "difficulty": "Hard",
+          "tier": "hard",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Microsoft",
+            "Uber"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "stacks-queues",
+      "order": 10,
+      "title": "Stacks & Queues",
+      "explainer_md": "A stack is LIFO (last-in-first-out) — think a stack of plates; you add and remove from the top. A queue is FIFO (first-in-first-out) — a line at a counter. Both restrict *where* you can add/remove, and that restriction is exactly what makes them useful for modeling order-dependent processes: function calls, undo history, BFS frontiers, expression parsing.\n\nThe standout interview pattern is the **monotonic stack** — a stack kept in sorted order that answers 'next greater/smaller element' problems in O(n). It looks like magic the first time and becomes a reliable tool once internalized.\n\nMental model: a stack is a spring-loaded plate dispenser (top only); a queue is a checkout line (back to join, front to leave).",
+      "patterns_md": "**Monotonic stack** — maintain a stack that's always increasing (or decreasing). When a new element violates the order, pop and resolve — this is how you find the next greater element, daily temperatures, or histogram areas in O(n).\n\n**Matching / balancing** — push opening symbols, pop on closing ones. Powers valid-parentheses and expression evaluation.\n\n**Stack for iterative traversal** — replace recursion with an explicit stack (tree traversals, DFS) to avoid stack-overflow on deep inputs.\n\n**Two-stack / two-queue tricks** — implement a queue with two stacks (or vice versa); implement a min-stack that returns the minimum in O(1) with an auxiliary stack.",
+      "complexity_md": "| Operation | Stack | Queue |\n|---|---|---|\n| Push / enqueue | O(1) | O(1) |\n| Pop / dequeue | O(1) | O(1) |\n| Top / front | O(1) | O(1) |\n| Search | O(n) | O(n) |\n| Monotonic-stack scan | O(n) total | — |\n\nEach element is pushed and popped at most once in a monotonic-stack pass, so the total is O(n) even though there's a nested-looking loop.",
+      "code": [
+        {
+          "label": "Valid parentheses — matching stack",
+          "code": "bool isValid(string s) {\n    stack<char> st;\n    unordered_map<char,char> m{{')','('},{']','['},{'}','{'}};\n    for (char c : s) {\n        if (m.count(c)) {\n            if (st.empty() || st.top() != m[c]) return false;\n            st.pop();\n        } else st.push(c);\n    }\n    return st.empty();\n}"
+        },
+        {
+          "label": "Monotonic stack — next greater element",
+          "code": "vector<int> nextGreater(vector<int>& a) {\n    int n = a.size();\n    vector<int> res(n, -1);\n    stack<int> st;   // holds indices, decreasing values\n    for (int i = 0; i < n; i++) {\n        while (!st.empty() && a[st.top()] < a[i]) {\n            res[st.top()] = a[i];\n            st.pop();\n        }\n        st.push(i);\n    }\n    return res;\n}"
+        }
+      ],
+      "problems": [
+        {
+          "name": "Valid Parentheses",
+          "url": "https://leetcode.com/problems/valid-parentheses/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Microsoft"
+          ]
+        },
+        {
+          "name": "Implement Queue using Stacks",
+          "url": "https://leetcode.com/problems/implement-queue-using-stacks/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Amazon",
+            "Microsoft"
+          ]
+        },
+        {
+          "name": "Min Stack",
+          "url": "https://leetcode.com/problems/min-stack/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Adobe"
+          ]
+        },
+        {
+          "name": "Daily Temperatures",
+          "url": "https://leetcode.com/problems/daily-temperatures/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Google"
+          ]
+        },
+        {
+          "name": "Next Greater Element I",
+          "url": "https://leetcode.com/problems/next-greater-element-i/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Adobe"
+          ]
+        },
+        {
+          "name": "Evaluate Reverse Polish Notation",
+          "url": "https://leetcode.com/problems/evaluate-reverse-polish-notation/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "LinkedIn"
+          ]
+        },
+        {
+          "name": "Largest Rectangle in Histogram",
+          "url": "https://leetcode.com/problems/largest-rectangle-in-histogram/",
+          "platform": "LeetCode",
+          "difficulty": "Hard",
+          "tier": "hard",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Microsoft"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "trees",
+      "order": 11,
+      "title": "Binary Trees",
+      "explainer_md": "A binary tree is a hierarchy where each node has up to two children (left, right). Trees model anything with nesting or hierarchy — file systems, decision processes, parse trees. They're **heavily** tested because they force you to think recursively and reveal whether you truly understand recursion.\n\nThe four traversals are the vocabulary: **inorder** (left-root-right), **preorder** (root-left-right), **postorder** (left-right-root), and **level-order** (BFS, row by row). Most tree problems are 'do a traversal and compute something at each node'. Height, diameter, path sums, and views all reduce to a well-chosen traversal.\n\nMental model: a family tree that branches downward — every person (node) has at most two children, and you can walk the family in different orders.",
+      "patterns_md": "**DFS recursion** — the default. Solve for a node by combining the solutions of its subtrees. Height, diameter, balanced-check, and path problems all follow 'recurse left, recurse right, combine'.\n\n**Level-order BFS** — use a queue to process the tree row by row. Powers level-averages, right-side view, zigzag traversal, and 'connect nodes at same level'.\n\n**Return-more-than-you-need** — for problems like diameter, have the recursion return one value (height) while updating a separate global (best diameter). A common and powerful trick.\n\n**Bottom-up vs top-down** — decide whether each node needs info from above (pass down as parameters) or from below (return up from children).",
+      "complexity_md": "| Operation | Time | Space |\n|---|---|---|\n| Any traversal | O(n) | O(h) recursion / O(w) queue |\n| Height / diameter | O(n) | O(h) |\n| Search (unbalanced) | O(n) | O(h) |\n| Level-order (BFS) | O(n) | O(w) width |\n\n`h` = height (O(log n) if balanced, O(n) if skewed); `w` = max width. Every node is visited once, so traversals are linear; the space is the recursion depth or the widest level.",
+      "code": [
+        {
+          "label": "Node + recursive traversals",
+          "code": "struct TreeNode {\n    int val; TreeNode *left, *right;\n    TreeNode(int x): val(x), left(nullptr), right(nullptr) {}\n};\nvoid inorder(TreeNode* root, vector<int>& out) {\n    if (!root) return;\n    inorder(root->left, out);\n    out.push_back(root->val);\n    inorder(root->right, out);\n}"
+        },
+        {
+          "label": "Level-order (BFS)",
+          "code": "vector<vector<int>> levelOrder(TreeNode* root) {\n    vector<vector<int>> res;\n    if (!root) return res;\n    queue<TreeNode*> q; q.push(root);\n    while (!q.empty()) {\n        int sz = q.size();\n        vector<int> level;\n        for (int i = 0; i < sz; i++) {\n            TreeNode* n = q.front(); q.pop();\n            level.push_back(n->val);\n            if (n->left) q.push(n->left);\n            if (n->right) q.push(n->right);\n        }\n        res.push_back(level);\n    }\n    return res;\n}"
+        },
+        {
+          "label": "Diameter — return height, track best",
+          "code": "int diameter(TreeNode* root, int& best) {\n    if (!root) return 0;\n    int l = diameter(root->left, best);\n    int r = diameter(root->right, best);\n    best = max(best, l + r);      // path through this node\n    return 1 + max(l, r);         // height upward\n}"
+        }
+      ],
+      "problems": [
+        {
+          "name": "Maximum Depth of Binary Tree",
+          "url": "https://leetcode.com/problems/maximum-depth-of-binary-tree/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Amazon",
+            "Google"
+          ]
+        },
+        {
+          "name": "Invert Binary Tree",
+          "url": "https://leetcode.com/problems/invert-binary-tree/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Google",
+            "Amazon"
+          ]
+        },
+        {
+          "name": "Diameter of Binary Tree",
+          "url": "https://leetcode.com/problems/diameter-of-binary-tree/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Meta",
+            "Google"
+          ]
+        },
+        {
+          "name": "Binary Tree Level Order Traversal",
+          "url": "https://leetcode.com/problems/binary-tree-level-order-traversal/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Microsoft",
+            "Meta"
+          ]
+        },
+        {
+          "name": "Binary Tree Right Side View",
+          "url": "https://leetcode.com/problems/binary-tree-right-side-view/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Meta",
+            "Microsoft"
+          ]
+        },
+        {
+          "name": "Lowest Common Ancestor of a Binary Tree",
+          "url": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Meta",
+            "Microsoft",
+            "LinkedIn"
+          ]
+        },
+        {
+          "name": "Binary Tree Maximum Path Sum",
+          "url": "https://leetcode.com/problems/binary-tree-maximum-path-sum/",
+          "platform": "LeetCode",
+          "difficulty": "Hard",
+          "tier": "hard",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Microsoft",
+            "Adobe"
+          ]
+        },
+        {
+          "name": "Serialize and Deserialize Binary Tree",
+          "url": "https://leetcode.com/problems/serialize-and-deserialize-binary-tree/",
+          "platform": "LeetCode",
+          "difficulty": "Hard",
+          "tier": "hard",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Meta",
+            "LinkedIn"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "bst",
+      "order": 12,
+      "title": "Binary Search Trees",
+      "explainer_md": "A binary search tree is a binary tree with an ordering invariant: for every node, all values in its left subtree are smaller and all in its right subtree are larger. That invariant means search, insert, and delete each follow a single root-to-leaf path — O(h) time, which is O(log n) when the tree stays balanced.\n\nThe single most important BST fact: an **inorder traversal yields the values in sorted order**. A huge fraction of BST problems are solved by exploiting this — validating a BST, finding the k-th smallest, finding the closest value, or spotting a swapped pair all lean on inorder order.\n\nMental model: a decision tree for 'guess the number' — at each node you go left (smaller) or right (larger), halving the search space when balanced.",
+      "patterns_md": "**Ordered navigation** — to find/insert/delete, compare with the current node and go left or right. One path, O(h).\n\n**Inorder = sorted** — leverage it for k-th smallest (inorder and stop at k), validate BST (inorder must be strictly increasing), or find two swapped nodes.\n\n**Range exploitation** — pass down `(low, high)` bounds to validate or to prune search to a value range.\n\n**Balanced-tree awareness** — a naive BST degrades to O(n) if inserted in sorted order. Self-balancing variants (AVL, Red-Black) keep O(log n); `std::set`/`std::map` are Red-Black trees under the hood.",
+      "complexity_md": "| Operation | Balanced | Worst (skewed) |\n|---|---|---|\n| Search | O(log n) | O(n) |\n| Insert | O(log n) | O(n) |\n| Delete | O(log n) | O(n) |\n| Inorder traversal | O(n) | O(n) |\n| k-th smallest | O(h + k) | O(n) |\n\nEverything hinges on height. Balanced ⇒ O(log n); a sorted-order insertion sequence makes it a linked list ⇒ O(n).",
+      "code": [
+        {
+          "label": "Search & insert",
+          "code": "TreeNode* insert(TreeNode* root, int val) {\n    if (!root) return new TreeNode(val);\n    if (val < root->val) root->left = insert(root->left, val);\n    else root->right = insert(root->right, val);\n    return root;\n}\nbool search(TreeNode* root, int val) {\n    while (root) {\n        if (root->val == val) return true;\n        root = val < root->val ? root->left : root->right;\n    }\n    return false;\n}"
+        },
+        {
+          "label": "Validate BST — range bounds",
+          "code": "bool valid(TreeNode* root, long lo, long hi) {\n    if (!root) return true;\n    if (root->val <= lo || root->val >= hi) return false;\n    return valid(root->left, lo, root->val) &&\n           valid(root->right, root->val, hi);\n}\n// call: valid(root, LONG_MIN, LONG_MAX)"
+        }
+      ],
+      "problems": [
+        {
+          "name": "Search in a Binary Search Tree",
+          "url": "https://leetcode.com/problems/search-in-a-binary-search-tree/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Amazon"
+          ]
+        },
+        {
+          "name": "Insert into a Binary Search Tree",
+          "url": "https://leetcode.com/problems/insert-into-a-binary-search-tree/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "warmup",
+          "companies": [
+            "Amazon",
+            "Microsoft"
+          ]
+        },
+        {
+          "name": "Validate Binary Search Tree",
+          "url": "https://leetcode.com/problems/validate-binary-search-tree/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Meta",
+            "Microsoft",
+            "Adobe"
+          ]
+        },
+        {
+          "name": "Kth Smallest Element in a BST",
+          "url": "https://leetcode.com/problems/kth-smallest-element-in-a-bst/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Uber"
+          ]
+        },
+        {
+          "name": "Lowest Common Ancestor of a BST",
+          "url": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Microsoft",
+            "Meta"
+          ]
+        },
+        {
+          "name": "Convert Sorted Array to BST",
+          "url": "https://leetcode.com/problems/convert-sorted-array-to-binary-search-tree/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Google"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "heaps",
+      "order": 13,
+      "title": "Heaps & Priority Queues",
+      "explainer_md": "A heap is a binary tree kept in a specific partial order: in a **min-heap**, every parent is ≤ its children (so the minimum sits at the root); a max-heap is the mirror. It's stored compactly in an array — no pointers — and gives you the smallest (or largest) element in O(1), with insert and extract in O(log n).\n\nHeaps shine on 'top-K', 'k-th largest', 'merge k sorted', and 'running median' problems — anything where you repeatedly need the best remaining element without fully sorting. In C++ it's `priority_queue` (max-heap by default; use `greater<>` for a min-heap).\n\nMental model: a tournament bracket that always keeps the current champion (min or max) at the top and reorganizes cheaply when players come and go.",
+      "patterns_md": "**Top-K with a bounded heap** — to find the k largest, keep a **min**-heap of size k; if it overflows, pop the smallest. O(n log k), better than sorting when k ≪ n.\n\n**k-way merge** — push the heads of k sorted lists into a heap; repeatedly pop the min and push its successor. Merges k lists in O(N log k).\n\n**Two-heap median** — a max-heap for the lower half and a min-heap for the upper half; balance them to read the median in O(1).\n\n**Greedy scheduling** — heaps power interval/task scheduling where you always process the nearest deadline or highest priority next.",
+      "complexity_md": "| Operation | Time |\n|---|---|\n| Peek min/max (top) | O(1) |\n| Insert (push) | O(log n) |\n| Extract (pop) | O(log n) |\n| Build heap from array | O(n) |\n| Top-K (size-k heap) | O(n log k) |\n\nBuilding a heap by successive sift-down is O(n), not O(n log n) — a common interview gotcha. Space is O(n) for the heap, or O(k) for a bounded top-K heap.",
+      "code": [
+        {
+          "label": "Min-heap & max-heap declarations",
+          "code": "priority_queue<int> maxHeap;                       // max on top\npriority_queue<int, vector<int>, greater<int>> minHeap;  // min on top\nmaxHeap.push(5); maxHeap.push(1);\nint top = maxHeap.top();   // 5\nmaxHeap.pop();"
+        },
+        {
+          "label": "Top-K largest with bounded min-heap",
+          "code": "int findKthLargest(vector<int>& nums, int k) {\n    priority_queue<int, vector<int>, greater<int>> h;\n    for (int x : nums) {\n        h.push(x);\n        if ((int)h.size() > k) h.pop();  // drop smallest\n    }\n    return h.top();   // k-th largest\n}"
+        }
+      ],
+      "problems": [
+        {
+          "name": "Kth Largest Element in a Stream",
+          "url": "https://leetcode.com/problems/kth-largest-element-in-a-stream/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Amazon",
+            "Meta"
+          ]
+        },
+        {
+          "name": "Last Stone Weight",
+          "url": "https://leetcode.com/problems/last-stone-weight/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Amazon"
+          ]
+        },
+        {
+          "name": "K Closest Points to Origin",
+          "url": "https://leetcode.com/problems/k-closest-points-to-origin/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Meta",
+            "Google"
+          ]
+        },
+        {
+          "name": "Top K Frequent Elements",
+          "url": "https://leetcode.com/problems/top-k-frequent-elements/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Meta"
+          ]
+        },
+        {
+          "name": "Task Scheduler",
+          "url": "https://leetcode.com/problems/task-scheduler/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Meta",
+            "Microsoft"
+          ]
+        },
+        {
+          "name": "Merge k Sorted Lists",
+          "url": "https://leetcode.com/problems/merge-k-sorted-lists/",
+          "platform": "LeetCode",
+          "difficulty": "Hard",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Microsoft"
+          ]
+        },
+        {
+          "name": "Find Median from Data Stream",
+          "url": "https://leetcode.com/problems/find-median-from-data-stream/",
+          "platform": "LeetCode",
+          "difficulty": "Hard",
+          "tier": "hard",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Microsoft"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "hashing",
+      "order": 14,
+      "title": "Hashing",
+      "explainer_md": "Hashing maps keys to array indices via a hash function, giving **average O(1)** insert, delete, and lookup. It's the single most useful optimization in interviews: any time you catch yourself scanning to check 'have I seen this before?' or 'what's the count of X?', a hash map turns an O(n²) solution into O(n).\n\nIn C++, `unordered_map` and `unordered_set` are your hash containers; `map`/`set` are their sorted (tree-based, O(log n)) cousins. The trade-off: hash containers are faster but unordered and have O(n) worst case under adversarial collisions.\n\nMental model: a coat-check. You hand over a coat (key), get a ticket (hash), and the attendant stores it in a numbered slot — retrieval is instant because the ticket tells you exactly where to look.",
+      "patterns_md": "**Seen-set / complement lookup** — store what you've encountered; check membership in O(1). Two Sum stores `target - x`; 'contains duplicate' stores seen values.\n\n**Frequency map** — count occurrences with `unordered_map<T,int>`. Powers anagrams, majority element, top-K, and 'first unique'.\n\n**Prefix-sum + hashmap** — store cumulative sums seen so far to count subarrays with a target sum in O(n) ('subarray sum equals k').\n\n**Grouping by signature** — map a canonical key (sorted string, shape hash) to a bucket of items ('group anagrams').",
+      "complexity_md": "| Operation | Average | Worst |\n|---|---|---|\n| Insert | O(1) | O(n) |\n| Lookup | O(1) | O(n) |\n| Delete | O(1) | O(n) |\n| Iteration | O(n) | O(n) |\n\nWorst case arises from many hash collisions; in practice with a good hash it's effectively O(1). Space is O(n) for the stored keys. Use `map`/`set` instead when you need sorted order or worst-case guarantees.",
+      "code": [
+        {
+          "label": "Complement lookup — Two Sum",
+          "code": "vector<int> twoSum(vector<int>& nums, int target) {\n    unordered_map<int,int> seen;   // value -> index\n    for (int i = 0; i < (int)nums.size(); i++) {\n        int need = target - nums[i];\n        if (seen.count(need)) return {seen[need], i};\n        seen[nums[i]] = i;\n    }\n    return {};\n}"
+        },
+        {
+          "label": "Prefix sum + map — subarrays summing to k",
+          "code": "int subarraySum(vector<int>& nums, int k) {\n    unordered_map<int,int> cnt{{0,1}};\n    int sum = 0, res = 0;\n    for (int x : nums) {\n        sum += x;\n        res += cnt[sum - k];   // seen a prefix that completes k\n        cnt[sum]++;\n    }\n    return res;\n}"
+        }
+      ],
+      "problems": [
+        {
+          "name": "Contains Duplicate",
+          "url": "https://leetcode.com/problems/contains-duplicate/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Amazon",
+            "Adobe"
+          ]
+        },
+        {
+          "name": "Valid Anagram",
+          "url": "https://leetcode.com/problems/valid-anagram/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Amazon",
+            "Adobe"
+          ]
+        },
+        {
+          "name": "Two Sum",
+          "url": "https://leetcode.com/problems/two-sum/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Microsoft"
+          ]
+        },
+        {
+          "name": "Group Anagrams",
+          "url": "https://leetcode.com/problems/group-anagrams/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Uber"
+          ]
+        },
+        {
+          "name": "Subarray Sum Equals K",
+          "url": "https://leetcode.com/problems/subarray-sum-equals-k/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Meta"
+          ]
+        },
+        {
+          "name": "Longest Consecutive Sequence",
+          "url": "https://leetcode.com/problems/longest-consecutive-sequence/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Meta"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "greedy",
+      "order": 15,
+      "title": "Greedy Algorithms",
+      "explainer_md": "A greedy algorithm builds a solution step by step, always taking the choice that looks best *right now*, never reconsidering. When it works, it's simple and fast — but it only works when local optimality guarantees global optimality. Proving (or at least convincing yourself of) that property is the real skill; a greedy that isn't provably correct is just a guess.\n\nThe classic signal: problems asking to maximize/minimize with a natural ordering — intervals sorted by end time, coins by denomination, jobs by deadline. Sorting is almost always the first step.\n\nMental model: hiking to the highest peak by always stepping uphill. It reaches the top only if there are no misleading smaller hills (local maxima) — that's exactly when greedy is safe.",
+      "patterns_md": "**Sort, then sweep** — sort by the key that makes the greedy choice obvious (interval end times, ratios), then make one linear pass taking safe choices.\n\n**Exchange argument** — the proof technique: show any optimal solution can be transformed into the greedy one without getting worse. If you can, greedy is correct.\n\n**Interval scheduling** — to maximize non-overlapping intervals, always pick the one that ends earliest. To merge, sort by start.\n\n**When greedy fails** — if a locally best choice can force a worse global outcome (e.g. 0/1 knapsack with arbitrary weights), you need DP instead. Recognizing this fork is itself an interview skill.",
+      "complexity_md": "| Step | Typical cost |\n|---|---|\n| Sort (usual first step) | O(n log n) |\n| Greedy sweep | O(n) |\n| With a heap | O(n log n) |\n| Overall | usually O(n log n) |\n\nGreedy is prized for being fast and low-space (often O(1) beyond the sort). The catch is correctness, not efficiency — always sanity-check that the greedy choice is actually safe.",
+      "code": [
+        {
+          "label": "Interval scheduling — max non-overlapping",
+          "code": "int maxMeetings(vector<pair<int,int>>& iv) {\n    // sort by end time\n    sort(iv.begin(), iv.end(), [](auto&a, auto&b){\n        return a.second < b.second;\n    });\n    int count = 0, lastEnd = INT_MIN;\n    for (auto& [s, e] : iv)\n        if (s > lastEnd) { count++; lastEnd = e; }\n    return count;\n}"
+        },
+        {
+          "label": "Jump Game — furthest reach",
+          "code": "bool canJump(vector<int>& nums) {\n    int reach = 0;\n    for (int i = 0; i < (int)nums.size(); i++) {\n        if (i > reach) return false;      // stuck\n        reach = max(reach, i + nums[i]);\n    }\n    return true;\n}"
+        }
+      ],
+      "problems": [
+        {
+          "name": "Assign Cookies",
+          "url": "https://leetcode.com/problems/assign-cookies/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Amazon"
+          ]
+        },
+        {
+          "name": "Best Time to Buy and Sell Stock II",
+          "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "warmup",
+          "companies": [
+            "Amazon",
+            "Adobe"
+          ]
+        },
+        {
+          "name": "Jump Game",
+          "url": "https://leetcode.com/problems/jump-game/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Microsoft"
+          ]
+        },
+        {
+          "name": "Gas Station",
+          "url": "https://leetcode.com/problems/gas-station/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Google"
+          ]
+        },
+        {
+          "name": "Non-overlapping Intervals",
+          "url": "https://leetcode.com/problems/non-overlapping-intervals/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Meta"
+          ]
+        },
+        {
+          "name": "Jump Game II",
+          "url": "https://leetcode.com/problems/jump-game-ii/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Adobe"
+          ]
+        },
+        {
+          "name": "Candy",
+          "url": "https://leetcode.com/problems/candy/",
+          "platform": "LeetCode",
+          "difficulty": "Hard",
+          "tier": "hard",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Flipkart"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "graphs",
+      "order": 16,
+      "title": "Graphs",
+      "explainer_md": "A graph is a set of nodes (vertices) connected by edges — the most general structure in the subject; trees and linked lists are special cases. Graphs model networks, maps, dependencies, states, and relationships. Master representation and traversal and a huge class of problems opens up.\n\nTwo representations: an **adjacency list** (array of neighbor-lists, space O(V+E), the usual choice) and an **adjacency matrix** (V×V grid, O(V²), good for dense graphs). Two core traversals: **BFS** (queue, explores level by level, finds shortest paths in unweighted graphs) and **DFS** (stack/recursion, explores deep, powers cycle detection and topological sort).\n\nMental model: cities (nodes) connected by roads (edges). BFS is ripples spreading from a stone dropped in water; DFS is following one road as far as it goes before backtracking.",
+      "patterns_md": "**BFS for shortest path (unweighted)** — a queue explores in rings, so the first time you reach a node is via a shortest path. Also used for grid/flood-fill and 'minimum steps' problems.\n\n**DFS for connectivity & cycles** — recursion or an explicit stack to count components, detect cycles, or explore fully. Track visited state (and recursion-stack state for directed cycle detection).\n\n**Topological sort** — order a DAG so every edge points forward. Kahn's (BFS on in-degrees) or DFS post-order. Powers dependency resolution and course-schedule problems.\n\n**Weighted shortest path** — Dijkstra (non-negative weights, min-heap) and Bellman-Ford (handles negatives). Union-Find + Kruskal or Prim for minimum spanning trees.",
+      "complexity_md": "| Algorithm | Time | Space |\n|---|---|---|\n| BFS / DFS | O(V + E) | O(V) |\n| Topological sort | O(V + E) | O(V) |\n| Dijkstra (heap) | O((V+E) log V) | O(V) |\n| Bellman-Ford | O(V·E) | O(V) |\n| Union-Find op | ~O(1) amortized | O(V) |\n\nV = vertices, E = edges. Adjacency-list traversals are linear in the graph size; the log factor in Dijkstra comes from the priority queue.",
+      "code": [
+        {
+          "label": "BFS on adjacency list",
+          "code": "void bfs(int start, vector<vector<int>>& adj) {\n    int n = adj.size();\n    vector<bool> vis(n, false);\n    queue<int> q; q.push(start); vis[start] = true;\n    while (!q.empty()) {\n        int u = q.front(); q.pop();\n        for (int v : adj[u])\n            if (!vis[v]) { vis[v] = true; q.push(v); }\n    }\n}"
+        },
+        {
+          "label": "Topological sort (Kahn's, BFS)",
+          "code": "vector<int> topoSort(int n, vector<vector<int>>& adj) {\n    vector<int> indeg(n, 0), order;\n    for (int u = 0; u < n; u++)\n        for (int v : adj[u]) indeg[v]++;\n    queue<int> q;\n    for (int i = 0; i < n; i++) if (!indeg[i]) q.push(i);\n    while (!q.empty()) {\n        int u = q.front(); q.pop(); order.push_back(u);\n        for (int v : adj[u]) if (--indeg[v] == 0) q.push(v);\n    }\n    return order;   // size < n means a cycle exists\n}"
+        },
+        {
+          "label": "Dijkstra — shortest path (min-heap)",
+          "code": "vector<int> dijkstra(int src, vector<vector<pair<int,int>>>& adj) {\n    int n = adj.size();\n    vector<int> dist(n, INT_MAX); dist[src] = 0;\n    priority_queue<pair<int,int>, vector<pair<int,int>>,\n                   greater<>> pq;\n    pq.push({0, src});\n    while (!pq.empty()) {\n        auto [d, u] = pq.top(); pq.pop();\n        if (d > dist[u]) continue;\n        for (auto [v, w] : adj[u])\n            if (dist[u] + w < dist[v]) {\n                dist[v] = dist[u] + w;\n                pq.push({dist[v], v});\n            }\n    }\n    return dist;\n}"
+        }
+      ],
+      "problems": [
+        {
+          "name": "Number of Islands",
+          "url": "https://leetcode.com/problems/number-of-islands/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "warmup",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Meta",
+            "Microsoft"
+          ]
+        },
+        {
+          "name": "Flood Fill",
+          "url": "https://leetcode.com/problems/flood-fill/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Amazon"
+          ]
+        },
+        {
+          "name": "Rotting Oranges",
+          "url": "https://leetcode.com/problems/rotting-oranges/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Microsoft"
+          ]
+        },
+        {
+          "name": "Course Schedule",
+          "url": "https://leetcode.com/problems/course-schedule/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Meta"
+          ]
+        },
+        {
+          "name": "Number of Provinces",
+          "url": "https://leetcode.com/problems/number-of-provinces/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Microsoft"
+          ]
+        },
+        {
+          "name": "Clone Graph",
+          "url": "https://leetcode.com/problems/clone-graph/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Meta",
+            "Uber"
+          ]
+        },
+        {
+          "name": "Network Delay Time",
+          "url": "https://leetcode.com/problems/network-delay-time/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Google"
+          ]
+        },
+        {
+          "name": "Word Ladder",
+          "url": "https://leetcode.com/problems/word-ladder/",
+          "platform": "LeetCode",
+          "difficulty": "Hard",
+          "tier": "hard",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Microsoft"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "dynamic-programming",
+      "order": 17,
+      "title": "Dynamic Programming",
+      "explainer_md": "Dynamic programming solves problems with **overlapping subproblems** and **optimal substructure** by solving each subproblem once and reusing the answer. It's the highest-leverage interview topic and the one most people find hardest — the difficulty is recognizing the recurrence, not writing the code.\n\nThe reliable path: (1) write a plain recursion that tries all options; (2) notice the same arguments recur, and cache them — that's **memoization** (top-down); (3) optionally flip it to fill a table from the base cases up — that's **tabulation** (bottom-up). Same recurrence, three levels of optimization. If you can define the state and the transition, the rest is mechanical.\n\nMental model: climbing stairs where each step's answer depends on earlier steps. Instead of recomputing, you jot each answer on the step so you never solve it twice.",
+      "patterns_md": "**Recursion → memo → tabulation** — always start from a brute-force recursion. Add a cache keyed by the state. Then, if useful, convert to an iterative table. This staged approach is how you *derive* a DP instead of memorizing one.\n\n**Define state precisely** — 'dp[i] = the answer considering the first i items'. Getting the state definition right is 80% of the battle.\n\n**Standard families** — 1D (climbing stairs, house robber), knapsack (subset-sum, coin change), sequence DP (LIS, LCS, edit distance), grid DP (unique paths, min path sum), and interval/partition DP.\n\n**Space optimization** — many DPs only need the previous row/few states, so O(n) space collapses to O(1). Do it after correctness, not before.",
+      "complexity_md": "| Problem family | Time | Space |\n|---|---|---|\n| 1D DP (stairs, robber) | O(n) | O(1) optimizable |\n| 0/1 Knapsack | O(n·W) | O(W) optimizable |\n| LCS / edit distance | O(n·m) | O(min(n,m)) |\n| LIS | O(n log n) | O(n) |\n| Grid DP | O(n·m) | O(m) optimizable |\n\nGeneral rule: DP time = (number of states) × (work per transition). Identify those two and you have the complexity before writing a line.",
+      "code": [
+        {
+          "label": "Recursion → memoization (top-down)",
+          "code": "int rob(vector<int>& nums, int i, vector<int>& memo) {\n    if (i >= (int)nums.size()) return 0;\n    if (memo[i] != -1) return memo[i];\n    int take = nums[i] + rob(nums, i + 2, memo);\n    int skip = rob(nums, i + 1, memo);\n    return memo[i] = max(take, skip);\n}"
+        },
+        {
+          "label": "Tabulation (bottom-up) + O(1) space",
+          "code": "int rob(vector<int>& nums) {\n    int prev2 = 0, prev1 = 0;\n    for (int x : nums) {\n        int cur = max(prev1, prev2 + x);\n        prev2 = prev1;\n        prev1 = cur;\n    }\n    return prev1;\n}"
+        },
+        {
+          "label": "LCS — classic 2D table",
+          "code": "int lcs(string a, string b) {\n    int n = a.size(), m = b.size();\n    vector<vector<int>> dp(n+1, vector<int>(m+1, 0));\n    for (int i = 1; i <= n; i++)\n        for (int j = 1; j <= m; j++)\n            dp[i][j] = (a[i-1] == b[j-1])\n                ? dp[i-1][j-1] + 1\n                : max(dp[i-1][j], dp[i][j-1]);\n    return dp[n][m];\n}"
+        }
+      ],
+      "problems": [
+        {
+          "name": "Climbing Stairs",
+          "url": "https://leetcode.com/problems/climbing-stairs/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Amazon",
+            "Adobe"
+          ]
+        },
+        {
+          "name": "House Robber",
+          "url": "https://leetcode.com/problems/house-robber/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "warmup",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Microsoft"
+          ]
+        },
+        {
+          "name": "Coin Change",
+          "url": "https://leetcode.com/problems/coin-change/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Uber"
+          ]
+        },
+        {
+          "name": "Longest Increasing Subsequence",
+          "url": "https://leetcode.com/problems/longest-increasing-subsequence/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Microsoft"
+          ]
+        },
+        {
+          "name": "Unique Paths",
+          "url": "https://leetcode.com/problems/unique-paths/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Adobe"
+          ]
+        },
+        {
+          "name": "Longest Common Subsequence",
+          "url": "https://leetcode.com/problems/longest-common-subsequence/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Microsoft"
+          ]
+        },
+        {
+          "name": "Word Break",
+          "url": "https://leetcode.com/problems/word-break/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Meta",
+            "Uber"
+          ]
+        },
+        {
+          "name": "Edit Distance",
+          "url": "https://leetcode.com/problems/edit-distance/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Microsoft"
+          ]
+        },
+        {
+          "name": "Best Time to Buy and Sell Stock III",
+          "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/",
+          "platform": "LeetCode",
+          "difficulty": "Hard",
+          "tier": "hard",
+          "companies": [
+            "Amazon",
+            "Adobe"
+          ]
+        },
+        {
+          "name": "Maximal Rectangle",
+          "url": "https://leetcode.com/problems/maximal-rectangle/",
+          "platform": "LeetCode",
+          "difficulty": "Hard",
+          "tier": "hard",
+          "companies": [
+            "Amazon",
+            "Google"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "tries",
+      "order": 18,
+      "title": "Tries",
+      "explainer_md": "A trie (prefix tree) stores strings by sharing common prefixes: each node represents a character, and a path from the root spells a prefix. Insert and lookup take O(L) where L is the word length — independent of how many words are stored. That makes tries ideal for autocomplete, spell-check, prefix matching, and dictionary problems.\n\nThe payoff over a hash set: a trie answers 'is any stored word a prefix of X?' or 'how many words start with this prefix?' efficiently, which hashing can't do without extra work. The cost is memory — each node holds an array (or map) of child pointers.\n\nMental model: a branching dictionary. To find a word you spell it out letter by letter, walking down shared branches; words with the same start share the same path until they diverge.",
+      "patterns_md": "**Prefix insertion & search** — walk/create one child per character; mark the final node as end-of-word. Search follows the same path and checks the end flag.\n\n**Prefix counting** — store a counter at each node to answer 'how many words share this prefix?' in O(L).\n\n**Word-search on a grid + trie** — combine a trie of the dictionary with DFS/backtracking on a board to find all words at once (Word Search II), far faster than searching each word separately.\n\n**Bitwise trie (XOR)** — store numbers as binary strings to solve maximum-XOR-pair problems in O(32·n).",
+      "complexity_md": "| Operation | Time | Space |\n|---|---|---|\n| Insert word | O(L) | O(L · alphabet) worst |\n| Search word | O(L) | O(1) |\n| Prefix query | O(L) | O(1) |\n| Build from n words | O(n · L) | up to O(n · L · Σ) |\n\nL = word length, Σ = alphabet size. Time is independent of the number of stored words — the trie's key advantage. Memory is the trade-off; use a `map` of children instead of a fixed array for sparse alphabets.",
+      "code": [
+        {
+          "label": "Trie node + insert/search",
+          "code": "struct TrieNode {\n    TrieNode* child[26] = {};\n    bool isEnd = false;\n};\nstruct Trie {\n    TrieNode* root = new TrieNode();\n    void insert(const string& w) {\n        TrieNode* cur = root;\n        for (char c : w) {\n            int i = c - 'a';\n            if (!cur->child[i]) cur->child[i] = new TrieNode();\n            cur = cur->child[i];\n        }\n        cur->isEnd = true;\n    }\n    bool search(const string& w) {\n        TrieNode* cur = root;\n        for (char c : w) {\n            int i = c - 'a';\n            if (!cur->child[i]) return false;\n            cur = cur->child[i];\n        }\n        return cur->isEnd;\n    }\n};"
+        }
+      ],
+      "problems": [
+        {
+          "name": "Implement Trie (Prefix Tree)",
+          "url": "https://leetcode.com/problems/implement-trie-prefix-tree/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "warmup",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Microsoft"
+          ]
+        },
+        {
+          "name": "Design Add and Search Words Data Structure",
+          "url": "https://leetcode.com/problems/design-add-and-search-words-data-structure/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Meta"
+          ]
+        },
+        {
+          "name": "Replace Words",
+          "url": "https://leetcode.com/problems/replace-words/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Google"
+          ]
+        },
+        {
+          "name": "Word Search II",
+          "url": "https://leetcode.com/problems/word-search-ii/",
+          "platform": "LeetCode",
+          "difficulty": "Hard",
+          "tier": "hard",
+          "companies": [
+            "Amazon",
+            "Google",
+            "Microsoft",
+            "Uber"
+          ]
+        },
+        {
+          "name": "Maximum XOR of Two Numbers in an Array",
+          "url": "https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Google"
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "bit-manipulation",
+      "order": 19,
+      "title": "Bit Manipulation",
+      "explainer_md": "Bit manipulation operates directly on the binary representation of integers using AND, OR, XOR, NOT, and shifts. It enables elegant O(1) tricks and compact state representations (bitmasks), and interviewers use it to test whether you understand what's happening beneath the abstraction.\n\nThe operator worth truly internalizing is **XOR**: `a ^ a = 0`, `a ^ 0 = a`, and it's commutative — so XOR-ing every element of an array where all but one appear twice leaves exactly the unique element. That single insight solves several classic problems in O(1) space.\n\nMental model: an integer is a row of light switches (bits). The bitwise operators flip, combine, and test switches in parallel — all bits at once, in a single instruction.",
+      "patterns_md": "**XOR cancellation** — pairs cancel to zero. Finds the single non-duplicated number, the missing number, or swaps without a temp.\n\n**Mask & shift** — `x & (1 << k)` tests bit k; `x | (1 << k)` sets it; `x & ~(1 << k)` clears it. The vocabulary for reading/writing individual bits.\n\n**Lowest set bit** — `x & -x` isolates the lowest set bit; `x & (x-1)` clears it (loop this to count set bits — Brian Kernighan's method).\n\n**Bitmask as state** — represent a subset of ≤ ~20 items as an integer's bits. Powers subset enumeration and bitmask DP (e.g. travelling salesman).",
+      "complexity_md": "| Trick | Time |\n|---|---|\n| Any single bit op | O(1) |\n| Count set bits (Kernighan) | O(set bits) |\n| Enumerate all subsets of n items | O(2^n) |\n| XOR whole array | O(n) |\n\nBit operations are constant-time and constant-space — that's the appeal. Bitmask subset enumeration is exponential in the number of items but each step is O(1).",
+      "code": [
+        {
+          "label": "XOR — single number",
+          "code": "int singleNumber(vector<int>& nums) {\n    int x = 0;\n    for (int n : nums) x ^= n;   // pairs cancel\n    return x;\n}"
+        },
+        {
+          "label": "Bit ops — test, set, clear, count",
+          "code": "bool getBit(int x, int k)  { return (x >> k) & 1; }\nint  setBit(int x, int k)  { return x | (1 << k); }\nint  clearBit(int x, int k){ return x & ~(1 << k); }\nint countBits(int x) {        // Brian Kernighan\n    int c = 0;\n    while (x) { x &= (x - 1); c++; }\n    return c;\n}"
+        }
+      ],
+      "problems": [
+        {
+          "name": "Single Number",
+          "url": "https://leetcode.com/problems/single-number/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Amazon",
+            "Adobe"
+          ]
+        },
+        {
+          "name": "Number of 1 Bits",
+          "url": "https://leetcode.com/problems/number-of-1-bits/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Amazon",
+            "Microsoft"
+          ]
+        },
+        {
+          "name": "Counting Bits",
+          "url": "https://leetcode.com/problems/counting-bits/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Google"
+          ]
+        },
+        {
+          "name": "Missing Number",
+          "url": "https://leetcode.com/problems/missing-number/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "core",
+          "companies": [
+            "Amazon",
+            "Microsoft"
+          ]
+        },
+        {
+          "name": "Sum of Two Integers",
+          "url": "https://leetcode.com/problems/sum-of-two-integers/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Google"
+          ]
+        },
+        {
+          "name": "Single Number II",
+          "url": "https://leetcode.com/problems/single-number-ii/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Google"
+          ]
+        }
+      ]
+    }
+  ],
+  "primers": {
+    "cpp": {
+      "language": "cpp",
+      "language_name": "C++",
+      "tagline": "Enough C++ to start DSA — the essential 20%",
+      "intro": "You don't need all of C++ to do DSA — you need fast I/O, the core types, control flow, functions, arrays/vectors, and the STL containers. This primer covers exactly that. Work through it once, keep it as a reference, and you'll spend your energy on algorithms instead of syntax.",
+      "sections": [
+        {
+          "order": 1,
+          "title": "Setup & Program Skeleton",
+          "body_md": "Every competitive/DSA C++ program follows the same shape: include headers, open `main`, read input, compute, print output. `#include <bits/stdc++.h>` pulls in the entire standard library in one line (fine for practice; avoid in production). `using namespace std;` lets you write `vector` instead of `std::vector`.",
+          "code": "#include <bits/stdc++.h>\nusing namespace std;\n\nint main() {\n    // your code here\n    cout << \"Hello, DSA\" << endl;\n    return 0;\n}"
+        },
+        {
+          "order": 2,
+          "title": "Fast Input / Output",
+          "body_md": "Default `cin`/`cout` are slow for large inputs. Two lines at the top of `main` speed them up dramatically by unsyncing from C stdio and untying `cin` from `cout`. Use `\"\\n\"` instead of `endl` (which flushes every time) in tight loops.",
+          "code": "ios_base::sync_with_stdio(false);\ncin.tie(NULL);\n\nint n; cin >> n;\nvector<int> a(n);\nfor (int i = 0; i < n; i++) cin >> a[i];\nfor (int x : a) cout << x << \"\\n\";"
+        },
+        {
+          "order": 3,
+          "title": "Types, Variables & Operators",
+          "body_md": "Know your integer ranges: `int` holds ~±2.1×10⁹; use `long long` (~±9.2×10¹⁸) when sums or products can overflow — a frequent bug source. `double` for decimals, `char` for single characters, `bool` for true/false. Operators are the usual arithmetic (`+ - * / %`), comparison (`== != < >`), and logical (`&& || !`).",
+          "code": "int a = 5, b = 2;\nlong long big = 1LL * a * 1000000000; // force 64-bit math\ncout << a / b << \" \" << a % b << \"\\n\"; // 2 1  (integer division)\ndouble d = (double)a / b;               // 2.5 (cast to divide)\nbool ok = (a > b) && (b > 0);"
+        },
+        {
+          "order": 4,
+          "title": "Control Flow",
+          "body_md": "`if/else if/else` for branching, `for`/`while` for loops. The range-based `for (auto x : container)` is the cleanest way to iterate. Use `break` to exit a loop early and `continue` to skip to the next iteration.",
+          "code": "for (int i = 0; i < 5; i++) {\n    if (i % 2 == 0) continue;   // skip evens\n    cout << i << \" \";           // 1 3\n}\n\nint i = 0;\nwhile (i < 3) { cout << i; i++; }  // 012"
+        },
+        {
+          "order": 5,
+          "title": "Functions",
+          "body_md": "Declare the return type, name, and parameters. Pass large objects **by reference** (`vector<int>& v`) to avoid copying; add `const` if you won't modify them. Recursion is just a function calling itself — the backbone of many DSA solutions.",
+          "code": "int add(int a, int b) { return a + b; }\n\n// pass by reference: no copy, can modify\nvoid doubleAll(vector<int>& v) {\n    for (int& x : v) x *= 2;\n}\n\nlong long fact(int n) {          // recursion\n    return n <= 1 ? 1 : n * fact(n - 1);\n}"
+        },
+        {
+          "order": 6,
+          "title": "Arrays & Vectors",
+          "body_md": "Prefer `vector` (dynamic array) over raw arrays — it grows, knows its size, and works with STL algorithms. Create, size, push, index, and iterate as shown. 2D grids are a `vector<vector<int>>`.",
+          "code": "vector<int> v;             // empty\nv.push_back(10);           // [10]\nvector<int> w(5, 0);       // [0,0,0,0,0]\nw[2] = 7;                  // index like an array\ncout << w.size() << \"\\n\";  // 5\n\n// 2D grid: 3 rows x 4 cols of zeros\nvector<vector<int>> grid(3, vector<int>(4, 0));"
+        },
+        {
+          "order": 7,
+          "title": "Strings",
+          "body_md": "`std::string` behaves like a vector of characters with handy extras: concatenation with `+`, `.size()`, `.substr(pos, len)`, `.find(...)`, and index access. Iterate character by character with a range-for.",
+          "code": "string s = \"hello\";\ns += \" world\";              // concatenate\ncout << s.size() << \"\\n\";   // 11\ncout << s.substr(0, 5);      // \"hello\"\nfor (char c : s) { /* ... */ }\nif (s.find(\"world\") != string::npos) cout << \"found\";"
+        },
+        {
+          "order": 8,
+          "title": "The STL Toolkit",
+          "body_md": "The containers you'll use in almost every problem: `map`/`unordered_map` (key→value), `set`/`unordered_set` (unique elements), `pair` (two values), `stack`, `queue`, `priority_queue` (heap). The `unordered_` versions are O(1) average; the plain ones are sorted and O(log n).",
+          "code": "unordered_map<string,int> cnt;\ncnt[\"apple\"]++;                 // auto-inserts 0 then increments\n\nset<int> s = {3, 1, 2};        // stored sorted: 1 2 3\ns.insert(5); s.count(3);        // membership test\n\npair<int,int> p = {1, 2};\ncout << p.first << p.second;\n\nstack<int> st; st.push(1); st.top(); st.pop();\nqueue<int> q; q.push(1); q.front(); q.pop();"
+        },
+        {
+          "order": 9,
+          "title": "Useful STL Algorithms",
+          "body_md": "The `<algorithm>` header saves you from reinventing basics: `sort` (with an optional comparator), `reverse`, `max_element`/`min_element`, `accumulate` (sum), and the binary-search helpers `lower_bound`/`upper_bound` on sorted ranges. Learn these and your code gets shorter and less bug-prone.",
+          "code": "vector<int> v = {3, 1, 4, 1, 5};\nsort(v.begin(), v.end());                 // ascending\nsort(v.begin(), v.end(), greater<int>()); // descending\nreverse(v.begin(), v.end());\nint mx = *max_element(v.begin(), v.end());\nint sum = accumulate(v.begin(), v.end(), 0);\n// first index >= 4 in a sorted vector:\nint idx = lower_bound(v.begin(), v.end(), 4) - v.begin();"
+        },
+        {
+          "order": 10,
+          "title": "Common Gotchas",
+          "body_md": "The bugs that bite everyone: integer overflow (use `long long` for big sums/products), integer division truncating (`5/2 == 2`), out-of-bounds vector access (no automatic check — undefined behavior), and uninitialized variables holding garbage. When a number can exceed ~2×10⁹, reach for `long long` before it bites you.",
+          "code": "// overflow: int * int can overflow before assignment\nlong long product = 1LL * a * b;    // force 64-bit\n\n// division: cast to get a decimal\ndouble avg = (double)sum / n;\n\n// always size vectors before indexing\nvector<int> v(n);   // not: vector<int> v; v[0] = ...;"
+        }
+      ]
+    }
+  },
+  "companies": [
+    "Adobe",
+    "Amazon",
+    "Flipkart",
+    "Google",
+    "Infosys",
+    "LinkedIn",
+    "Meta",
+    "Microsoft",
+    "TCS",
+    "Uber",
+    "Wipro"
+  ],
+  "meta": {
+    "topicCount": 19,
+    "problemCount": 139,
+    "languages": [
+      "cpp"
+    ]
+  }
+}

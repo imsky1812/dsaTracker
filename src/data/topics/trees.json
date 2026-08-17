@@ -1,0 +1,121 @@
+{
+  "slug": "trees",
+  "order": 11,
+  "title": "Binary Trees",
+  "explainer_md": "A binary tree is a hierarchy where each node has up to two children (left, right). Trees model anything with nesting or hierarchy \u2014 file systems, decision processes, parse trees. They're **heavily** tested because they force you to think recursively and reveal whether you truly understand recursion.\n\nThe four traversals are the vocabulary: **inorder** (left-root-right), **preorder** (root-left-right), **postorder** (left-right-root), and **level-order** (BFS, row by row). Most tree problems are 'do a traversal and compute something at each node'. Height, diameter, path sums, and views all reduce to a well-chosen traversal.\n\nMental model: a family tree that branches downward \u2014 every person (node) has at most two children, and you can walk the family in different orders.",
+  "patterns_md": "**DFS recursion** \u2014 the default. Solve for a node by combining the solutions of its subtrees. Height, diameter, balanced-check, and path problems all follow 'recurse left, recurse right, combine'.\n\n**Level-order BFS** \u2014 use a queue to process the tree row by row. Powers level-averages, right-side view, zigzag traversal, and 'connect nodes at same level'.\n\n**Return-more-than-you-need** \u2014 for problems like diameter, have the recursion return one value (height) while updating a separate global (best diameter). A common and powerful trick.\n\n**Bottom-up vs top-down** \u2014 decide whether each node needs info from above (pass down as parameters) or from below (return up from children).",
+  "complexity_md": "| Operation | Time | Space |\n|---|---|---|\n| Any traversal | O(n) | O(h) recursion / O(w) queue |\n| Height / diameter | O(n) | O(h) |\n| Search (unbalanced) | O(n) | O(h) |\n| Level-order (BFS) | O(n) | O(w) width |\n\n`h` = height (O(log n) if balanced, O(n) if skewed); `w` = max width. Every node is visited once, so traversals are linear; the space is the recursion depth or the widest level.",
+  "code": [
+    {
+      "label": "Node + recursive traversals",
+      "code": "struct TreeNode {\n    int val; TreeNode *left, *right;\n    TreeNode(int x): val(x), left(nullptr), right(nullptr) {}\n};\nvoid inorder(TreeNode* root, vector<int>& out) {\n    if (!root) return;\n    inorder(root->left, out);\n    out.push_back(root->val);\n    inorder(root->right, out);\n}"
+    },
+    {
+      "label": "Level-order (BFS)",
+      "code": "vector<vector<int>> levelOrder(TreeNode* root) {\n    vector<vector<int>> res;\n    if (!root) return res;\n    queue<TreeNode*> q; q.push(root);\n    while (!q.empty()) {\n        int sz = q.size();\n        vector<int> level;\n        for (int i = 0; i < sz; i++) {\n            TreeNode* n = q.front(); q.pop();\n            level.push_back(n->val);\n            if (n->left) q.push(n->left);\n            if (n->right) q.push(n->right);\n        }\n        res.push_back(level);\n    }\n    return res;\n}"
+    },
+    {
+      "label": "Diameter \u2014 return height, track best",
+      "code": "int diameter(TreeNode* root, int& best) {\n    if (!root) return 0;\n    int l = diameter(root->left, best);\n    int r = diameter(root->right, best);\n    best = max(best, l + r);      // path through this node\n    return 1 + max(l, r);         // height upward\n}"
+    }
+  ],
+  "problems": [
+    {
+      "name": "Maximum Depth of Binary Tree",
+      "url": "https://leetcode.com/problems/maximum-depth-of-binary-tree/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [
+        "Amazon",
+        "Google"
+      ]
+    },
+    {
+      "name": "Invert Binary Tree",
+      "url": "https://leetcode.com/problems/invert-binary-tree/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [
+        "Google",
+        "Amazon"
+      ]
+    },
+    {
+      "name": "Diameter of Binary Tree",
+      "url": "https://leetcode.com/problems/diameter-of-binary-tree/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "core",
+      "companies": [
+        "Amazon",
+        "Meta",
+        "Google"
+      ]
+    },
+    {
+      "name": "Binary Tree Level Order Traversal",
+      "url": "https://leetcode.com/problems/binary-tree-level-order-traversal/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "Amazon",
+        "Microsoft",
+        "Meta"
+      ]
+    },
+    {
+      "name": "Binary Tree Right Side View",
+      "url": "https://leetcode.com/problems/binary-tree-right-side-view/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Amazon",
+        "Meta",
+        "Microsoft"
+      ]
+    },
+    {
+      "name": "Lowest Common Ancestor of a Binary Tree",
+      "url": "https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Amazon",
+        "Meta",
+        "Microsoft",
+        "LinkedIn"
+      ]
+    },
+    {
+      "name": "Binary Tree Maximum Path Sum",
+      "url": "https://leetcode.com/problems/binary-tree-maximum-path-sum/",
+      "platform": "LeetCode",
+      "difficulty": "Hard",
+      "tier": "hard",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Microsoft",
+        "Adobe"
+      ]
+    },
+    {
+      "name": "Serialize and Deserialize Binary Tree",
+      "url": "https://leetcode.com/problems/serialize-and-deserialize-binary-tree/",
+      "platform": "LeetCode",
+      "difficulty": "Hard",
+      "tier": "hard",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Meta",
+        "LinkedIn"
+      ]
+    }
+  ]
+}

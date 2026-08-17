@@ -1,0 +1,100 @@
+{
+  "slug": "backtracking",
+  "order": 7,
+  "title": "Backtracking",
+  "explainer_md": "Backtracking is recursion that explores a decision tree, and **undoes** each choice before trying the next \u2014 'try, recurse, un-try'. It's how you enumerate all valid configurations (permutations, board placements, path fillings) without generating invalid ones. Whenever a partial solution can't possibly lead to a valid one, you prune that whole branch.\n\nThe defining move is the undo: you mutate shared state going down, then restore it coming back up. This is what lets one data structure serve the entire search instead of copying at every node.\n\nMental model: exploring a maze with a ball of string. At each junction you try a path; if it dead-ends, you follow the string back and try the next one.",
+  "patterns_md": "**The universal template**: `if (goal) record; else for each choice: apply \u2192 recurse \u2192 undo`. Almost every backtracking problem is this shape.\n\n**Pruning** \u2014 before recursing into a choice, check if it can still lead to a solution (e.g. is this queen placement safe?). Good pruning is the difference between fast and hopeless.\n\n**Used-set / in-place marking** \u2014 track which options are taken with a boolean array or by mutating the grid, and unmark on the way out.\n\n**Choice ordering** \u2014 sometimes sorting choices or fixing an order avoids duplicate solutions (e.g. `start` index in combinations).",
+  "complexity_md": "| Problem | Time (worst) | Space |\n|---|---|---|\n| Subsets | O(2^n) | O(n) depth |\n| Permutations | O(n! \u00b7 n) | O(n) |\n| N-Queens | O(n!) | O(n) |\n| Sudoku | O(9^(empty cells)) | O(1) board |\n\nBacktracking is exponential by nature \u2014 its value is *pruning* the search so the real running time is far below the worst case. Space is the recursion depth plus whatever state you carry.",
+  "code": [
+    {
+      "label": "Universal backtracking template",
+      "code": "void backtrack(State& s, vector<Solution>& out) {\n    if (isGoal(s)) { out.push_back(extract(s)); return; }\n    for (auto& choice : choices(s)) {\n        apply(s, choice);        // try\n        backtrack(s, out);       // recurse\n        undo(s, choice);         // un-try\n    }\n}"
+    },
+    {
+      "label": "N-Queens \u2014 safety check + placement",
+      "code": "bool safe(vector<int>& col, int r, int c) {\n    for (int i = 0; i < r; i++)\n        if (col[i] == c || abs(col[i]-c) == abs(i-r)) return false;\n    return true;\n}\nvoid solve(int r, int n, vector<int>& col, int& count) {\n    if (r == n) { count++; return; }\n    for (int c = 0; c < n; c++)\n        if (safe(col, r, c)) {\n            col[r] = c;          // place\n            solve(r+1, n, col, count);\n            col[r] = -1;         // remove (backtrack)\n        }\n}"
+    }
+  ],
+  "problems": [
+    {
+      "name": "Subsets",
+      "url": "https://leetcode.com/problems/subsets/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "warmup",
+      "companies": [
+        "Amazon",
+        "Meta"
+      ]
+    },
+    {
+      "name": "Combination Sum",
+      "url": "https://leetcode.com/problems/combination-sum/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "Amazon",
+        "Adobe"
+      ]
+    },
+    {
+      "name": "Permutations",
+      "url": "https://leetcode.com/problems/permutations/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "Amazon",
+        "Microsoft"
+      ]
+    },
+    {
+      "name": "Word Search",
+      "url": "https://leetcode.com/problems/word-search/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Amazon",
+        "Microsoft",
+        "Google"
+      ]
+    },
+    {
+      "name": "Palindrome Partitioning",
+      "url": "https://leetcode.com/problems/palindrome-partitioning/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Amazon",
+        "Google"
+      ]
+    },
+    {
+      "name": "N-Queens",
+      "url": "https://leetcode.com/problems/n-queens/",
+      "platform": "LeetCode",
+      "difficulty": "Hard",
+      "tier": "hard",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Adobe"
+      ]
+    },
+    {
+      "name": "Sudoku Solver",
+      "url": "https://leetcode.com/problems/sudoku-solver/",
+      "platform": "LeetCode",
+      "difficulty": "Hard",
+      "tier": "hard",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Uber"
+      ]
+    }
+  ]
+}

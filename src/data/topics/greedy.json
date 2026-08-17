@@ -1,0 +1,99 @@
+{
+  "slug": "greedy",
+  "order": 15,
+  "title": "Greedy Algorithms",
+  "explainer_md": "A greedy algorithm builds a solution step by step, always taking the choice that looks best *right now*, never reconsidering. When it works, it's simple and fast \u2014 but it only works when local optimality guarantees global optimality. Proving (or at least convincing yourself of) that property is the real skill; a greedy that isn't provably correct is just a guess.\n\nThe classic signal: problems asking to maximize/minimize with a natural ordering \u2014 intervals sorted by end time, coins by denomination, jobs by deadline. Sorting is almost always the first step.\n\nMental model: hiking to the highest peak by always stepping uphill. It reaches the top only if there are no misleading smaller hills (local maxima) \u2014 that's exactly when greedy is safe.",
+  "patterns_md": "**Sort, then sweep** \u2014 sort by the key that makes the greedy choice obvious (interval end times, ratios), then make one linear pass taking safe choices.\n\n**Exchange argument** \u2014 the proof technique: show any optimal solution can be transformed into the greedy one without getting worse. If you can, greedy is correct.\n\n**Interval scheduling** \u2014 to maximize non-overlapping intervals, always pick the one that ends earliest. To merge, sort by start.\n\n**When greedy fails** \u2014 if a locally best choice can force a worse global outcome (e.g. 0/1 knapsack with arbitrary weights), you need DP instead. Recognizing this fork is itself an interview skill.",
+  "complexity_md": "| Step | Typical cost |\n|---|---|\n| Sort (usual first step) | O(n log n) |\n| Greedy sweep | O(n) |\n| With a heap | O(n log n) |\n| Overall | usually O(n log n) |\n\nGreedy is prized for being fast and low-space (often O(1) beyond the sort). The catch is correctness, not efficiency \u2014 always sanity-check that the greedy choice is actually safe.",
+  "code": [
+    {
+      "label": "Interval scheduling \u2014 max non-overlapping",
+      "code": "int maxMeetings(vector<pair<int,int>>& iv) {\n    // sort by end time\n    sort(iv.begin(), iv.end(), [](auto&a, auto&b){\n        return a.second < b.second;\n    });\n    int count = 0, lastEnd = INT_MIN;\n    for (auto& [s, e] : iv)\n        if (s > lastEnd) { count++; lastEnd = e; }\n    return count;\n}"
+    },
+    {
+      "label": "Jump Game \u2014 furthest reach",
+      "code": "bool canJump(vector<int>& nums) {\n    int reach = 0;\n    for (int i = 0; i < (int)nums.size(); i++) {\n        if (i > reach) return false;      // stuck\n        reach = max(reach, i + nums[i]);\n    }\n    return true;\n}"
+    }
+  ],
+  "problems": [
+    {
+      "name": "Assign Cookies",
+      "url": "https://leetcode.com/problems/assign-cookies/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [
+        "Amazon"
+      ]
+    },
+    {
+      "name": "Best Time to Buy and Sell Stock II",
+      "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "warmup",
+      "companies": [
+        "Amazon",
+        "Adobe"
+      ]
+    },
+    {
+      "name": "Jump Game",
+      "url": "https://leetcode.com/problems/jump-game/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Microsoft"
+      ]
+    },
+    {
+      "name": "Gas Station",
+      "url": "https://leetcode.com/problems/gas-station/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "Amazon",
+        "Google"
+      ]
+    },
+    {
+      "name": "Non-overlapping Intervals",
+      "url": "https://leetcode.com/problems/non-overlapping-intervals/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Amazon",
+        "Meta"
+      ]
+    },
+    {
+      "name": "Jump Game II",
+      "url": "https://leetcode.com/problems/jump-game-ii/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Adobe"
+      ]
+    },
+    {
+      "name": "Candy",
+      "url": "https://leetcode.com/problems/candy/",
+      "platform": "LeetCode",
+      "difficulty": "Hard",
+      "tier": "hard",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Flipkart"
+      ]
+    }
+  ]
+}

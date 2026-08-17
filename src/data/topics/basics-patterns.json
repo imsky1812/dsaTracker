@@ -1,0 +1,19 @@
+{
+  "slug": "basics-patterns",
+  "order": 1,
+  "title": "Basics & Patterns",
+  "explainer_md": "Before data structures, you need loops and nesting to feel automatic — and pattern-printing is the classic way to get there. These problems (pyramids, triangles, diamonds) look like busywork but they train the single most important beginner skill: reasoning about nested loops, where the outer loop controls rows and the inner loop controls what's printed in each row.\n\nThe mental shift to internalize: for any pattern, ask 'how many rows?' (outer loop) and 'for row i, what/how many characters?' (inner loop, expressed in terms of i). Once that clicks, nested iteration — which underlies matrices, DP tables, and brute-force scans — stops being intimidating.\n\nMental model: you're a printer head moving row by row (outer loop); within each row you decide what to stamp at each column (inner loop).",
+  "patterns_md": "**Outer = rows, inner = columns** — the universal structure. The inner loop's bound is written in terms of the outer loop variable to create shapes.\n\n**Relate content to indices** — spaces before a pyramid = `n - i`; stars = `2i - 1`. Deriving these relationships is the whole exercise.\n\n**Build up complexity** — solid square → right triangle → pyramid → diamond → hollow shapes. Each adds one idea (variable inner bound, leading spaces, conditional printing).\n\n**Number/character patterns** — same loops, but print `j`, `i`, or `'A'+j` instead of a fixed star. Reinforces index-to-value thinking.",
+  "complexity_md": "| Pattern | Time | Space |\n|---|---|---|\n| Any n-row pattern | O(n²) | O(1) |\n| Printing a full grid | O(rows · cols) | O(1) |\n\nMost pattern problems are O(n²) because you print roughly n characters across n rows. Space is O(1) — you print directly without storing. The value is conceptual, not algorithmic: fluency with nested loops.",
+  "code": [
+    {"label": "Right triangle of stars", "code": "void triangle(int n) {\n    for (int i = 1; i <= n; i++) {      // rows\n        for (int j = 1; j <= i; j++)     // stars in row i\n            cout << \"* \";\n        cout << \"\\n\";\n    }\n}"},
+    {"label": "Centered pyramid", "code": "void pyramid(int n) {\n    for (int i = 1; i <= n; i++) {\n        for (int s = 0; s < n - i; s++) cout << \" \";   // leading spaces\n        for (int j = 0; j < 2*i - 1; j++) cout << \"*\"; // 2i-1 stars\n        cout << \"\\n\";\n    }\n}"}
+  ],
+  "problems": [
+    {"name": "Pattern Printing (collection)", "url": "https://www.geeksforgeeks.org/problems/print-the-pattern-1587115620/1", "platform": "GFG", "difficulty": "Easy", "tier": "warmup", "companies": ["TCS", "Infosys", "Wipro"]},
+    {"name": "FizzBuzz", "url": "https://leetcode.com/problems/fizz-buzz/", "platform": "LeetCode", "difficulty": "Easy", "tier": "warmup", "companies": ["Amazon", "Microsoft"]},
+    {"name": "Number of Steps to Reduce a Number to Zero", "url": "https://leetcode.com/problems/number-of-steps-to-reduce-a-number-to-zero/", "platform": "LeetCode", "difficulty": "Easy", "tier": "warmup", "companies": ["Amazon"]},
+    {"name": "Count Primes", "url": "https://leetcode.com/problems/count-primes/", "platform": "LeetCode", "difficulty": "Medium", "tier": "core", "companies": ["Amazon", "Microsoft"]},
+    {"name": "Palindrome Number", "url": "https://leetcode.com/problems/palindrome-number/", "platform": "LeetCode", "difficulty": "Easy", "tier": "core", "companies": ["Amazon", "Adobe"]}
+  ]
+}

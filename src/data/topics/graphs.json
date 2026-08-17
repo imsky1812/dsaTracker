@@ -1,0 +1,118 @@
+{
+  "slug": "graphs",
+  "order": 16,
+  "title": "Graphs",
+  "explainer_md": "A graph is a set of nodes (vertices) connected by edges \u2014 the most general structure in the subject; trees and linked lists are special cases. Graphs model networks, maps, dependencies, states, and relationships. Master representation and traversal and a huge class of problems opens up.\n\nTwo representations: an **adjacency list** (array of neighbor-lists, space O(V+E), the usual choice) and an **adjacency matrix** (V\u00d7V grid, O(V\u00b2), good for dense graphs). Two core traversals: **BFS** (queue, explores level by level, finds shortest paths in unweighted graphs) and **DFS** (stack/recursion, explores deep, powers cycle detection and topological sort).\n\nMental model: cities (nodes) connected by roads (edges). BFS is ripples spreading from a stone dropped in water; DFS is following one road as far as it goes before backtracking.",
+  "patterns_md": "**BFS for shortest path (unweighted)** \u2014 a queue explores in rings, so the first time you reach a node is via a shortest path. Also used for grid/flood-fill and 'minimum steps' problems.\n\n**DFS for connectivity & cycles** \u2014 recursion or an explicit stack to count components, detect cycles, or explore fully. Track visited state (and recursion-stack state for directed cycle detection).\n\n**Topological sort** \u2014 order a DAG so every edge points forward. Kahn's (BFS on in-degrees) or DFS post-order. Powers dependency resolution and course-schedule problems.\n\n**Weighted shortest path** \u2014 Dijkstra (non-negative weights, min-heap) and Bellman-Ford (handles negatives). Union-Find + Kruskal or Prim for minimum spanning trees.",
+  "complexity_md": "| Algorithm | Time | Space |\n|---|---|---|\n| BFS / DFS | O(V + E) | O(V) |\n| Topological sort | O(V + E) | O(V) |\n| Dijkstra (heap) | O((V+E) log V) | O(V) |\n| Bellman-Ford | O(V\u00b7E) | O(V) |\n| Union-Find op | ~O(1) amortized | O(V) |\n\nV = vertices, E = edges. Adjacency-list traversals are linear in the graph size; the log factor in Dijkstra comes from the priority queue.",
+  "code": [
+    {
+      "label": "BFS on adjacency list",
+      "code": "void bfs(int start, vector<vector<int>>& adj) {\n    int n = adj.size();\n    vector<bool> vis(n, false);\n    queue<int> q; q.push(start); vis[start] = true;\n    while (!q.empty()) {\n        int u = q.front(); q.pop();\n        for (int v : adj[u])\n            if (!vis[v]) { vis[v] = true; q.push(v); }\n    }\n}"
+    },
+    {
+      "label": "Topological sort (Kahn's, BFS)",
+      "code": "vector<int> topoSort(int n, vector<vector<int>>& adj) {\n    vector<int> indeg(n, 0), order;\n    for (int u = 0; u < n; u++)\n        for (int v : adj[u]) indeg[v]++;\n    queue<int> q;\n    for (int i = 0; i < n; i++) if (!indeg[i]) q.push(i);\n    while (!q.empty()) {\n        int u = q.front(); q.pop(); order.push_back(u);\n        for (int v : adj[u]) if (--indeg[v] == 0) q.push(v);\n    }\n    return order;   // size < n means a cycle exists\n}"
+    },
+    {
+      "label": "Dijkstra \u2014 shortest path (min-heap)",
+      "code": "vector<int> dijkstra(int src, vector<vector<pair<int,int>>>& adj) {\n    int n = adj.size();\n    vector<int> dist(n, INT_MAX); dist[src] = 0;\n    priority_queue<pair<int,int>, vector<pair<int,int>>,\n                   greater<>> pq;\n    pq.push({0, src});\n    while (!pq.empty()) {\n        auto [d, u] = pq.top(); pq.pop();\n        if (d > dist[u]) continue;\n        for (auto [v, w] : adj[u])\n            if (dist[u] + w < dist[v]) {\n                dist[v] = dist[u] + w;\n                pq.push({dist[v], v});\n            }\n    }\n    return dist;\n}"
+    }
+  ],
+  "problems": [
+    {
+      "name": "Number of Islands",
+      "url": "https://leetcode.com/problems/number-of-islands/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "warmup",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Meta",
+        "Microsoft"
+      ]
+    },
+    {
+      "name": "Flood Fill",
+      "url": "https://leetcode.com/problems/flood-fill/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [
+        "Amazon"
+      ]
+    },
+    {
+      "name": "Rotting Oranges",
+      "url": "https://leetcode.com/problems/rotting-oranges/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Microsoft"
+      ]
+    },
+    {
+      "name": "Course Schedule",
+      "url": "https://leetcode.com/problems/course-schedule/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Meta"
+      ]
+    },
+    {
+      "name": "Number of Provinces",
+      "url": "https://leetcode.com/problems/number-of-provinces/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Amazon",
+        "Microsoft"
+      ]
+    },
+    {
+      "name": "Clone Graph",
+      "url": "https://leetcode.com/problems/clone-graph/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Meta",
+        "Uber"
+      ]
+    },
+    {
+      "name": "Network Delay Time",
+      "url": "https://leetcode.com/problems/network-delay-time/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Amazon",
+        "Google"
+      ]
+    },
+    {
+      "name": "Word Ladder",
+      "url": "https://leetcode.com/problems/word-ladder/",
+      "platform": "LeetCode",
+      "difficulty": "Hard",
+      "tier": "hard",
+      "companies": [
+        "Amazon",
+        "Google",
+        "Microsoft"
+      ]
+    }
+  ]
+}
