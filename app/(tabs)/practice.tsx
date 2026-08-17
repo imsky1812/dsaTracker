@@ -2,8 +2,9 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, Linking, TextInput, Modal, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
-import { colors, spacing, radius, type, difficultyColor } from '../../src/theme/tokens';
-import { Card, Eyebrow, Pill } from '../../src/components/ui';
+import { Palette, spacing, radius, type, tabInset, difficultyColor } from '../../src/theme/tokens';
+import { useColors, useThemedStyles } from '../../src/theme/theme';
+import { Card, Pill, PrimaryButton } from '../../src/components/ui';
 import { plan, allProblems, ProblemStatus } from '../../src/lib/content';
 import { useProgress } from '../../src/store/progress';
 
@@ -12,6 +13,8 @@ type DiffFilter = 'all' | 'Easy' | 'Medium' | 'Hard';
 type PlatFilter = 'all' | 'LeetCode' | 'GFG';
 
 export default function Practice() {
+  const c = useColors();
+  const s = useThemedStyles(makeStyles);
   const { problemStatus, cycleProblemStatus, problemNotes, setNote } = useProgress();
   const all = useMemo(() => allProblems(), []);
 
@@ -41,8 +44,8 @@ export default function Practice() {
     return true;
   });
 
-  const statusColor = (s?: string) => s === 'solved' ? colors.easy : s === 'revisit' ? colors.medium : colors.textFaint;
-  const statusGlyph = (s?: string) => s === 'solved' ? '✓' : s === 'revisit' ? '↺' : '○';
+  const statusColor = (st?: string) => (st === 'solved' ? c.easy : st === 'revisit' ? c.medium : c.textFaint);
+  const statusGlyph = (st?: string) => (st === 'solved' ? '✓' : st === 'revisit' ? '↺' : '');
 
   // openURL rejects when no browser can handle the link; unhandled, that is an
   // unexplained crash-looking failure on a tap.
@@ -57,70 +60,106 @@ export default function Practice() {
   const openNote = (id: string) => { setNoteFor(id); setDraft(problemNotes[id] ?? ''); };
   const saveNote = () => { if (noteFor) setNote(noteFor, draft); setNoteFor(null); };
 
+  const anyFilter = status !== 'all' || diff !== 'all' || plat !== 'all' || company !== 'all' || topic !== 'all';
+  const clearAll = () => { setStatus('all'); setDiff('all'); setPlat('all'); setCompany('all'); setTopic('all'); };
+
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
-      <View style={styles.head}>
-        <Eyebrow>Solve</Eyebrow>
-        <Text style={styles.h1}>Practice</Text>
-        <Text style={styles.count}>{filtered.length} of {all.length} problems</Text>
+    <SafeAreaView style={s.safe} edges={['top']}>
+      <View style={s.head}>
+        <Text style={s.kicker}>Solve</Text>
+        <View style={s.titleRow}>
+          <Text style={s.h1}>Practice</Text>
+          {anyFilter && (
+            <Pressable onPress={clearAll} style={s.clearBtn} hitSlop={8}>
+              <Text style={s.clearText}>Clear</Text>
+            </Pressable>
+          )}
+        </View>
+        <Text style={s.count}>{filtered.length} of {all.length} problems</Text>
       </View>
 
-      {/* Filter rows */}
-      <View style={styles.filters}>
+      <View style={s.filters}>
         <FilterRow label="Status" value={status} setValue={setStatus} options={['all', 'unsolved', 'solved', 'revisit']} />
         <FilterRow label="Level" value={diff} setValue={setDiff} options={['all', 'Easy', 'Medium', 'Hard']} />
         <FilterRow label="Source" value={plat} setValue={setPlat} options={['all', 'LeetCode', 'GFG']} />
         <FilterRow label="Company" value={company} setValue={setCompany} options={['all', ...plan.companies]} />
-        <FilterRow label="Topic" value={topic} setValue={setTopic}
+        <FilterRow
+          label="Topic"
+          value={topic}
+          setValue={setTopic}
           options={['all', ...plan.topics.map((t) => t.slug)]}
-          labelFor={(v: string) => v === 'all' ? 'all' : v.replace(/-/g, ' ')} />
+          labelFor={(v: string) => (v === 'all' ? 'all' : v.replace(/-/g, ' '))}
+        />
       </View>
 
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
         {filtered.map((p) => {
           const st = problemStatus[p.id];
           const hasNote = Boolean(problemNotes[p.id]);
+          const tint = statusColor(st);
           return (
-            <Card key={p.id} style={styles.row}>
-              <Pressable onPress={() => cycleProblemStatus(p.id)} hitSlop={10} style={styles.statusBtn}>
-                <Text style={[styles.statusGlyph, { color: statusColor(st) }]}>{statusGlyph(st)}</Text>
+            <Card key={p.id} style={s.row}>
+              <Pressable
+                onPress={() => cycleProblemStatus(p.id)}
+                hitSlop={10}
+                style={({ pressed }) => [
+                  s.statusCircle,
+                  { borderColor: tint },
+                  st && st !== 'unsolved' && { backgroundColor: tint, borderColor: tint },
+                  pressed && { transform: [{ scale: 0.92 }] },
+                ]}
+              >
+                <Text style={[s.statusGlyph, { color: c.onAccent }]}>{statusGlyph(st)}</Text>
               </Pressable>
+
               <Pressable style={{ flex: 1 }} onPress={() => void openProblem(p.url, p.name)}>
-                <Text style={styles.name}>{p.name}</Text>
-                <Text style={styles.meta}>{p.topicSlug.replace(/-/g, ' ')} · {p.companies.slice(0, 3).join(', ')}</Text>
+                <Text style={s.name}>{p.name}</Text>
+                <Text style={s.meta}>
+                  {p.topicSlug.replace(/-/g, ' ')}
+                  {p.companies.length ? ` · ${p.companies.slice(0, 2).join(', ')}` : ''}
+                </Text>
               </Pressable>
-              <View style={styles.rightCol}>
-                <Pill label={p.difficulty} filled color={difficultyColor(p.difficulty)} small />
-                <Pressable onPress={() => openNote(p.id)} hitSlop={8}>
-                  <Text style={[styles.noteIcon, hasNote && { color: colors.accent }]}>✎</Text>
+
+              <View style={s.rightCol}>
+                <Pill label={p.difficulty} filled color={difficultyColor(c, p.difficulty)} small />
+                <Pressable onPress={() => openNote(p.id)} hitSlop={8} style={s.noteBtn}>
+                  <Text style={[s.noteIcon, hasNote && { color: c.accent }]}>✎</Text>
                 </Pressable>
               </View>
             </Card>
           );
         })}
+
         {filtered.length === 0 && (
-          <Text style={styles.empty}>No problems match these filters. Loosen one to see more.</Text>
+          <View style={s.empty}>
+            <Text style={s.emptyTitle}>Nothing matches</Text>
+            <Text style={s.emptyBody}>Loosen a filter to see more problems.</Text>
+            <Pressable onPress={clearAll} style={s.emptyBtn}>
+              <Text style={s.emptyBtnText}>Clear filters</Text>
+            </Pressable>
+          </View>
         )}
       </ScrollView>
 
       {/* Note editor */}
       <Modal visible={noteFor !== null} transparent animationType="fade" onRequestClose={() => setNoteFor(null)}>
-        <View style={styles.modalBg}>
-          <View style={styles.modal}>
-            <Eyebrow>Note</Eyebrow>
+        <View style={s.modalBg}>
+          <View style={s.modal}>
+            <Text style={s.modalTitle}>Note</Text>
             <TextInput
-              style={styles.input}
+              style={s.input}
               value={draft}
               onChangeText={setDraft}
               placeholder="Approach, gotchas, complexity…"
-              placeholderTextColor={colors.textFaint}
+              placeholderTextColor={c.textFaint}
+              selectionColor={c.accent}
               multiline
               autoFocus
             />
-            <View style={styles.modalBtns}>
-              <Pressable onPress={() => setNoteFor(null)}><Text style={styles.cancel}>Cancel</Text></Pressable>
-              <Pressable onPress={saveNote} style={styles.saveBtn}><Text style={styles.saveText}>Save</Text></Pressable>
-            </View>
+            <PrimaryButton label="Save" onPress={saveNote} style={{ marginTop: spacing.lg }} />
+            <Pressable onPress={() => setNoteFor(null)} style={{ paddingVertical: spacing.md }}>
+              <Text style={s.cancel}>Cancel</Text>
+            </Pressable>
           </View>
         </View>
       </Modal>
@@ -129,13 +168,14 @@ export default function Practice() {
 }
 
 function FilterRow({ label, value, setValue, options, labelFor }: any) {
+  const s = useThemedStyles(makeStyles);
   return (
-    <View style={styles.filterRow}>
-      <Text style={styles.filterLabel}>{label}</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 6, paddingRight: spacing.lg }}>
+    <View style={s.filterRow}>
+      <Text style={s.filterLabel}>{label}</Text>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 7, paddingRight: spacing.lg }}>
         {options.map((o: string) => (
-          <Pressable key={o} onPress={() => setValue(o)} style={[styles.chip, value === o && styles.chipActive]}>
-            <Text style={[styles.chipText, value === o && styles.chipTextActive]}>{labelFor ? labelFor(o) : o}</Text>
+          <Pressable key={o} onPress={() => setValue(o)} style={[s.chip, value === o && s.chipActive]}>
+            <Text style={[s.chipText, value === o && s.chipTextActive]}>{labelFor ? labelFor(o) : o}</Text>
           </Pressable>
         ))}
       </ScrollView>
@@ -143,32 +183,52 @@ function FilterRow({ label, value, setValue, options, labelFor }: any) {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.bg },
+const makeStyles = (c: Palette) => StyleSheet.create({
+  safe: { flex: 1, backgroundColor: c.bg },
   head: { paddingHorizontal: spacing.lg, paddingTop: spacing.sm },
-  h1: { fontFamily: type.display, fontSize: 34, color: colors.text, letterSpacing: -0.5 },
-  count: { fontFamily: type.mono, fontSize: 12, color: colors.textFaint, marginTop: 2, marginBottom: spacing.md },
-  filters: { paddingLeft: spacing.lg, gap: 6, paddingBottom: spacing.md, borderBottomWidth: 1, borderBottomColor: colors.borderSoft },
+  kicker: { fontFamily: type.mono, fontSize: 11, color: c.textFaint, letterSpacing: 1.5, textTransform: 'uppercase' },
+  titleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  h1: { fontFamily: type.display, fontSize: 40, color: c.text, letterSpacing: -1.2, marginTop: 2 },
+  clearBtn: { paddingVertical: 7, paddingHorizontal: 16, borderRadius: radius.pill, backgroundColor: c.surface2 },
+  clearText: { fontFamily: type.mono, fontSize: 11, color: c.textMuted, textTransform: 'uppercase' },
+  count: { fontFamily: type.mono, fontSize: 12, color: c.textFaint, marginTop: 2, marginBottom: spacing.md },
+
+  filters: { paddingLeft: spacing.lg, gap: 8, paddingBottom: spacing.md },
   filterRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
-  filterLabel: { fontFamily: type.mono, fontSize: 10, color: colors.textFaint, width: 58, textTransform: 'uppercase' },
-  chip: { paddingVertical: 5, paddingHorizontal: 11, borderRadius: radius.pill, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border },
-  chipActive: { backgroundColor: colors.accentSoft, borderColor: colors.accentDim },
-  chipText: { fontFamily: type.mono, fontSize: 11, color: colors.textMuted, textTransform: 'capitalize' },
-  chipTextActive: { color: colors.accent },
-  scroll: { padding: spacing.lg, paddingBottom: spacing.xxl },
-  row: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.sm, gap: spacing.md, paddingVertical: spacing.md },
-  statusBtn: { width: 26, alignItems: 'center' },
-  statusGlyph: { fontSize: 20 },
-  name: { fontFamily: type.heading, fontSize: 15, color: colors.text },
-  meta: { fontFamily: type.mono, fontSize: 10, color: colors.textFaint, marginTop: 3, textTransform: 'capitalize' },
-  rightCol: { alignItems: 'flex-end', gap: 6 },
-  noteIcon: { fontSize: 16, color: colors.textFaint },
-  empty: { fontFamily: type.body, fontSize: 14, color: colors.textFaint, textAlign: 'center', marginTop: spacing.xl, fontStyle: 'italic' },
-  modalBg: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', padding: spacing.lg },
-  modal: { backgroundColor: colors.surface, borderRadius: radius.lg, padding: spacing.lg, borderWidth: 1, borderColor: colors.border },
-  input: { color: colors.text, fontFamily: type.body, fontSize: 15, minHeight: 100, textAlignVertical: 'top', marginTop: spacing.sm, backgroundColor: colors.surface2, borderRadius: radius.md, padding: spacing.md },
-  modalBtns: { flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', gap: spacing.lg, marginTop: spacing.md },
-  cancel: { fontFamily: type.mono, fontSize: 13, color: colors.textMuted },
-  saveBtn: { backgroundColor: colors.accent, paddingVertical: 8, paddingHorizontal: 20, borderRadius: radius.pill },
-  saveText: { fontFamily: type.heading, fontSize: 13, color: '#fff' },
+  filterLabel: { fontFamily: type.mono, fontSize: 10, color: c.textFaint, width: 58, textTransform: 'uppercase' },
+  chip: { paddingVertical: 7, paddingHorizontal: 14, borderRadius: radius.pill, backgroundColor: c.surface2 },
+  chipActive: { backgroundColor: c.accent },
+  chipText: { fontFamily: type.mono, fontSize: 11.5, color: c.textMuted },
+  chipTextActive: { color: c.onAccent },
+
+  scroll: { padding: spacing.lg, paddingTop: spacing.sm, paddingBottom: tabInset },
+  row: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.sm, gap: spacing.lg, paddingVertical: spacing.lg, paddingHorizontal: spacing.lg },
+
+  statusCircle: {
+    width: 34, height: 34, borderRadius: 17,
+    borderWidth: 2, alignItems: 'center', justifyContent: 'center',
+  },
+  statusGlyph: { fontSize: 15, fontFamily: type.heading, includeFontPadding: false },
+
+  name: { fontFamily: type.heading, fontSize: 15.5, color: c.text, lineHeight: 21 },
+  meta: { fontFamily: type.mono, fontSize: 10.5, color: c.textFaint, marginTop: 4, textTransform: 'capitalize' },
+  rightCol: { alignItems: 'flex-end', gap: spacing.sm },
+  noteBtn: { width: 30, height: 30, borderRadius: 15, backgroundColor: c.surface2, alignItems: 'center', justifyContent: 'center' },
+  noteIcon: { fontSize: 14, color: c.textFaint },
+
+  empty: { alignItems: 'center', paddingVertical: spacing.xxl, gap: spacing.sm },
+  emptyTitle: { fontFamily: type.display, fontSize: 22, color: c.text },
+  emptyBody: { fontFamily: type.body, fontSize: 14, color: c.textMuted },
+  emptyBtn: { marginTop: spacing.md, paddingVertical: 13, paddingHorizontal: spacing.xl, borderRadius: radius.pill, backgroundColor: c.surface2 },
+  emptyBtnText: { fontFamily: type.heading, fontSize: 13, color: c.text },
+
+  modalBg: { flex: 1, backgroundColor: 'rgba(0,0,0,0.55)', justifyContent: 'flex-end' },
+  modal: { backgroundColor: c.surface, borderTopLeftRadius: radius.xxl, borderTopRightRadius: radius.xxl, padding: spacing.xl, paddingBottom: spacing.xxl },
+  modalTitle: { fontFamily: type.display, fontSize: 22, color: c.text, marginBottom: spacing.lg, letterSpacing: -0.4 },
+  input: {
+    color: c.text, fontFamily: type.body, fontSize: 15,
+    backgroundColor: c.surface2, borderRadius: radius.lg,
+    padding: spacing.lg, minHeight: 120, textAlignVertical: 'top',
+  },
+  cancel: { fontFamily: type.mono, fontSize: 12, color: c.textMuted, textAlign: 'center', textTransform: 'uppercase' },
 });

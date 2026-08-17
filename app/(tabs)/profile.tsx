@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, TextInput, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors, spacing, radius, type } from '../../src/theme/tokens';
-import { Card, Eyebrow, Pill } from '../../src/components/ui';
+import { Palette, spacing, radius, type, tabInset } from '../../src/theme/tokens';
+import { useColors, useThemedStyles, useIsLight } from '../../src/theme/theme';
+import { Card, Eyebrow, Pill, GhostButton } from '../../src/components/ui';
 import { plan } from '../../src/lib/content';
 import { useProgress } from '../../src/store/progress';
 import { supabaseEnabled } from '../../src/lib/supabase';
@@ -13,7 +14,7 @@ import { syncNow } from '../../src/lib/syncManager';
 import { scheduleDailyReminder, parseReminderTime } from '../../src/lib/notifications';
 
 // Languages the data model supports. Only those actually present in the bundle
-// are selectable; the rest show as "coming soon" (content is authored per M0).
+// are selectable; the rest show as "soon" (content is authored per M0).
 const LANGUAGES = [
   { code: 'cpp', name: 'C++' },
   { code: 'java', name: 'Java' },
@@ -22,9 +23,25 @@ const LANGUAGES = [
 ];
 
 export default function Profile() {
+  const c = useColors();
+  const s = useThemedStyles(makeStyles);
+  const isLight = useIsLight();
+
   const { language, setLanguage, reminderTime, setReminderTime, githubHandle, setGithubHandle, resetProgress } = useProgress();
   const [handle, setHandle] = useState(githubHandle);
   const [time, setTime] = useState(reminderTime ?? '');
+
+  const session = useSession((st) => st.session);
+  const localMode = useSession((st) => st.localMode);
+  const exitLocalMode = useSession((st) => st.exitLocalMode);
+
+  const pendingCount = useProgress((st) => st.pending.length);
+  const syncState = useProgress((st) => st.syncState);
+  const lastSyncedAt = useProgress((st) => st.lastSyncedAt);
+  const currentStreak = useProgress((st) => st.currentStreak);
+  const lastActiveDate = useProgress((st) => st.lastActiveDate);
+
+  const [reminderNote, setReminderNote] = useState<string | null>(null);
 
   // Backend check is diagnostic only — it never gates rendering, so the screen
   // is fully usable while it is pending or if it fails outright.
@@ -38,26 +55,10 @@ export default function Profile() {
     setChecking(false);
   }, []);
 
-  useEffect(() => {
-    void runCheck();
-  }, [runCheck]);
+  useEffect(() => { void runCheck(); }, [runCheck]);
 
   const available = (code: string) => Boolean(plan.primers[code]) || code === 'cpp';
 
-  const session = useSession((s) => s.session);
-  const localMode = useSession((s) => s.localMode);
-  const exitLocalMode = useSession((s) => s.exitLocalMode);
-
-  const pendingCount = useProgress((s) => s.pending.length);
-  const syncState = useProgress((s) => s.syncState);
-  const lastSyncedAt = useProgress((s) => s.lastSyncedAt);
-  const currentStreak = useProgress((s) => s.currentStreak);
-  const lastActiveDate = useProgress((s) => s.lastActiveDate);
-
-  const [reminderNote, setReminderNote] = useState<string | null>(null);
-
-  // Committing the reminder does two things that must stay in step: persist the
-  // preference (which syncs) and reprogram the OS trigger.
   // Takes the value explicitly rather than reading `time` state: setTime() is
   // async, so "turn off" would otherwise re-read the value it just cleared.
   const commitReminder = async (raw: string) => {
@@ -67,10 +68,7 @@ export default function Profile() {
       return;
     }
     setReminderTime(value);
-    const result = await scheduleDailyReminder(value, {
-      streak: currentStreak,
-      lastActiveDate,
-    });
+    const result = await scheduleDailyReminder(value, { streak: currentStreak, lastActiveDate });
     setReminderNote(
       result === 'scheduled' ? `Reminder set for ${value} daily.`
         : result === 'cleared' ? 'Daily reminder turned off.'
@@ -81,90 +79,76 @@ export default function Profile() {
   };
 
   const confirmSignOut = () => {
-    Alert.alert(
-      'Sign out?',
-      'Your progress stays synced to your account. This device keeps its local copy.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Sign out', style: 'destructive', onPress: () => void signOut() },
-      ]
-    );
+    Alert.alert('Sign out?', 'Your progress stays synced to your account. This device keeps its local copy.', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Sign out', style: 'destructive', onPress: () => void signOut() },
+    ]);
   };
 
   const confirmReset = () => {
-    Alert.alert('Reset all progress?', 'This clears every solved mark, note, and streak. Content stays. This cannot be undone.',
-      [{ text: 'Cancel', style: 'cancel' }, { text: 'Reset', style: 'destructive', onPress: resetProgress }]);
+    Alert.alert(
+      'Reset all progress?',
+      'This clears every solved mark, note, and streak. Content stays. This cannot be undone.',
+      [{ text: 'Cancel', style: 'cancel' }, { text: 'Reset', style: 'destructive', onPress: resetProgress }]
+    );
   };
 
+  const initial = (session?.user.email ?? '?').charAt(0).toUpperCase();
+
   return (
-    <SafeAreaView style={styles.safe} edges={['top']}>
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-        <Eyebrow>You</Eyebrow>
-        <Text style={styles.h1}>Profile</Text>
+    <SafeAreaView style={s.safe} edges={['top']}>
+      <ScrollView contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
+        <Text style={s.kicker}>You</Text>
+        <Text style={s.h1}>Profile</Text>
 
         {/* Account */}
         <Card style={{ marginBottom: spacing.lg }}>
-          <Eyebrow>Account</Eyebrow>
-
           {!supabaseEnabled && (
             <>
-              <Text style={styles.body}>Running locally. Your progress is saved on this device.</Text>
-              <View style={{ marginTop: spacing.sm }}>
-                <Pill label="Offline mode" small />
-              </View>
-              <Text style={styles.hint}>Accounts + cross-device sync activate once the backend is connected.</Text>
+              <Eyebrow>Account</Eyebrow>
+              <Text style={s.body}>Running locally. Your progress is saved on this device.</Text>
+              <View style={{ marginTop: spacing.md }}><Pill label="Offline mode" small /></View>
             </>
           )}
 
           {supabaseEnabled && session && (
             <>
-              <Text style={styles.email}>{session.user.email}</Text>
-              <View style={styles.syncRow}>
-                <Pill label="Signed in" small color={colors.easy} filled />
-                <Pill
-                  label={
-                    syncState === 'syncing'
-                      ? 'syncing…'
-                      : pendingCount > 0
-                        ? `${pendingCount} to sync`
-                        : 'synced'
-                  }
-                  small
-                  color={pendingCount > 0 ? colors.medium : colors.easy}
-                  filled={pendingCount > 0}
-                />
+              <View style={s.accountHead}>
+                <View style={s.avatar}><Text style={s.avatarText}>{initial}</Text></View>
+                <View style={{ flex: 1 }}>
+                  <Text style={s.email} numberOfLines={1}>{session.user.email}</Text>
+                  <View style={s.syncRow}>
+                    <Pill
+                      label={syncState === 'syncing' ? 'syncing…' : pendingCount > 0 ? `${pendingCount} to sync` : 'synced'}
+                      small
+                      color={pendingCount > 0 ? c.medium : c.easy}
+                      filled
+                    />
+                  </View>
+                </View>
               </View>
+
               {pendingCount > 0 && (
-                <Text style={styles.hint}>
-                  Saved on this device. They’ll upload automatically when you’re back online.
-                </Text>
+                <Text style={s.hint}>Saved on this device. They’ll upload automatically when you’re back online.</Text>
               )}
               {pendingCount === 0 && lastSyncedAt && (
-                <Text style={styles.hint}>Last synced {new Date(lastSyncedAt).toLocaleString()}.</Text>
+                <Text style={s.hint}>Last synced {new Date(lastSyncedAt).toLocaleString()}.</Text>
               )}
-              <Pressable onPress={() => void syncNow()} style={styles.outlineBtn}>
-                <Text style={styles.outlineText}>Sync now</Text>
-              </Pressable>
-              <Pressable onPress={confirmSignOut} style={styles.outlineBtn}>
-                <Text style={styles.outlineText}>Sign out</Text>
-              </Pressable>
+
+              <View style={s.btnRow}>
+                <GhostButton label="Sync now" onPress={() => void syncNow()} style={{ flex: 1 }} />
+                <GhostButton label="Sign out" onPress={confirmSignOut} style={{ flex: 1 }} />
+              </View>
             </>
           )}
 
           {supabaseEnabled && !session && localMode && (
             <>
-              <Text style={styles.body}>
-                Using the app without an account. Progress is saved on this device only.
-              </Text>
-              <View style={{ marginTop: spacing.sm }}>
-                <Pill label="Local only" small />
-              </View>
-              <Pressable onPress={exitLocalMode} style={styles.outlineBtn}>
-                <Text style={styles.outlineText}>Sign in to sync</Text>
-              </Pressable>
-              <Text style={styles.hint}>
-                Signing in keeps what you have already done — it moves up to your account.
-              </Text>
+              <Eyebrow>Account</Eyebrow>
+              <Text style={s.body}>Using the app without an account. Progress is saved on this device only.</Text>
+              <View style={{ marginTop: spacing.md }}><Pill label="Local only" small /></View>
+              <GhostButton label="Sign in to sync" tone="accent" onPress={exitLocalMode} style={{ marginTop: spacing.lg }} />
+              <Text style={s.hint}>Signing in keeps what you have already done — it moves up to your account.</Text>
             </>
           )}
         </Card>
@@ -172,16 +156,20 @@ export default function Profile() {
         {/* Language */}
         <Card style={{ marginBottom: spacing.lg }}>
           <Eyebrow>Language</Eyebrow>
-          <Text style={styles.hint}>DSA code and the primer follow this choice.</Text>
-          <View style={styles.langGrid}>
+          <Text style={s.hint}>DSA code and the primer follow this choice.</Text>
+          <View style={s.langGrid}>
             {LANGUAGES.map((l) => {
               const active = language === l.code;
               const ok = available(l.code);
               return (
-                <Pressable key={l.code} disabled={!ok} onPress={() => setLanguage(l.code)}
-                  style={[styles.lang, active && styles.langActive, !ok && styles.langDisabled]}>
-                  <Text style={[styles.langText, active && { color: colors.accent }, !ok && { color: colors.textFaint }]}>{l.name}</Text>
-                  {!ok && <Text style={styles.soon}>soon</Text>}
+                <Pressable
+                  key={l.code}
+                  disabled={!ok}
+                  onPress={() => setLanguage(l.code)}
+                  style={[s.lang, active && s.langActive, !ok && { opacity: 0.4 }]}
+                >
+                  <Text style={[s.langText, active && { color: c.onAccent }]}>{l.name}</Text>
+                  {!ok && <Text style={s.soon}>soon</Text>}
                 </Pressable>
               );
             })}
@@ -191,129 +179,132 @@ export default function Profile() {
         {/* Reminder */}
         <Card style={{ marginBottom: spacing.lg }}>
           <Eyebrow>Daily reminder</Eyebrow>
-          <Text style={styles.hint}>A local nudge to keep your streak. Format HH:MM (24h).</Text>
+          <Text style={s.hint}>A local nudge to keep your streak. Format HH:MM (24h).</Text>
           <TextInput
-            style={styles.input}
+            style={s.input}
             value={time}
             onChangeText={(t) => { setTime(t); setReminderNote(null); }}
             onEndEditing={() => void commitReminder(time)}
             placeholder="e.g. 20:00"
-            placeholderTextColor={colors.textFaint}
+            placeholderTextColor={c.textFaint}
+            selectionColor={c.accent}
             keyboardType="numbers-and-punctuation"
           />
-          {reminderNote && <Text style={styles.hint}>{reminderNote}</Text>}
+          {reminderNote && <Text style={s.hint}>{reminderNote}</Text>}
           {reminderTime && (
-            <Pressable
+            <GhostButton
+              label="Turn off reminder"
               onPress={() => { setTime(''); void commitReminder(''); }}
-              style={styles.outlineBtn}
-            >
-              <Text style={styles.outlineText}>Turn off reminder</Text>
-            </Pressable>
+              style={{ marginTop: spacing.md }}
+            />
           )}
         </Card>
 
         {/* GitHub */}
         <Card style={{ marginBottom: spacing.lg }}>
           <Eyebrow>GitHub handle</Eyebrow>
-          <Text style={styles.hint}>For your commit habit — push solutions daily.</Text>
+          <Text style={s.hint}>For your commit habit — push solutions daily.</Text>
           <TextInput
-            style={styles.input}
+            style={s.input}
             value={handle}
             onChangeText={setHandle}
             onEndEditing={() => setGithubHandle(handle)}
             placeholder="username"
-            placeholderTextColor={colors.textFaint}
+            placeholderTextColor={c.textFaint}
+            selectionColor={c.accent}
             autoCapitalize="none"
           />
         </Card>
 
-        {/* Meta */}
+        {/* Content */}
         <Card style={{ marginBottom: spacing.lg }}>
           <Eyebrow>Content</Eyebrow>
-          <Text style={styles.body}>
-            {plan.meta.topicCount} topics · {plan.meta.problemCount} problems · {plan.roadmap.phases.length} roadmap phases
+          <Text style={s.body}>
+            {plan.meta.topicCount} topics · {plan.meta.problemCount} problems · {plan.roadmap.phases.length} phases
           </Text>
-          <Text style={styles.hint}>Bundled with the app — always available offline.</Text>
+          <Text style={s.hint}>Bundled with the app — always available offline.</Text>
         </Card>
 
-        {/* Backend — M2 diagnostic. Content always renders from the bundle;
-            this only reports whether Supabase holds the same content. */}
+        {/* Backend diagnostic */}
         {supabaseEnabled && (
           <Card style={{ marginBottom: spacing.lg }}>
-            <View style={styles.rowBetween}>
+            <View style={s.rowBetween}>
               <Eyebrow>Backend</Eyebrow>
               <Pressable onPress={runCheck} hitSlop={10} disabled={checking}>
-                <Text style={styles.link}>{checking ? 'checking…' : 'recheck'}</Text>
+                <Text style={s.link}>{checking ? 'checking…' : 'recheck'}</Text>
               </Pressable>
             </View>
 
-            {checking && !check && <ActivityIndicator color={colors.accent} style={{ marginTop: spacing.md }} />}
+            {checking && !check && <ActivityIndicator color={c.accent} style={{ marginTop: spacing.md }} />}
 
             {check?.status === 'ok' && (
               <>
                 <View style={{ marginTop: spacing.sm }}>
-                  <Pill label="Connected" small />
+                  <Pill label="Connected" small color={c.easy} filled />
                 </View>
-                <Text style={styles.body}>
-                  All {check.rows.length} content tables match the bundle.
-                </Text>
-                <Text style={styles.hint}>Sample read: “{check.sampleTopic}”.</Text>
+                <Text style={s.body}>All {check.rows.length} content tables match the bundle.</Text>
               </>
             )}
 
             {check?.status === 'mismatch' && (
               <>
-                <Text style={[styles.body, { color: colors.accent }]}>Content mismatch.</Text>
+                <Text style={[s.body, { color: c.accent }]}>Content mismatch.</Text>
                 {check.rows.filter((r) => !r.ok).map((r) => (
-                  <Text key={r.table} style={styles.mono}>
-                    {r.table}: {r.remote} / {r.expected} expected
-                  </Text>
+                  <Text key={r.table} style={s.mono}>{r.table}: {r.remote} / {r.expected} expected</Text>
                 ))}
-                <Text style={styles.hint}>Re-run supabase/seed.sql in the SQL editor.</Text>
               </>
             )}
 
             {check?.status === 'error' && (
               <>
-                <Text style={[styles.body, { color: colors.accent }]}>Can’t reach the backend.</Text>
-                <Text style={styles.mono}>{check.error}</Text>
-                <Text style={styles.hint}>The app keeps working offline — your progress is safe on this device.</Text>
+                <Text style={[s.body, { color: c.accent }]}>Can’t reach the backend.</Text>
+                <Text style={s.hint}>The app keeps working offline — your progress is safe on this device.</Text>
               </>
             )}
           </Card>
         )}
 
-        <Pressable onPress={confirmReset} style={styles.resetBtn}>
-          <Text style={styles.resetText}>Reset all progress</Text>
-        </Pressable>
+        <GhostButton label="Reset all progress" tone="accent" onPress={confirmReset} />
 
-        <Text style={styles.version}>DSA Mastery · v1.0 · built for the grind</Text>
+        <Text style={s.version}>
+          DSA Mastery · v1.0 · {isLight ? 'light' : 'dark'} theme follows your system
+        </Text>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.bg },
-  scroll: { padding: spacing.lg, paddingBottom: spacing.xxl },
-  h1: { fontFamily: type.display, fontSize: 34, color: colors.text, letterSpacing: -0.5, marginBottom: spacing.lg },
-  body: { fontFamily: type.body, fontSize: 14, color: colors.textMuted, lineHeight: 21, marginTop: 4 },
-  hint: { fontFamily: type.body, fontSize: 13, color: colors.textFaint, marginTop: 4, lineHeight: 19 },
-  langGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginTop: spacing.md },
-  lang: { paddingVertical: 10, paddingHorizontal: 18, borderRadius: radius.md, backgroundColor: colors.surface2, borderWidth: 1, borderColor: colors.border, alignItems: 'center' },
-  langActive: { backgroundColor: colors.accentSoft, borderColor: colors.accentDim },
-  langDisabled: { opacity: 0.5 },
-  langText: { fontFamily: type.heading, fontSize: 14, color: colors.text },
-  soon: { fontFamily: type.mono, fontSize: 8, color: colors.textFaint, textTransform: 'uppercase', marginTop: 2 },
-  input: { color: colors.text, fontFamily: type.mono, fontSize: 15, marginTop: spacing.md, backgroundColor: colors.surface2, borderRadius: radius.md, padding: spacing.md, borderWidth: 1, borderColor: colors.border },
-  resetBtn: { borderWidth: 1, borderColor: colors.accentDim, borderRadius: radius.md, padding: spacing.md, alignItems: 'center', marginBottom: spacing.lg },
-  resetText: { fontFamily: type.heading, fontSize: 14, color: colors.accent },
+const makeStyles = (c: Palette) => StyleSheet.create({
+  safe: { flex: 1, backgroundColor: c.bg },
+  scroll: { padding: spacing.lg, paddingBottom: tabInset },
+  kicker: { fontFamily: type.mono, fontSize: 11, color: c.textFaint, letterSpacing: 1.5, textTransform: 'uppercase' },
+  h1: { fontFamily: type.display, fontSize: 40, color: c.text, letterSpacing: -1.2, marginTop: 2, marginBottom: spacing.lg },
+
+  accountHead: { flexDirection: 'row', alignItems: 'center', gap: spacing.lg },
+  avatar: { width: 54, height: 54, borderRadius: 27, backgroundColor: c.accent, alignItems: 'center', justifyContent: 'center' },
+  avatarText: { fontFamily: type.display, fontSize: 22, color: c.onAccent, includeFontPadding: false },
+  email: { fontFamily: type.heading, fontSize: 15.5, color: c.text },
+  syncRow: { flexDirection: 'row', gap: spacing.sm, marginTop: 6, flexWrap: 'wrap' },
+
+  body: { fontFamily: type.body, fontSize: 14.5, color: c.textMuted, lineHeight: 23, marginTop: 4 },
+  hint: { fontFamily: type.body, fontSize: 13, color: c.textFaint, marginTop: spacing.sm, lineHeight: 20 },
+  mono: { fontFamily: type.mono, fontSize: 11, color: c.textMuted, marginTop: 4 },
+
+  btnRow: { flexDirection: 'row', gap: spacing.md, marginTop: spacing.lg },
   rowBetween: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  link: { fontFamily: type.mono, fontSize: 11, color: colors.accent, textTransform: 'uppercase', letterSpacing: 0.5 },
-  mono: { fontFamily: type.mono, fontSize: 11, color: colors.textMuted, marginTop: 4 },
-  email: { fontFamily: type.heading, fontSize: 15, color: colors.text, marginTop: 2 },
-  outlineBtn: { borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, paddingVertical: spacing.md, alignItems: 'center', marginTop: spacing.lg },
-  outlineText: { fontFamily: type.heading, fontSize: 13, color: colors.text },
-  syncRow: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.sm, flexWrap: 'wrap' },
-  version: { fontFamily: type.mono, fontSize: 11, color: colors.textFaint, textAlign: 'center' },
+  link: { fontFamily: type.mono, fontSize: 11, color: c.accent, textTransform: 'uppercase', letterSpacing: 0.5 },
+
+  langGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginTop: spacing.lg },
+  lang: { paddingVertical: 12, paddingHorizontal: 22, borderRadius: radius.pill, backgroundColor: c.surface2, alignItems: 'center' },
+  langActive: { backgroundColor: c.accent },
+  langText: { fontFamily: type.heading, fontSize: 14, color: c.text },
+  soon: { fontFamily: type.mono, fontSize: 8, color: c.textFaint, textTransform: 'uppercase', marginTop: 2 },
+
+  input: {
+    color: c.text, fontFamily: type.mono, fontSize: 15,
+    marginTop: spacing.lg, backgroundColor: c.surface2,
+    borderRadius: radius.lg, paddingHorizontal: spacing.lg, paddingVertical: 15,
+  },
+
+  version: { fontFamily: type.mono, fontSize: 10.5, color: c.textFaint, textAlign: 'center', marginTop: spacing.xl },
 });

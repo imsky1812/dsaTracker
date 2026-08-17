@@ -9,11 +9,13 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { colors, spacing, type } from '../../src/theme/tokens';
+import { Palette, spacing, type } from '../../src/theme/tokens';
+import { useThemedStyles } from '../../src/theme/theme';
 import { AuthField, AuthButton, AuthLink, AuthNotice, AuthMark } from '../../src/components/auth-ui';
 import { sendPasswordReset } from '../../src/lib/auth';
 
 export default function Reset() {
+  const s = useThemedStyles(makeStyles);
   const [email, setEmail] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
@@ -35,13 +37,13 @@ export default function Reset() {
   };
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={s.safe}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <ScrollView
-          contentContainerStyle={styles.scroll}
+          contentContainerStyle={s.scroll}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
@@ -77,7 +79,7 @@ export default function Reset() {
             <AuthLink label="Back to sign in" onPress={() => router.back()} />
           </View>
 
-          <Text style={styles.footnote}>
+          <Text style={s.footnote}>
             The link opens a Supabase page where you set a new password, then you sign in here
             with it.
           </Text>
@@ -87,13 +89,13 @@ export default function Reset() {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.bg },
+const makeStyles = (c: Palette) => StyleSheet.create({
+  safe: { flex: 1, backgroundColor: c.bg },
   scroll: { padding: spacing.xl, paddingTop: spacing.xxl, flexGrow: 1, justifyContent: 'center' },
   footnote: {
     fontFamily: type.body,
     fontSize: 12,
-    color: colors.textFaint,
+    color: c.textFaint,
     textAlign: 'center',
     lineHeight: 18,
     marginTop: spacing.xl,

@@ -1,5 +1,5 @@
-// Shared building blocks for the (auth) screens. Kept here so sign-in, sign-up
-// and reset stay visually identical and no screen hardcodes a color.
+// Shared building blocks for the (auth) screens, so sign-in, sign-up and reset
+// stay identical and no screen hardcodes a colour.
 
 import React from 'react';
 import {
@@ -11,21 +11,24 @@ import {
   ActivityIndicator,
   TextInputProps,
 } from 'react-native';
-import { colors, spacing, radius, type } from '../theme/tokens';
+import { Palette, spacing, radius, type } from '../theme/tokens';
+import { useColors, useThemedStyles } from '../theme/theme';
 
 export function AuthField({
   label,
   error,
   ...props
 }: TextInputProps & { label: string; error?: boolean }) {
+  const c = useColors();
+  const s = useThemedStyles(makeStyles);
   return (
-    <View style={{ marginBottom: spacing.md }}>
-      <Text style={styles.label}>{label}</Text>
+    <View style={{ marginBottom: spacing.lg }}>
+      <Text style={s.label}>{label}</Text>
       <TextInput
-        placeholderTextColor={colors.textFaint}
-        selectionColor={colors.accent}
+        placeholderTextColor={c.textFaint}
+        selectionColor={c.accent}
         {...props}
-        style={[styles.input, error && { borderColor: colors.accentDim }]}
+        style={[s.input, error && { borderColor: c.accentDim }]}
       />
     </View>
   );
@@ -42,134 +45,100 @@ export function AuthButton({
   busy?: boolean;
   disabled?: boolean;
 }) {
+  const c = useColors();
+  const s = useThemedStyles(makeStyles);
   const off = busy || disabled;
   return (
     <Pressable
       onPress={onPress}
       disabled={off}
-      style={({ pressed }) => [
-        styles.button,
-        pressed && !off && { opacity: 0.85 },
-        off && { opacity: 0.5 },
-      ]}
+      style={({ pressed }) => [s.button, pressed && !off && { opacity: 0.88 }, off && { opacity: 0.5 }]}
     >
-      {busy ? (
-        <ActivityIndicator color="#fff" />
-      ) : (
-        <Text style={styles.buttonText}>{label}</Text>
-      )}
+      {busy ? <ActivityIndicator color={c.onAccent} /> : <Text style={s.buttonText}>{label}</Text>}
     </Pressable>
   );
 }
 
-/** Low-emphasis text action — "Create account", "Forgot password?". */
 export function AuthLink({ label, onPress }: { label: string; onPress: () => void }) {
+  const s = useThemedStyles(makeStyles);
   return (
     <Pressable onPress={onPress} hitSlop={12}>
-      {({ pressed }) => (
-        <Text style={[styles.link, pressed && { opacity: 0.6 }]}>{label}</Text>
-      )}
+      {({ pressed }) => <Text style={[s.link, pressed && { opacity: 0.6 }]}>{label}</Text>}
     </Pressable>
   );
 }
 
-/** Inline error or confirmation. Reserves no space when empty. */
 export function AuthNotice({ message, tone = 'error' }: { message?: string | null; tone?: 'error' | 'ok' }) {
+  const c = useColors();
+  const s = useThemedStyles(makeStyles);
   if (!message) return null;
+  const ok = tone === 'ok';
   return (
-    <View style={[styles.notice, tone === 'ok' && { borderColor: colors.easy, backgroundColor: 'rgba(74,157,106,0.10)' }]}>
-      <Text style={[styles.noticeText, tone === 'ok' && { color: colors.easy }]}>{message}</Text>
+    <View style={[s.notice, ok && { borderColor: c.easy, backgroundColor: c.easy + '14' }]}>
+      <Text style={[s.noticeText, ok && { color: c.easy }]}>{message}</Text>
     </View>
   );
 }
 
-/** The wordmark at the top of every auth screen. */
 export function AuthMark({ caption }: { caption: string }) {
+  const s = useThemedStyles(makeStyles);
   return (
     <View style={{ marginBottom: spacing.xxl }}>
-      <Text style={styles.mark}>DSA</Text>
-      <Text style={styles.markAccent}>MASTERY</Text>
-      <Text style={styles.caption}>{caption}</Text>
+      <Text style={s.mark}>DSA</Text>
+      <Text style={s.markAccent}>MASTERY</Text>
+      <Text style={s.caption}>{caption}</Text>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (c: Palette) => StyleSheet.create({
   label: {
     fontFamily: type.mono,
     fontSize: 11,
     letterSpacing: 1.5,
     textTransform: 'uppercase',
-    color: colors.textFaint,
+    color: c.textFaint,
     marginBottom: spacing.sm,
   },
   input: {
-    color: colors.text,
+    color: c.text,
     fontFamily: type.body,
     fontSize: 16,
-    backgroundColor: colors.surface2,
-    borderRadius: radius.md,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-    borderWidth: 1,
-    borderColor: colors.border,
+    backgroundColor: c.surface,
+    borderRadius: radius.lg,
+    paddingHorizontal: spacing.xl,
+    paddingVertical: 16,
+    borderWidth: 1.5,
+    borderColor: c.border,
   },
   button: {
-    backgroundColor: colors.accent,
-    borderRadius: radius.md,
-    paddingVertical: spacing.lg,
+    backgroundColor: c.accent,
+    borderRadius: radius.pill,
+    paddingVertical: 18,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 52,
+    minHeight: 56,
     marginTop: spacing.sm,
   },
-  buttonText: {
-    fontFamily: type.heading,
-    fontSize: 15,
-    color: '#FFFFFF',
-    letterSpacing: 0.3,
-  },
+  buttonText: { fontFamily: type.heading, fontSize: 15, color: c.onAccent, letterSpacing: 0.2 },
   link: {
     fontFamily: type.mono,
     fontSize: 12,
-    color: colors.textMuted,
-    letterSpacing: 0.5,
+    color: c.textMuted,
+    letterSpacing: 0.4,
     textAlign: 'center',
-    paddingVertical: spacing.sm,
+    paddingVertical: spacing.md,
   },
   notice: {
-    borderWidth: 1,
-    borderColor: colors.accentDim,
-    backgroundColor: colors.accentSoft,
-    borderRadius: radius.md,
-    padding: spacing.md,
-    marginBottom: spacing.md,
+    borderWidth: 1.5,
+    borderColor: c.accentDim,
+    backgroundColor: c.accentSoft,
+    borderRadius: radius.lg,
+    padding: spacing.lg,
+    marginBottom: spacing.lg,
   },
-  noticeText: {
-    fontFamily: type.body,
-    fontSize: 13,
-    color: colors.accent,
-    lineHeight: 19,
-  },
-  mark: {
-    fontFamily: type.display,
-    fontSize: 40,
-    color: colors.text,
-    letterSpacing: -1,
-    lineHeight: 42,
-  },
-  markAccent: {
-    fontFamily: type.display,
-    fontSize: 40,
-    color: colors.accent,
-    letterSpacing: -1,
-    lineHeight: 42,
-  },
-  caption: {
-    fontFamily: type.mono,
-    fontSize: 12,
-    color: colors.textFaint,
-    marginTop: spacing.md,
-    letterSpacing: 0.5,
-  },
+  noticeText: { fontFamily: type.body, fontSize: 13.5, color: c.accent, lineHeight: 20 },
+  mark: { fontFamily: type.display, fontSize: 42, color: c.text, letterSpacing: -1.5, lineHeight: 44 },
+  markAccent: { fontFamily: type.display, fontSize: 42, color: c.accent, letterSpacing: -1.5, lineHeight: 44 },
+  caption: { fontFamily: type.body, fontSize: 14, color: c.textMuted, marginTop: spacing.lg, lineHeight: 21 },
 });

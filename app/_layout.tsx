@@ -13,7 +13,7 @@ import {
   JetBrainsMono_400Regular,
   JetBrainsMono_700Bold,
 } from '@expo-google-fonts/jetbrains-mono';
-import { colors } from '../src/theme/tokens';
+import { useColors, useIsLight } from '../src/theme/theme';
 import { useSession, initAuth, sessionReady, isUnlocked } from '../src/store/session';
 import { initSync } from '../src/lib/syncManager';
 import { useProgress } from '../src/store/progress';
@@ -44,6 +44,8 @@ function useAuthGate(ready: boolean) {
 }
 
 export default function RootLayout() {
+  const c = useColors();
+  const isLight = useIsLight();
   const [fontsLoaded] = useFonts({
     Archivo_400Regular,
     Archivo_600SemiBold,
@@ -79,11 +81,17 @@ export default function RootLayout() {
   if (!ready) return null;
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.bg }}>
-      <StatusBar style="light" />
-      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg } }}>
+    <View style={{ flex: 1, backgroundColor: c.bg }}>
+      {/* Status bar icons must invert with the ground, or they vanish. */}
+      <StatusBar style={isLight ? 'dark' : 'light'} />
+      <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: c.bg } }}>
         <Stack.Screen name="(auth)" />
         <Stack.Screen name="(tabs)" />
+        {/* Topic detail sits OUTSIDE (tabs): as a tab route it became a sixth
+            phantom tab, and the nested tab navigator did not deliver the
+            [slug] param — so the screen rendered blank. As a stack screen it
+            pushes over the tab bar, which is also the right UX for a detail. */}
+        <Stack.Screen name="topic/[slug]" options={{ animation: 'slide_from_right' }} />
       </Stack>
     </View>
   );

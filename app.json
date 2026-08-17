@@ -5,12 +5,16 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "dsamastery",
-    "userInterfaceStyle": "dark",
+    "userInterfaceStyle": "automatic",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
-      "backgroundColor": "#0E0E10",
-      "resizeMode": "contain"
+      "backgroundColor": "#F4F2EE",
+      "resizeMode": "contain",
+      "dark": {
+        "image": "./assets/splash-dark.png",
+        "backgroundColor": "#0E0E10"
+      }
     },
     "assetBundlePatterns": [
       "**/*"

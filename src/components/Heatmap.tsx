@@ -1,27 +1,25 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { colors, spacing, type } from '../theme/tokens';
+import { Palette, spacing, type } from '../theme/tokens';
+import { useColors, useThemedStyles } from '../theme/theme';
 import { dayKey } from '../lib/dates';
 
 // Signature element: a GitHub-style contribution heatmap of problems solved
-// per day. Reads the activity map from the store. 18 weeks back.
+// per day, 18 weeks back.
 
 const WEEKS = 18;
 const CELL = 13;
-const GAP = 3;
-
-function heatColor(count: number) {
-  if (count <= 0) return colors.heat0;
-  if (count === 1) return colors.heat1;
-  if (count === 2) return colors.heat2;
-  if (count <= 4) return colors.heat3;
-  return colors.heat4;
-}
+const GAP = 4;
 
 export function Heatmap({ activity }: { activity: Record<string, number> }) {
+  const c = useColors();
+  const s = useThemedStyles(makeStyles);
+
+  const heatColor = (count: number) =>
+    count <= 0 ? c.heat0 : count === 1 ? c.heat1 : count === 2 ? c.heat2 : count <= 4 ? c.heat3 : c.heat4;
+
   const today = new Date();
   const dayOfWeek = today.getDay(); // 0 Sun
-  // start on the Sunday WEEKS ago
   const start = new Date(today);
   start.setDate(today.getDate() - dayOfWeek - (WEEKS - 1) * 7);
 
@@ -40,42 +38,40 @@ export function Heatmap({ activity }: { activity: Record<string, number> }) {
     columns.push(col);
   }
 
-  const monthLabels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
   return (
     <View>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <View>
-          <View style={{ flexDirection: 'row' }}>
-            {columns.map((col, wi) => (
-              <View key={wi} style={{ marginRight: GAP }}>
-                {col.map((cell, di) => (
-                  <View
-                    key={di}
-                    style={{
-                      width: CELL, height: CELL, borderRadius: 3, marginBottom: GAP,
-                      backgroundColor: cell.count < 0 ? 'transparent' : heatColor(cell.count),
-                      borderWidth: cell.count === 0 ? 1 : 0, borderColor: colors.borderSoft,
-                    }}
-                  />
-                ))}
-              </View>
-            ))}
-          </View>
+        <View style={{ flexDirection: 'row' }}>
+          {columns.map((col, wi) => (
+            <View key={wi} style={{ marginRight: GAP }}>
+              {col.map((cell, di) => (
+                <View
+                  key={di}
+                  style={{
+                    width: CELL,
+                    height: CELL,
+                    borderRadius: 4,
+                    marginBottom: GAP,
+                    backgroundColor: cell.count < 0 ? 'transparent' : heatColor(cell.count),
+                  }}
+                />
+              ))}
+            </View>
+          ))}
         </View>
       </ScrollView>
-      <View style={styles.legend}>
-        <Text style={styles.legendText}>Less</Text>
-        {[colors.heat0, colors.heat1, colors.heat2, colors.heat3, colors.heat4].map((c, i) => (
-          <View key={i} style={{ width: 11, height: 11, borderRadius: 3, backgroundColor: c, marginHorizontal: 2 }} />
+      <View style={s.legend}>
+        <Text style={s.legendText}>Less</Text>
+        {[c.heat0, c.heat1, c.heat2, c.heat3, c.heat4].map((colour, i) => (
+          <View key={i} style={{ width: 11, height: 11, borderRadius: 3, backgroundColor: colour, marginHorizontal: 2 }} />
         ))}
-        <Text style={styles.legendText}>More</Text>
+        <Text style={s.legendText}>More</Text>
       </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  legend: { flexDirection: 'row', alignItems: 'center', marginTop: spacing.md, alignSelf: 'flex-end' },
-  legendText: { fontFamily: type.mono, fontSize: 11, color: colors.textFaint, marginHorizontal: 6 },
+const makeStyles = (c: Palette) => StyleSheet.create({
+  legend: { flexDirection: 'row', alignItems: 'center', marginTop: spacing.lg, alignSelf: 'flex-end' },
+  legendText: { fontFamily: type.mono, fontSize: 11, color: c.textFaint, marginHorizontal: 6 },
 });

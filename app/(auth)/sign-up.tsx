@@ -9,11 +9,13 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { colors, spacing, type } from '../../src/theme/tokens';
+import { Palette, spacing, type } from '../../src/theme/tokens';
+import { useThemedStyles } from '../../src/theme/theme';
 import { AuthField, AuthButton, AuthLink, AuthNotice, AuthMark } from '../../src/components/auth-ui';
 import { signUp, validate } from '../../src/lib/auth';
 
 export default function SignUp() {
+  const s = useThemedStyles(makeStyles);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -41,13 +43,13 @@ export default function SignUp() {
   };
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={s.safe}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <ScrollView
-          contentContainerStyle={styles.scroll}
+          contentContainerStyle={s.scroll}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
@@ -95,7 +97,7 @@ export default function SignUp() {
             <AuthLink label="Already have an account? Sign in" onPress={() => router.back()} />
           </View>
 
-          <Text style={styles.footnote}>
+          <Text style={s.footnote}>
             Your progress is private to your account — row-level security means no one else can
             read it.
           </Text>
@@ -105,13 +107,13 @@ export default function SignUp() {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.bg },
+const makeStyles = (c: Palette) => StyleSheet.create({
+  safe: { flex: 1, backgroundColor: c.bg },
   scroll: { padding: spacing.xl, paddingTop: spacing.xxl, flexGrow: 1, justifyContent: 'center' },
   footnote: {
     fontFamily: type.body,
     fontSize: 12,
-    color: colors.textFaint,
+    color: c.textFaint,
     textAlign: 'center',
     lineHeight: 18,
     marginTop: spacing.xl,

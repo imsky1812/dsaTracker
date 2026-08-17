@@ -10,13 +10,15 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { colors, spacing, type } from '../../src/theme/tokens';
+import { Palette, spacing, type } from '../../src/theme/tokens';
+import { useThemedStyles } from '../../src/theme/theme';
 import { AuthField, AuthButton, AuthLink, AuthNotice, AuthMark } from '../../src/components/auth-ui';
 import { signIn, validate } from '../../src/lib/auth';
 import { useSession } from '../../src/store/session';
 
 export default function SignIn() {
-  const continueLocally = useSession((s) => s.continueLocally);
+  const s = useThemedStyles(makeStyles);
+  const continueLocally = useSession((st) => st.continueLocally);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -36,13 +38,13 @@ export default function SignIn() {
   };
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={s.safe}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <ScrollView
-          contentContainerStyle={styles.scroll}
+          contentContainerStyle={s.scroll}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
@@ -83,12 +85,12 @@ export default function SignIn() {
 
           {/* Offline-first escape hatch: signing up needs a network, so someone
               with no signal and no account must still be able to get in. */}
-          <View style={styles.divider} />
+          <View style={s.divider} />
           <Pressable onPress={continueLocally} hitSlop={12}>
             {({ pressed }) => (
-              <View style={[styles.offline, pressed && { opacity: 0.6 }]}>
-                <Text style={styles.offlineText}>Continue without an account  →</Text>
-                <Text style={styles.offlineHint}>
+              <View style={[s.offline, pressed && { opacity: 0.6 }]}>
+                <Text style={s.offlineText}>Continue without an account  →</Text>
+                <Text style={s.offlineHint}>
                   Everything works offline. Your progress saves on this device and moves to your
                   account when you sign in later.
                 </Text>
@@ -101,16 +103,16 @@ export default function SignIn() {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.bg },
+const makeStyles = (c: Palette) => StyleSheet.create({
+  safe: { flex: 1, backgroundColor: c.bg },
   scroll: { padding: spacing.xl, paddingTop: spacing.xxl, flexGrow: 1, justifyContent: 'center' },
-  divider: { height: 1, backgroundColor: colors.border, marginVertical: spacing.xl },
+  divider: { height: 1, backgroundColor: c.border, marginVertical: spacing.xl },
   offline: { alignItems: 'center' },
-  offlineText: { fontFamily: type.heading, fontSize: 14, color: colors.text },
+  offlineText: { fontFamily: type.heading, fontSize: 14, color: c.text },
   offlineHint: {
     fontFamily: type.body,
     fontSize: 12.5,
-    color: colors.textFaint,
+    color: c.textFaint,
     textAlign: 'center',
     lineHeight: 19,
     marginTop: spacing.sm,

@@ -21,15 +21,28 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const outDir = join(root, 'assets');
 mkdirSync(outDir, { recursive: true });
 
-// ---------- palette (mirrors src/theme/tokens.ts) ----------
-const BG = [0x0e, 0x0e, 0x10, 255];
-const HEAT = [
-  [0x1a, 0x1a, 0x1e, 255], // heat0 — empty day
-  [0x3a, 0x22, 0x24, 255], // heat1
-  [0x6e, 0x24, 0x29, 255], // heat2
-  [0xa6, 0x26, 0x30, 255], // heat3
-  [0xe5, 0x39, 0x3b, 255], // heat4 — best day
-];
+// ---------- palettes (mirror src/theme/tokens.ts) ----------
+const DARK = {
+  bg: [0x0e, 0x0e, 0x10, 255],
+  heat: [
+    [0x1a, 0x1a, 0x1e, 255], // heat0 — empty day
+    [0x3a, 0x22, 0x24, 255],
+    [0x6e, 0x24, 0x29, 255],
+    [0xa6, 0x26, 0x30, 255],
+    [0xe5, 0x39, 0x3b, 255], // heat4 — best day
+  ],
+};
+
+const LIGHT = {
+  bg: [0xf4, 0xf2, 0xee, 255],
+  heat: [
+    [0xe7, 0xe3, 0xdb, 255],
+    [0xf3, 0xc9, 0xc4, 255],
+    [0xe3, 0x9a, 0x93, 255],
+    [0xd2, 0x63, 0x5b, 255],
+    [0xc8, 0x36, 0x2f, 255],
+  ],
+};
 
 // Fixed pattern, hand-picked so the eye reads a rising streak rather than noise.
 const GRID = [
@@ -108,7 +121,9 @@ const inRoundedRect = (x, y, cx, cy, half, r) => {
  *                  by the system and must be transparent outside the mark
  * @param scale     mark size as a fraction of the canvas
  */
-function render(size, { opaqueBg = true, scale = 0.62 } = {}) {
+function render(size, { opaqueBg = true, scale = 0.62, palette = DARK } = {}) {
+  const BG = palette.bg;
+  const HEAT = palette.heat;
   const W = size * SS;
   const rgba = Buffer.alloc(size * size * 4);
 
@@ -169,8 +184,11 @@ const outputs = [
   // Android masks this to a circle/squircle and can zoom ~33%, so the mark sits
   // smaller inside the safe zone; the background comes from app.json.
   ['adaptive-icon.png', render(1024, { opaqueBg: false, scale: 0.42 })],
-  // Splash renders with resizeMode "contain" on the same charcoal.
-  ['splash.png', render(1284, { scale: 0.34 })],
+  // Splash renders with resizeMode "contain". Two variants, because the app
+  // follows the system theme and a charcoal splash into a light UI (or the
+  // reverse) is a jarring flash on every launch.
+  ['splash.png', render(1284, { scale: 0.34, palette: LIGHT })],
+  ['splash-dark.png', render(1284, { scale: 0.34, palette: DARK })],
   ['favicon.png', render(48)],
 ];
 
