@@ -2,7 +2,7 @@
 
 An offline-first DSA learning and tracking app for Android and iOS. Not just a
 tracker — it ships an authored roadmap, full-depth topic modules, primers for five languages,
-and 139 company-tagged interview problems, with the progress system built around
+and 183 company-tagged interview problems, with the progress system built around
 them.
 
 Built with Expo + React Native + TypeScript, backed by Supabase.
@@ -19,9 +19,9 @@ Built with Expo + React Native + TypeScript, backed by Supabase.
 </td>
 <td>
 
-**[⬇ Download the APK directly](https://expo.dev/artifacts/eas/EnSZILV4fPNDpwdUIPWEap0kNWZfgrcrLNS15N5USZI.apk)**
+**[⬇ Download the APK directly](https://expo.dev/artifacts/eas/B1NFZaG1Kx_QuyB6FFHwYaOoC-yu6F3BMxs5VqsdgyM.apk)**
 
-or open the **[install page](https://expo.dev/accounts/imsky1812/projects/dsa-mastery/builds/896e07ac-20e2-4a56-aa50-3a652421adb5)**
+or open the **[install page](https://expo.dev/accounts/imsky1812/projects/dsa-mastery/builds/959beecc-bffb-4b69-82dc-97d069f6cb42)**
 on your phone.
 
 1. Tap the APK to download it.
@@ -59,7 +59,7 @@ a problem ladder tiered *warmup → core → interview → hard*. Each of five l
 C++, Java, Python, C and Go — gets a ten-section primer and its own snippets
 per topic, switchable from Profile.
 
-**Practise deliberately.** All 139 problems in one list, filterable by status,
+**Practise deliberately.** All 183 problems in one list, filterable by status,
 difficulty, platform, company, and topic. Every link was verified — no
 fabricated URLs. Tap a problem to open it on LeetCode or GFG; tap its circle to
 cycle *unsolved → solved → revisit*; keep a note per problem for the approach,
@@ -80,9 +80,9 @@ the entire app keeps working with no signal — see [Offline-first](#offline-fir
 
 | | |
 |---|---|
-| **Content** | 8-phase roadmap · 19 topic modules · 139 verified problems · 124 code samples |
+| **Content** | 8-phase roadmap · 19 topic modules · 183 verified problems · 124 code samples |
 | **Languages** | C++, Java, Python, C, Go — a 10-section primer each, snippets per topic |
-| **Companies** | Amazon, Google, Microsoft, Meta, Adobe, Uber, LinkedIn, Flipkart, TCS, Infosys, Wipro |
+| **Companies** | Amazon, Google, Microsoft, Meta, Adobe, Uber, LinkedIn, Flipkart · TCS, Infosys, Wipro, Accenture, Cognizant |
 | **Tracking** | contribution heatmap · streaks · per-problem notes · revisit flags · topic completion |
 | **Filtering** | status · difficulty · platform · company · topic |
 | **Accounts** | email/password sign-up, sign-in, password reset — or use it with no account at all |
@@ -180,8 +180,19 @@ npm run content:check   # CI-style check that they're current
 ```
 
 The generator validates each problem URL's shape and rejects a problem name
-pointing at two different URLs. It **cannot** confirm a link resolves, so any
-newly added problem still needs a manual check before it lands.
+pointing at two different URLs. Links themselves are checked against the
+platform:
+
+```bash
+npm run verify:problems   # every link + difficulty, against LeetCode's API
+npm run problems          # add new ones (--check to verify, --apply to write)
+```
+
+Every problem is on LeetCode, deliberately. LeetCode's GraphQL endpoint answers
+authoritatively — a bad slug returns null, and a good one returns the official
+difficulty, so a mislabelled difficulty is caught too. GFG problems were removed
+because they cannot be verified at all: geeksforgeeks.org returns HTTP 200 for a
+made-up slug, so a status check proves nothing.
 
 The data model is multi-language from day one — code is keyed by language — so
 adding Java/Python/JS means adding snippets and a primer, never duplicating
@@ -202,7 +213,7 @@ the app builds a YouTube **search** from the problem name and its topic:
 https://www.youtube.com/results?search_query=Two%20Sum%20arrays%20dsa%20explained%20solution
 ```
 
-This is deliberate. Hardcoding 139 specific video ids would mean inventing them,
+This is deliberate. Hardcoding a video id per problem would mean inventing them,
 which is exactly the fabricated URL this repo forbids, and a dead video is worse
 than no video. A search always resolves, needs no maintenance, and improves on
 its own as better explanations get published.
@@ -351,7 +362,7 @@ polish, and a shipping Android build.
 
 | | |
 |---|---|
-| M0 Content | 19 topics, 139 verified problems, C++ primer |
+| M0 Content | 19 topics, 183 verified problems, primers for 5 languages |
 | M1 App | five screens, offline-first, heatmap + streaks |
 | M2 Supabase | schema + seed deployed and verified |
 | M3 Auth | email/password, route gate, local-only mode |
@@ -364,10 +375,12 @@ polish, and a shipping Android build.
 
 - **iOS is unbuilt.** The code is cross-platform; it needs an Apple Developer
   account to produce an installable build.
-- **Java / Python / JS are stubs.** The data model supports them; the content
-  isn't authored yet, so they show as *soon* in the language picker.
-- **Amazon is tagged on 137 of 139 problems**, which makes that particular
-  company filter close to a no-op. A content-tagging call, not a bug.
 - **`SCHEDULE_EXACT_ALARM`** is requested in `app.json`. Google Play restricts
   it and will ask for justification; the daily reminder doesn't need exact
   timing, so drop it before any Play submission. Harmless for a sideloaded APK.
+- **Explanation videos cover 42 of 183 problems.** The rest fall back to a
+  YouTube search, which always works — see [Explanation videos](#explanation-videos)
+  for why the gap is deliberate rather than unfinished.
+- **Company tags are editorial, not sourced.** They follow tier rules (warmups
+  carry no big-tech tags; Amazon only on interview/hard) enforced by the build,
+  which keeps them honest — but they are judgment, not interview data.
