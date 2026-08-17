@@ -74,6 +74,18 @@
       "companies": []
     },
     {
+      "name": "Sqrt(x)",
+      "url": "https://leetcode.com/problems/sqrtx/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [
+        "TCS",
+        "Infosys",
+        "Cognizant"
+      ]
+    },
+    {
       "name": "Find First and Last Position",
       "url": "https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/",
       "platform": "LeetCode",
@@ -82,6 +94,26 @@
       "companies": [
         "Microsoft",
         "Google"
+      ]
+    },
+    {
+      "name": "Find Peak Element",
+      "url": "https://leetcode.com/problems/find-peak-element/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "Google"
+      ]
+    },
+    {
+      "name": "Search a 2D Matrix",
+      "url": "https://leetcode.com/problems/search-a-2d-matrix/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "Cognizant"
       ]
     },
     {
@@ -97,16 +129,6 @@
         "Meta"
       ],
       "video": "https://www.youtube.com/watch?v=U8XENwh8Oy8"
-    },
-    {
-      "name": "Find Peak Element",
-      "url": "https://leetcode.com/problems/find-peak-element/",
-      "platform": "LeetCode",
-      "difficulty": "Medium",
-      "tier": "core",
-      "companies": [
-        "Google"
-      ]
     },
     {
       "name": "Koko Eating Bananas",
@@ -129,18 +151,6 @@
       "companies": [
         "Amazon",
         "Google"
-      ]
-    },
-    {
-      "name": "Allocate Minimum Number of Pages",
-      "url": "https://www.geeksforgeeks.org/problems/allocate-minimum-number-of-pages0937/1",
-      "platform": "GFG",
-      "difficulty": "Hard",
-      "tier": "interview",
-      "companies": [
-        "Amazon",
-        "Flipkart",
-        "Microsoft"
       ]
     },
     {

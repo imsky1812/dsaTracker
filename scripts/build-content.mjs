@@ -121,7 +121,11 @@ for (const t of topics) {
     //   - Amazon only appears on the interview/hard tiers, where "company X
     //     asks this" is a claim worth making.
     // These are editorial rules about tiers, not sourced interview data.
-    const SERVICE_COMPANIES = new Set(['TCS', 'Infosys', 'Wipro']);
+    // Service companies: their interview bar genuinely sits at warmup level for
+    // the mass-hiring rounds, so a warmup tag is informative rather than noise.
+    // (Their contest tracks — CodeVita, HackWithInfy — are a different matter
+    // and appear on hard problems.)
+    const SERVICE_COMPANIES = new Set(['TCS', 'Infosys', 'Wipro', 'Accenture', 'Cognizant']);
     const warmupBigTech = (p.companies ?? []).filter((n) => !SERVICE_COMPANIES.has(n));
     if (p.tier === 'warmup' && warmupBigTech.length > 0) {
       fail(`warmup problems carry no big-tech company tags: ${where} -> ${warmupBigTech.join(', ')}`);

@@ -75,6 +75,40 @@
       "companies": []
     },
     {
+      "name": "Remove Duplicates from Sorted Array",
+      "url": "https://leetcode.com/problems/remove-duplicates-from-sorted-array/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [
+        "TCS",
+        "Infosys",
+        "Cognizant"
+      ]
+    },
+    {
+      "name": "Plus One",
+      "url": "https://leetcode.com/problems/plus-one/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [
+        "TCS",
+        "Wipro"
+      ]
+    },
+    {
+      "name": "Merge Sorted Array",
+      "url": "https://leetcode.com/problems/merge-sorted-array/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [
+        "Accenture",
+        "Cognizant"
+      ]
+    },
+    {
       "name": "Maximum Subarray (Kadane)",
       "url": "https://leetcode.com/problems/maximum-subarray/",
       "platform": "LeetCode",
@@ -96,6 +130,43 @@
         "Adobe"
       ],
       "video": "https://www.youtube.com/watch?v=UuiTKBwPgAo"
+    },
+    {
+      "name": "Majority Element",
+      "url": "https://leetcode.com/problems/majority-element/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "core",
+      "companies": [
+        "TCS",
+        "Infosys",
+        "Wipro",
+        "Accenture",
+        "Cognizant"
+      ]
+    },
+    {
+      "name": "Rotate Array",
+      "url": "https://leetcode.com/problems/rotate-array/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "Infosys",
+        "Wipro",
+        "Accenture"
+      ]
+    },
+    {
+      "name": "Set Matrix Zeroes",
+      "url": "https://leetcode.com/problems/set-matrix-zeroes/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "TCS",
+        "Accenture"
+      ]
     },
     {
       "name": "3Sum",
@@ -155,6 +226,27 @@
       "companies": [
         "Amazon",
         "Microsoft"
+      ]
+    },
+    {
+      "name": "Next Permutation",
+      "url": "https://leetcode.com/problems/next-permutation/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Infosys"
+      ]
+    },
+    {
+      "name": "Spiral Matrix",
+      "url": "https://leetcode.com/problems/spiral-matrix/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Infosys",
+        "Wipro"
       ]
     },
     {

@@ -9,6 +9,24 @@ import { plan, allProblems } from '../../src/lib/content';
 import { useProgress } from '../../src/store/progress';
 import { effectiveStreak } from '../../src/lib/dates';
 
+/**
+ * The line at the bottom of Today.
+ *
+ * Was a fixed mantra ("watch → re-code → solve → note → commit"), which stops
+ * being read after the second day. Reacting to actual state means it says
+ * something true each time: what to do when nothing is solved, what is at stake
+ * when a streak is running, and what to do once the list is finished.
+ */
+function todayLine(solved: number, total: number, streak: number): string {
+  if (total > 0 && solved >= total) return 'every problem done. now do timed mocks.';
+  if (solved === 0) return 'one problem is a start. that is all today needs.';
+  if (streak === 0) return 'streak is at zero — one problem restarts it.';
+  if (streak === 1) return 'day one. the trick is showing up tomorrow.';
+  if (streak < 7) return `${streak} days running. do not break the chain.`;
+  if (streak < 30) return `${streak}-day streak. this is the part that compounds.`;
+  return `${streak} days. this is a habit now, not an effort.`;
+}
+
 export default function Today() {
   const c = useColors();
   const s = useThemedStyles(makeStyles);
@@ -102,7 +120,7 @@ export default function Today() {
           </Card>
         </View>
 
-        <Text style={s.loop}>watch → re-code → solve → note → commit</Text>
+        <Text style={s.loop}>{todayLine(solved, total, streak)}</Text>
       </ScrollView>
     </SafeAreaView>
   );

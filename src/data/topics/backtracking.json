@@ -93,6 +93,16 @@
       ]
     },
     {
+      "name": "Combination Sum II",
+      "url": "https://leetcode.com/problems/combination-sum-ii/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Wipro"
+      ]
+    },
+    {
       "name": "N-Queens",
       "url": "https://leetcode.com/problems/n-queens/",
       "platform": "LeetCode",

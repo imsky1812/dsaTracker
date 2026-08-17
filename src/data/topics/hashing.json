@@ -66,6 +66,17 @@
       "video": "https://www.youtube.com/watch?v=KLlXCFG5TnA"
     },
     {
+      "name": "Intersection of Two Arrays II",
+      "url": "https://leetcode.com/problems/intersection-of-two-arrays-ii/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [
+        "Accenture",
+        "Cognizant"
+      ]
+    },
+    {
       "name": "Group Anagrams",
       "url": "https://leetcode.com/problems/group-anagrams/",
       "platform": "LeetCode",
@@ -98,6 +109,16 @@
         "Amazon",
         "Google",
         "Meta"
+      ]
+    },
+    {
+      "name": "4Sum",
+      "url": "https://leetcode.com/problems/4sum/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Infosys"
       ]
     }
   ]

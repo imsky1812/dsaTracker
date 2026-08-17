@@ -106,6 +106,16 @@
         "Google",
         "Uber"
       ]
+    },
+    {
+      "name": "Subsets II",
+      "url": "https://leetcode.com/problems/subsets-ii/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Infosys"
+      ]
     }
   ]
 }

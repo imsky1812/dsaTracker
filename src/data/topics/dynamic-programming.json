@@ -136,6 +136,37 @@
       ]
     },
     {
+      "name": "Partition Equal Subset Sum",
+      "url": "https://leetcode.com/problems/partition-equal-subset-sum/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Infosys"
+      ]
+    },
+    {
+      "name": "Decode Ways",
+      "url": "https://leetcode.com/problems/decode-ways/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Infosys",
+        "Wipro"
+      ]
+    },
+    {
+      "name": "Target Sum",
+      "url": "https://leetcode.com/problems/target-sum/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Cognizant"
+      ]
+    },
+    {
       "name": "Best Time to Buy and Sell Stock III",
       "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/",
       "platform": "LeetCode",
@@ -155,6 +186,17 @@
       "companies": [
         "Amazon",
         "Google"
+      ]
+    },
+    {
+      "name": "Longest Increasing Path in a Matrix",
+      "url": "https://leetcode.com/problems/longest-increasing-path-in-a-matrix/",
+      "platform": "LeetCode",
+      "difficulty": "Hard",
+      "tier": "hard",
+      "companies": [
+        "TCS",
+        "Infosys"
       ]
     }
   ]

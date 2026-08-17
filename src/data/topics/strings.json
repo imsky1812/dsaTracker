@@ -70,6 +70,18 @@
       "companies": []
     },
     {
+      "name": "Roman to Integer",
+      "url": "https://leetcode.com/problems/roman-to-integer/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [
+        "TCS",
+        "Infosys",
+        "Cognizant"
+      ]
+    },
+    {
       "name": "Longest Substring Without Repeating Characters",
       "url": "https://leetcode.com/problems/longest-substring-without-repeating-characters/",
       "platform": "LeetCode",
@@ -95,6 +107,27 @@
       "video": "https://www.youtube.com/watch?v=vzdNOK2oB2E"
     },
     {
+      "name": "String to Integer (atoi)",
+      "url": "https://leetcode.com/problems/string-to-integer-atoi/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "TCS",
+        "Cognizant"
+      ]
+    },
+    {
+      "name": "Zigzag Conversion",
+      "url": "https://leetcode.com/problems/zigzag-conversion/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "core",
+      "companies": [
+        "TCS"
+      ]
+    },
+    {
       "name": "Longest Palindromic Substring",
       "url": "https://leetcode.com/problems/longest-palindromic-substring/",
       "platform": "LeetCode",
@@ -118,6 +151,17 @@
       ]
     },
     {
+      "name": "Multiply Strings",
+      "url": "https://leetcode.com/problems/multiply-strings/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Infosys",
+        "Cognizant"
+      ]
+    },
+    {
       "name": "Minimum Window Substring",
       "url": "https://leetcode.com/problems/minimum-window-substring/",
       "platform": "LeetCode",
@@ -128,6 +172,17 @@
         "Google",
         "Meta",
         "Microsoft"
+      ]
+    },
+    {
+      "name": "Valid Number",
+      "url": "https://leetcode.com/problems/valid-number/",
+      "platform": "LeetCode",
+      "difficulty": "Hard",
+      "tier": "hard",
+      "companies": [
+        "TCS",
+        "Infosys"
       ]
     }
   ]

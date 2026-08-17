@@ -198,18 +198,6 @@
       ],
       "problems": [
         {
-          "name": "Pattern Printing (collection)",
-          "url": "https://www.geeksforgeeks.org/problems/print-the-pattern-1587115620/1",
-          "platform": "GFG",
-          "difficulty": "Easy",
-          "tier": "warmup",
-          "companies": [
-            "TCS",
-            "Infosys",
-            "Wipro"
-          ]
-        },
-        {
           "name": "FizzBuzz",
           "url": "https://leetcode.com/problems/fizz-buzz/",
           "platform": "LeetCode",
@@ -224,6 +212,30 @@
           "difficulty": "Easy",
           "tier": "warmup",
           "companies": []
+        },
+        {
+          "name": "Power of Two",
+          "url": "https://leetcode.com/problems/power-of-two/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "TCS",
+            "Infosys",
+            "Cognizant"
+          ]
+        },
+        {
+          "name": "Happy Number",
+          "url": "https://leetcode.com/problems/happy-number/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "TCS",
+            "Wipro",
+            "Accenture"
+          ]
         },
         {
           "name": "Count Primes",
@@ -324,6 +336,40 @@
           "companies": []
         },
         {
+          "name": "Remove Duplicates from Sorted Array",
+          "url": "https://leetcode.com/problems/remove-duplicates-from-sorted-array/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "TCS",
+            "Infosys",
+            "Cognizant"
+          ]
+        },
+        {
+          "name": "Plus One",
+          "url": "https://leetcode.com/problems/plus-one/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "TCS",
+            "Wipro"
+          ]
+        },
+        {
+          "name": "Merge Sorted Array",
+          "url": "https://leetcode.com/problems/merge-sorted-array/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Accenture",
+            "Cognizant"
+          ]
+        },
+        {
           "name": "Maximum Subarray (Kadane)",
           "url": "https://leetcode.com/problems/maximum-subarray/",
           "platform": "LeetCode",
@@ -345,6 +391,43 @@
             "Adobe"
           ],
           "video": "https://www.youtube.com/watch?v=UuiTKBwPgAo"
+        },
+        {
+          "name": "Majority Element",
+          "url": "https://leetcode.com/problems/majority-element/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "core",
+          "companies": [
+            "TCS",
+            "Infosys",
+            "Wipro",
+            "Accenture",
+            "Cognizant"
+          ]
+        },
+        {
+          "name": "Rotate Array",
+          "url": "https://leetcode.com/problems/rotate-array/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Infosys",
+            "Wipro",
+            "Accenture"
+          ]
+        },
+        {
+          "name": "Set Matrix Zeroes",
+          "url": "https://leetcode.com/problems/set-matrix-zeroes/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "TCS",
+            "Accenture"
+          ]
         },
         {
           "name": "3Sum",
@@ -404,6 +487,27 @@
           "companies": [
             "Amazon",
             "Microsoft"
+          ]
+        },
+        {
+          "name": "Next Permutation",
+          "url": "https://leetcode.com/problems/next-permutation/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Infosys"
+          ]
+        },
+        {
+          "name": "Spiral Matrix",
+          "url": "https://leetcode.com/problems/spiral-matrix/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Infosys",
+            "Wipro"
           ]
         },
         {
@@ -509,6 +613,18 @@
           "companies": []
         },
         {
+          "name": "Sqrt(x)",
+          "url": "https://leetcode.com/problems/sqrtx/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "TCS",
+            "Infosys",
+            "Cognizant"
+          ]
+        },
+        {
           "name": "Find First and Last Position",
           "url": "https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/",
           "platform": "LeetCode",
@@ -517,6 +633,26 @@
           "companies": [
             "Microsoft",
             "Google"
+          ]
+        },
+        {
+          "name": "Find Peak Element",
+          "url": "https://leetcode.com/problems/find-peak-element/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Google"
+          ]
+        },
+        {
+          "name": "Search a 2D Matrix",
+          "url": "https://leetcode.com/problems/search-a-2d-matrix/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "Cognizant"
           ]
         },
         {
@@ -532,16 +668,6 @@
             "Meta"
           ],
           "video": "https://www.youtube.com/watch?v=U8XENwh8Oy8"
-        },
-        {
-          "name": "Find Peak Element",
-          "url": "https://leetcode.com/problems/find-peak-element/",
-          "platform": "LeetCode",
-          "difficulty": "Medium",
-          "tier": "core",
-          "companies": [
-            "Google"
-          ]
         },
         {
           "name": "Koko Eating Bananas",
@@ -564,18 +690,6 @@
           "companies": [
             "Amazon",
             "Google"
-          ]
-        },
-        {
-          "name": "Allocate Minimum Number of Pages",
-          "url": "https://www.geeksforgeeks.org/problems/allocate-minimum-number-of-pages0937/1",
-          "platform": "GFG",
-          "difficulty": "Hard",
-          "tier": "interview",
-          "companies": [
-            "Amazon",
-            "Flipkart",
-            "Microsoft"
           ]
         },
         {
@@ -676,6 +790,18 @@
           "companies": []
         },
         {
+          "name": "Roman to Integer",
+          "url": "https://leetcode.com/problems/roman-to-integer/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "TCS",
+            "Infosys",
+            "Cognizant"
+          ]
+        },
+        {
           "name": "Longest Substring Without Repeating Characters",
           "url": "https://leetcode.com/problems/longest-substring-without-repeating-characters/",
           "platform": "LeetCode",
@@ -701,6 +827,27 @@
           "video": "https://www.youtube.com/watch?v=vzdNOK2oB2E"
         },
         {
+          "name": "String to Integer (atoi)",
+          "url": "https://leetcode.com/problems/string-to-integer-atoi/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "TCS",
+            "Cognizant"
+          ]
+        },
+        {
+          "name": "Zigzag Conversion",
+          "url": "https://leetcode.com/problems/zigzag-conversion/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "core",
+          "companies": [
+            "TCS"
+          ]
+        },
+        {
           "name": "Longest Palindromic Substring",
           "url": "https://leetcode.com/problems/longest-palindromic-substring/",
           "platform": "LeetCode",
@@ -724,6 +871,17 @@
           ]
         },
         {
+          "name": "Multiply Strings",
+          "url": "https://leetcode.com/problems/multiply-strings/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Infosys",
+            "Cognizant"
+          ]
+        },
+        {
           "name": "Minimum Window Substring",
           "url": "https://leetcode.com/problems/minimum-window-substring/",
           "platform": "LeetCode",
@@ -734,6 +892,17 @@
             "Google",
             "Meta",
             "Microsoft"
+          ]
+        },
+        {
+          "name": "Valid Number",
+          "url": "https://leetcode.com/problems/valid-number/",
+          "platform": "LeetCode",
+          "difficulty": "Hard",
+          "tier": "hard",
+          "companies": [
+            "TCS",
+            "Infosys"
           ]
         }
       ]
@@ -955,6 +1124,16 @@
             "Google",
             "Uber"
           ]
+        },
+        {
+          "name": "Subsets II",
+          "url": "https://leetcode.com/problems/subsets-ii/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Infosys"
+          ]
         }
       ]
     },
@@ -1050,6 +1229,16 @@
           "companies": [
             "Amazon",
             "Google"
+          ]
+        },
+        {
+          "name": "Combination Sum II",
+          "url": "https://leetcode.com/problems/combination-sum-ii/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Wipro"
           ]
         },
         {
@@ -1161,6 +1350,26 @@
           ]
         },
         {
+          "name": "Largest Number",
+          "url": "https://leetcode.com/problems/largest-number/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "TCS"
+          ]
+        },
+        {
+          "name": "Insert Interval",
+          "url": "https://leetcode.com/problems/insert-interval/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Accenture"
+          ]
+        },
+        {
           "name": "Count of Smaller Numbers After Self",
           "url": "https://leetcode.com/problems/count-of-smaller-numbers-after-self/",
           "platform": "LeetCode",
@@ -1172,14 +1381,25 @@
           ]
         },
         {
-          "name": "Count Inversions",
-          "url": "https://www.geeksforgeeks.org/problems/inversion-of-array-1587115620/1",
-          "platform": "GFG",
+          "name": "Sort List",
+          "url": "https://leetcode.com/problems/sort-list/",
+          "platform": "LeetCode",
           "difficulty": "Medium",
-          "tier": "interview",
+          "tier": "hard",
           "companies": [
-            "Amazon",
-            "Flipkart"
+            "TCS",
+            "Infosys"
+          ]
+        },
+        {
+          "name": "Reverse Pairs",
+          "url": "https://leetcode.com/problems/reverse-pairs/",
+          "platform": "LeetCode",
+          "difficulty": "Hard",
+          "tier": "hard",
+          "companies": [
+            "TCS",
+            "Infosys"
           ]
         }
       ]
@@ -1300,6 +1520,17 @@
           ]
         },
         {
+          "name": "Copy List with Random Pointer",
+          "url": "https://leetcode.com/problems/copy-list-with-random-pointer/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Infosys",
+            "TCS"
+          ]
+        },
+        {
           "name": "Merge k Sorted Lists",
           "url": "https://leetcode.com/problems/merge-k-sorted-lists/",
           "platform": "LeetCode",
@@ -1312,6 +1543,28 @@
             "Uber"
           ],
           "video": "https://www.youtube.com/watch?v=q5a5OiGbT6Q"
+        },
+        {
+          "name": "Reverse Nodes in k-Group",
+          "url": "https://leetcode.com/problems/reverse-nodes-in-k-group/",
+          "platform": "LeetCode",
+          "difficulty": "Hard",
+          "tier": "hard",
+          "companies": [
+            "TCS",
+            "Infosys"
+          ]
+        },
+        {
+          "name": "LRU Cache",
+          "url": "https://leetcode.com/problems/lru-cache/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "hard",
+          "companies": [
+            "TCS",
+            "Infosys"
+          ]
         }
       ]
     },
@@ -1418,6 +1671,16 @@
           ]
         },
         {
+          "name": "Decode String",
+          "url": "https://leetcode.com/problems/decode-string/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Infosys"
+          ]
+        },
+        {
           "name": "Largest Rectangle in Histogram",
           "url": "https://leetcode.com/problems/largest-rectangle-in-histogram/",
           "platform": "LeetCode",
@@ -1427,6 +1690,17 @@
             "Amazon",
             "Google",
             "Microsoft"
+          ]
+        },
+        {
+          "name": "Sliding Window Maximum",
+          "url": "https://leetcode.com/problems/sliding-window-maximum/",
+          "platform": "LeetCode",
+          "difficulty": "Hard",
+          "tier": "hard",
+          "companies": [
+            "TCS",
+            "Infosys"
           ]
         }
       ]
@@ -1495,6 +1769,18 @@
           "video": "https://www.youtube.com/watch?v=OnSn2XEQ4MY"
         },
         {
+          "name": "Symmetric Tree",
+          "url": "https://leetcode.com/problems/symmetric-tree/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "TCS",
+            "Infosys",
+            "Cognizant"
+          ]
+        },
+        {
           "name": "Diameter of Binary Tree",
           "url": "https://leetcode.com/problems/diameter-of-binary-tree/",
           "platform": "LeetCode",
@@ -1516,6 +1802,17 @@
             "Meta"
           ],
           "video": "https://www.youtube.com/watch?v=6ZnyEApgFYg"
+        },
+        {
+          "name": "Balanced Binary Tree",
+          "url": "https://leetcode.com/problems/balanced-binary-tree/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "core",
+          "companies": [
+            "TCS",
+            "Accenture"
+          ]
         },
         {
           "name": "Binary Tree Right Side View",
@@ -1540,6 +1837,38 @@
             "Meta",
             "Microsoft",
             "LinkedIn"
+          ]
+        },
+        {
+          "name": "Binary Tree Zigzag Level Order Traversal",
+          "url": "https://leetcode.com/problems/binary-tree-zigzag-level-order-traversal/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Infosys",
+            "Wipro"
+          ]
+        },
+        {
+          "name": "Construct Binary Tree from Preorder and Inorder Traversal",
+          "url": "https://leetcode.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Infosys",
+            "Wipro"
+          ]
+        },
+        {
+          "name": "Flatten Binary Tree to Linked List",
+          "url": "https://leetcode.com/problems/flatten-binary-tree-to-linked-list/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "TCS"
           ]
         },
         {
@@ -1673,6 +2002,27 @@
             "Amazon",
             "Google"
           ]
+        },
+        {
+          "name": "Delete Node in a BST",
+          "url": "https://leetcode.com/problems/delete-node-in-a-bst/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Cognizant"
+          ]
+        },
+        {
+          "name": "Recover Binary Search Tree",
+          "url": "https://leetcode.com/problems/recover-binary-search-tree/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "hard",
+          "companies": [
+            "TCS",
+            "Infosys"
+          ]
         }
       ]
     },
@@ -1791,6 +2141,17 @@
             "Google",
             "Microsoft"
           ]
+        },
+        {
+          "name": "Sliding Window Median",
+          "url": "https://leetcode.com/problems/sliding-window-median/",
+          "platform": "LeetCode",
+          "difficulty": "Hard",
+          "tier": "hard",
+          "companies": [
+            "TCS",
+            "Infosys"
+          ]
         }
       ]
     },
@@ -1862,6 +2223,17 @@
           "video": "https://www.youtube.com/watch?v=KLlXCFG5TnA"
         },
         {
+          "name": "Intersection of Two Arrays II",
+          "url": "https://leetcode.com/problems/intersection-of-two-arrays-ii/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "warmup",
+          "companies": [
+            "Accenture",
+            "Cognizant"
+          ]
+        },
+        {
           "name": "Group Anagrams",
           "url": "https://leetcode.com/problems/group-anagrams/",
           "platform": "LeetCode",
@@ -1894,6 +2266,16 @@
             "Amazon",
             "Google",
             "Meta"
+          ]
+        },
+        {
+          "name": "4Sum",
+          "url": "https://leetcode.com/problems/4sum/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Infosys"
           ]
         }
       ]
@@ -1996,6 +2378,16 @@
             "Amazon",
             "Google",
             "Adobe"
+          ]
+        },
+        {
+          "name": "Minimum Number of Arrows to Burst Balloons",
+          "url": "https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Accenture"
           ]
         },
         {
@@ -2134,6 +2526,16 @@
           ]
         },
         {
+          "name": "Course Schedule II",
+          "url": "https://leetcode.com/problems/course-schedule-ii/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Infosys"
+          ]
+        },
+        {
           "name": "Word Ladder",
           "url": "https://leetcode.com/problems/word-ladder/",
           "platform": "LeetCode",
@@ -2143,6 +2545,17 @@
             "Amazon",
             "Google",
             "Microsoft"
+          ]
+        },
+        {
+          "name": "Cheapest Flights Within K Stops",
+          "url": "https://leetcode.com/problems/cheapest-flights-within-k-stops/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "hard",
+          "companies": [
+            "TCS",
+            "Infosys"
           ]
         }
       ]
@@ -2285,6 +2698,37 @@
           ]
         },
         {
+          "name": "Partition Equal Subset Sum",
+          "url": "https://leetcode.com/problems/partition-equal-subset-sum/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Infosys"
+          ]
+        },
+        {
+          "name": "Decode Ways",
+          "url": "https://leetcode.com/problems/decode-ways/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Infosys",
+            "Wipro"
+          ]
+        },
+        {
+          "name": "Target Sum",
+          "url": "https://leetcode.com/problems/target-sum/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Cognizant"
+          ]
+        },
+        {
           "name": "Best Time to Buy and Sell Stock III",
           "url": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/",
           "platform": "LeetCode",
@@ -2304,6 +2748,17 @@
           "companies": [
             "Amazon",
             "Google"
+          ]
+        },
+        {
+          "name": "Longest Increasing Path in a Matrix",
+          "url": "https://leetcode.com/problems/longest-increasing-path-in-a-matrix/",
+          "platform": "LeetCode",
+          "difficulty": "Hard",
+          "tier": "hard",
+          "companies": [
+            "TCS",
+            "Infosys"
           ]
         }
       ]
@@ -2375,6 +2830,17 @@
           ]
         },
         {
+          "name": "Maximum XOR of Two Numbers in an Array",
+          "url": "https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "interview",
+          "companies": [
+            "Amazon",
+            "Google"
+          ]
+        },
+        {
           "name": "Word Search II",
           "url": "https://leetcode.com/problems/word-search-ii/",
           "platform": "LeetCode",
@@ -2385,17 +2851,6 @@
             "Google",
             "Microsoft",
             "Uber"
-          ]
-        },
-        {
-          "name": "Maximum XOR of Two Numbers in an Array",
-          "url": "https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array/",
-          "platform": "LeetCode",
-          "difficulty": "Medium",
-          "tier": "interview",
-          "companies": [
-            "Amazon",
-            "Google"
           ]
         }
       ]
@@ -2480,6 +2935,17 @@
           ]
         },
         {
+          "name": "Reverse Bits",
+          "url": "https://leetcode.com/problems/reverse-bits/",
+          "platform": "LeetCode",
+          "difficulty": "Easy",
+          "tier": "core",
+          "companies": [
+            "TCS",
+            "Wipro"
+          ]
+        },
+        {
           "name": "Sum of Two Integers",
           "url": "https://leetcode.com/problems/sum-of-two-integers/",
           "platform": "LeetCode",
@@ -2499,6 +2965,17 @@
           "companies": [
             "Amazon",
             "Google"
+          ]
+        },
+        {
+          "name": "Divide Two Integers",
+          "url": "https://leetcode.com/problems/divide-two-integers/",
+          "platform": "LeetCode",
+          "difficulty": "Medium",
+          "tier": "hard",
+          "companies": [
+            "TCS",
+            "Infosys"
           ]
         }
       ]
@@ -2847,8 +3324,10 @@
     }
   },
   "companies": [
+    "Accenture",
     "Adobe",
     "Amazon",
+    "Cognizant",
     "Flipkart",
     "Google",
     "Infosys",
@@ -2861,7 +3340,7 @@
   ],
   "meta": {
     "topicCount": 19,
-    "problemCount": 139,
+    "problemCount": 183,
     "languages": [
       "c",
       "cpp",

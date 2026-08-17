@@ -120,6 +120,16 @@
       ]
     },
     {
+      "name": "Course Schedule II",
+      "url": "https://leetcode.com/problems/course-schedule-ii/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Infosys"
+      ]
+    },
+    {
       "name": "Word Ladder",
       "url": "https://leetcode.com/problems/word-ladder/",
       "platform": "LeetCode",
@@ -129,6 +139,17 @@
         "Amazon",
         "Google",
         "Microsoft"
+      ]
+    },
+    {
+      "name": "Cheapest Flights Within K Stops",
+      "url": "https://leetcode.com/problems/cheapest-flights-within-k-stops/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "hard",
+      "companies": [
+        "TCS",
+        "Infosys"
       ]
     }
   ]

@@ -99,6 +99,16 @@
       ]
     },
     {
+      "name": "Minimum Number of Arrows to Burst Balloons",
+      "url": "https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Accenture"
+      ]
+    },
+    {
       "name": "Candy",
       "url": "https://leetcode.com/problems/candy/",
       "platform": "LeetCode",

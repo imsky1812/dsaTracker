@@ -101,6 +101,27 @@
         "Amazon",
         "Google"
       ]
+    },
+    {
+      "name": "Delete Node in a BST",
+      "url": "https://leetcode.com/problems/delete-node-in-a-bst/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Cognizant"
+      ]
+    },
+    {
+      "name": "Recover Binary Search Tree",
+      "url": "https://leetcode.com/problems/recover-binary-search-tree/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "hard",
+      "companies": [
+        "TCS",
+        "Infosys"
+      ]
     }
   ]
 }

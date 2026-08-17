@@ -78,6 +78,17 @@
       ]
     },
     {
+      "name": "Reverse Bits",
+      "url": "https://leetcode.com/problems/reverse-bits/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "core",
+      "companies": [
+        "TCS",
+        "Wipro"
+      ]
+    },
+    {
       "name": "Sum of Two Integers",
       "url": "https://leetcode.com/problems/sum-of-two-integers/",
       "platform": "LeetCode",
@@ -97,6 +108,17 @@
       "companies": [
         "Amazon",
         "Google"
+      ]
+    },
+    {
+      "name": "Divide Two Integers",
+      "url": "https://leetcode.com/problems/divide-two-integers/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "hard",
+      "companies": [
+        "TCS",
+        "Infosys"
       ]
     }
   ]

@@ -39,18 +39,6 @@
   ],
   "problems": [
     {
-      "name": "Pattern Printing (collection)",
-      "url": "https://www.geeksforgeeks.org/problems/print-the-pattern-1587115620/1",
-      "platform": "GFG",
-      "difficulty": "Easy",
-      "tier": "warmup",
-      "companies": [
-        "TCS",
-        "Infosys",
-        "Wipro"
-      ]
-    },
-    {
       "name": "FizzBuzz",
       "url": "https://leetcode.com/problems/fizz-buzz/",
       "platform": "LeetCode",
@@ -65,6 +53,30 @@
       "difficulty": "Easy",
       "tier": "warmup",
       "companies": []
+    },
+    {
+      "name": "Power of Two",
+      "url": "https://leetcode.com/problems/power-of-two/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [
+        "TCS",
+        "Infosys",
+        "Cognizant"
+      ]
+    },
+    {
+      "name": "Happy Number",
+      "url": "https://leetcode.com/problems/happy-number/",
+      "platform": "LeetCode",
+      "difficulty": "Easy",
+      "tier": "warmup",
+      "companies": [
+        "TCS",
+        "Wipro",
+        "Accenture"
+      ]
     },
     {
       "name": "Count Primes",

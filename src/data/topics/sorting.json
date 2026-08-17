@@ -81,6 +81,26 @@
       ]
     },
     {
+      "name": "Largest Number",
+      "url": "https://leetcode.com/problems/largest-number/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "TCS"
+      ]
+    },
+    {
+      "name": "Insert Interval",
+      "url": "https://leetcode.com/problems/insert-interval/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Accenture"
+      ]
+    },
+    {
       "name": "Count of Smaller Numbers After Self",
       "url": "https://leetcode.com/problems/count-of-smaller-numbers-after-self/",
       "platform": "LeetCode",
@@ -92,14 +112,25 @@
       ]
     },
     {
-      "name": "Count Inversions",
-      "url": "https://www.geeksforgeeks.org/problems/inversion-of-array-1587115620/1",
-      "platform": "GFG",
+      "name": "Sort List",
+      "url": "https://leetcode.com/problems/sort-list/",
+      "platform": "LeetCode",
       "difficulty": "Medium",
-      "tier": "interview",
+      "tier": "hard",
       "companies": [
-        "Amazon",
-        "Flipkart"
+        "TCS",
+        "Infosys"
+      ]
+    },
+    {
+      "name": "Reverse Pairs",
+      "url": "https://leetcode.com/problems/reverse-pairs/",
+      "platform": "LeetCode",
+      "difficulty": "Hard",
+      "tier": "hard",
+      "companies": [
+        "TCS",
+        "Infosys"
       ]
     }
   ]

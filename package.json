@@ -20,7 +20,9 @@
     "qr": "node scripts/make-qr.mjs",
     "snippets": "node scripts/merge-snippets.mjs",
     "check:snippets": "node scripts/check-snippets.mjs",
-    "videos": "node scripts/curate-videos.mjs"
+    "videos": "node scripts/curate-videos.mjs",
+    "verify:problems": "node scripts/verify-problems.mjs",
+    "problems": "node scripts/add-problems.mjs"
   },
   "dependencies": {
     "@expo-google-fonts/archivo": "^0.2.3",

@@ -113,6 +113,17 @@
         "Google",
         "Microsoft"
       ]
+    },
+    {
+      "name": "Sliding Window Median",
+      "url": "https://leetcode.com/problems/sliding-window-median/",
+      "platform": "LeetCode",
+      "difficulty": "Hard",
+      "tier": "hard",
+      "companies": [
+        "TCS",
+        "Infosys"
+      ]
     }
   ]
 }

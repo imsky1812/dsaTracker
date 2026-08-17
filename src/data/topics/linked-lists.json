@@ -114,6 +114,17 @@
       ]
     },
     {
+      "name": "Copy List with Random Pointer",
+      "url": "https://leetcode.com/problems/copy-list-with-random-pointer/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Infosys",
+        "TCS"
+      ]
+    },
+    {
       "name": "Merge k Sorted Lists",
       "url": "https://leetcode.com/problems/merge-k-sorted-lists/",
       "platform": "LeetCode",
@@ -126,6 +137,28 @@
         "Uber"
       ],
       "video": "https://www.youtube.com/watch?v=q5a5OiGbT6Q"
+    },
+    {
+      "name": "Reverse Nodes in k-Group",
+      "url": "https://leetcode.com/problems/reverse-nodes-in-k-group/",
+      "platform": "LeetCode",
+      "difficulty": "Hard",
+      "tier": "hard",
+      "companies": [
+        "TCS",
+        "Infosys"
+      ]
+    },
+    {
+      "name": "LRU Cache",
+      "url": "https://leetcode.com/problems/lru-cache/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "hard",
+      "companies": [
+        "TCS",
+        "Infosys"
+      ]
     }
   ]
 }

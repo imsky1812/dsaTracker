@@ -101,6 +101,16 @@
       ]
     },
     {
+      "name": "Decode String",
+      "url": "https://leetcode.com/problems/decode-string/",
+      "platform": "LeetCode",
+      "difficulty": "Medium",
+      "tier": "interview",
+      "companies": [
+        "Infosys"
+      ]
+    },
+    {
       "name": "Largest Rectangle in Histogram",
       "url": "https://leetcode.com/problems/largest-rectangle-in-histogram/",
       "platform": "LeetCode",
@@ -110,6 +120,17 @@
         "Amazon",
         "Google",
         "Microsoft"
+      ]
+    },
+    {
+      "name": "Sliding Window Maximum",
+      "url": "https://leetcode.com/problems/sliding-window-maximum/",
+      "platform": "LeetCode",
+      "difficulty": "Hard",
+      "tier": "hard",
+      "companies": [
+        "TCS",
+        "Infosys"
       ]
     }
   ]
