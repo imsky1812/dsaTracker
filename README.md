@@ -1,15 +1,23 @@
 # DSA Mastery
 
-An offline-first DSA learning and tracking app for Android and iOS. Not just a
-tracker — it ships an authored roadmap, full-depth topic modules, primers for five languages,
-and 183 company-tagged interview problems, with the progress system built around
-them.
+An offline-first DSA learning and tracking app. Not just a tracker — it ships an
+authored roadmap, full-depth topic modules, primers for five languages, and 183
+company-tagged interview problems, with the progress system built around them.
 
-Built with Expo + React Native + TypeScript, backed by Supabase.
+Built with Expo + React Native + TypeScript, backed by Supabase. One codebase
+runs as an Android app and as a web app.
+
+## ▶ Open it now
+
+### **[dsamastery.expo.app](https://dsamastery.expo.app/)**
+
+Runs in any browser on Windows, macOS or Linux — nothing to install, no account
+required. Same app, same content, same offline-first progress (stored in your
+browser until you sign in).
 
 ---
 
-## 📱 Download
+## 📱 Install on Android
 
 <table>
 <tr>
@@ -39,8 +47,11 @@ new version installs straight over the old one — no uninstall needed.
 > forever; the install page is the durable reference. To cut a fresh APK, see
 > [Building an APK](#building-an-apk).
 
-iOS builds need an Apple Developer account ($99/yr). The codebase is
-cross-platform and ready for it.
+**On iPhone or a Mac?** Use the [web app](https://dsamastery.expo.app/) — it
+needs no Apple account. A standalone iOS build would require the Apple Developer
+Program ($99/yr): a device build needs a distribution certificate from App Store
+Connect, which free Apple IDs cannot issue, and free "personal team" signing only
+works locally through Xcode and expires after 7 days.
 
 ---
 
@@ -276,6 +287,29 @@ and refuses to leave it in place unless it scans back to exactly that URL. A QR
 in a README is a link people follow without being able to read it, so it should
 never be an image nobody has verified.
 
+### Deploying the web app
+
+```bash
+npx expo export --platform web      # static build into dist/
+npx eas-cli deploy --prod           # publish to dsamastery.expo.app
+```
+
+`app.json` sets `web.output: "single"` — one `index.html` plus a JS bundle, with
+client-side routing. Any host that serves `index.html` for unknown paths works;
+EAS Hosting does by default, which is what makes `/topic/arrays` resolve on a
+cold load rather than 404.
+
+Two things behave differently in a browser, both handled rather than left broken:
+
+- **Confirmation dialogs.** `react-native-web` does not implement `Alert.alert`
+  — it is a silent no-op. "Sign out" and "Reset all progress" both relied on it,
+  so on web the buttons would have appeared to do nothing. `src/lib/dialog.ts`
+  routes to `window.confirm` on web and the native `Alert` elsewhere.
+- **Daily reminders.** Local notifications are native-only, so
+  `src/lib/notifications.ts` short-circuits on web and the Profile screen says
+  so plainly. Its `setNotificationHandler` call is also guarded, because a throw
+  at module scope would take down the whole web bundle, not just the reminder.
+
 Icons and splash are generated too:
 
 ```bash
@@ -369,12 +403,15 @@ polish, and a shipping Android build.
 | M4 Sync | write-through queue, last-write-wins, offline-safe |
 | M5 Progress | per-company breakdown → filtered practice |
 | M6 Polish | reminders, local-timezone streaks, icon/splash, warm light theme |
-| M7 Ship | Android APK via EAS |
+| M7 Ship | Android APK via EAS, web app on EAS Hosting |
 
 ### Known limitations
 
-- **iOS is unbuilt.** The code is cross-platform; it needs an Apple Developer
-  account to produce an installable build.
+- **No standalone iOS app.** Apple requires the $99/yr Developer Program for any
+  installable device build. Use the [web app](https://dsamastery.expo.app/) on
+  iPhone or Mac instead — it needs no Apple account.
+- **Reminders are Android-only.** They are local OS notifications, so the web app
+  cannot schedule them; Profile says so rather than failing quietly.
 - **`SCHEDULE_EXACT_ALARM`** is requested in `app.json`. Google Play restricts
   it and will ask for justification; the daily reminder doesn't need exact
   timing, so drop it before any Play submission. Harmless for a sideloaded APK.

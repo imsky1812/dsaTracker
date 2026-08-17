@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable, Linking, TextInput, Modal, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Linking, TextInput, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
 import { Palette, spacing, radius, type, tabInset, difficultyColor } from '../../src/theme/tokens';
@@ -8,6 +8,7 @@ import { Card, Pill, PrimaryButton } from '../../src/components/ui';
 import { Feather } from '@expo/vector-icons';
 import { plan, allProblems, ProblemStatus, problemVideoUrl } from '../../src/lib/content';
 import { useProgress } from '../../src/store/progress';
+import { notify } from '../../src/lib/dialog';
 
 type StatusFilter = 'all' | ProblemStatus;
 type DiffFilter = 'all' | 'Easy' | 'Medium' | 'Hard';
@@ -54,7 +55,7 @@ export default function Practice() {
     try {
       await Linking.openURL(url);
     } catch {
-      Alert.alert('Couldn’t open the link', `${name}\n\n${url}`);
+      notify('Couldn’t open the link', `${name}\n\n${url}`);
     }
   };
 

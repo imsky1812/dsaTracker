@@ -15,14 +15,25 @@ import { effectiveStreak } from './dates';
 
 const CHANNEL_ID = 'daily-practice';
 
+// Local notifications are a native concern. On web this module must still be
+// safe to IMPORT — Profile imports it unconditionally, so a throw at module
+// scope would take down the whole bundle rather than just the reminder.
+const SUPPORTED = Platform.OS === 'ios' || Platform.OS === 'android';
+
 // Show the banner even when the app happens to be open.
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
-  }),
-});
+if (SUPPORTED) {
+  try {
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: false,
+        shouldSetBadge: false,
+      }),
+    });
+  } catch {
+    // A missing native module is not worth crashing over.
+  }
+}
 
 /** "HH:MM" (24h) -> {hour, minute}, or null if malformed. */
 export function parseReminderTime(value: string | null): { hour: number; minute: number } | null {
@@ -47,6 +58,7 @@ async function ensureAndroidChannel() {
 
 /** Ask for permission. Returns whether we ended up with it. */
 export async function requestPermission(): Promise<boolean> {
+  if (!SUPPORTED) return false;
   try {
     const current = await Notifications.getPermissionsAsync();
     if (current.granted) return true;
@@ -68,6 +80,8 @@ export async function scheduleDailyReminder(
   time: string | null,
   opts: { streak?: number; lastActiveDate?: string | null } = {}
 ): Promise<'scheduled' | 'cleared' | 'invalid' | 'denied' | 'unavailable'> {
+  // Say so plainly rather than reporting a failure the user cannot act on.
+  if (!SUPPORTED) return 'unavailable';
   try {
     // Always clear first: rescheduling without this stacks duplicate reminders.
     await Notifications.cancelAllScheduledNotificationsAsync();
@@ -108,6 +122,7 @@ export async function scheduleDailyReminder(
 
 /** Count of reminders the OS currently holds — used to confirm state in the UI. */
 export async function scheduledCount(): Promise<number> {
+  if (!SUPPORTED) return 0;
   try {
     return (await Notifications.getAllScheduledNotificationsAsync()).length;
   } catch {

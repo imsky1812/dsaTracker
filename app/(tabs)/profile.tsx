@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable, TextInput, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, TextInput, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Palette, spacing, radius, type, tabInset } from '../../src/theme/tokens';
 import { useColors, useThemedStyles } from '../../src/theme/theme';
@@ -12,6 +12,7 @@ import { useSession } from '../../src/store/session';
 import { signOut } from '../../src/lib/auth';
 import { syncNow } from '../../src/lib/syncManager';
 import { scheduleDailyReminder, parseReminderTime } from '../../src/lib/notifications';
+import { confirm } from '../../src/lib/dialog';
 
 export default function Profile() {
   const c = useColors();
@@ -65,23 +66,28 @@ export default function Profile() {
         : result === 'cleared' ? 'Daily reminder turned off.'
         : result === 'denied' ? 'Notifications are blocked. Enable them for DSA Mastery in system settings.'
         : result === 'invalid' ? 'Use 24-hour HH:MM, e.g. 20:00.'
-        : 'Reminders aren’t available here — they work in a real build.'
+        : 'Reminders need the installed app — they aren’t available in a browser.'
     );
   };
 
-  const confirmSignOut = () => {
-    Alert.alert('Sign out?', 'Your progress stays synced to your account. This device keeps its local copy.', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Sign out', style: 'destructive', onPress: () => void signOut() },
-    ]);
+  const confirmSignOut = async () => {
+    const ok = await confirm({
+      title: 'Sign out?',
+      message: 'Your progress stays synced to your account. This device keeps its local copy.',
+      confirmLabel: 'Sign out',
+      destructive: true,
+    });
+    if (ok) await signOut();
   };
 
-  const confirmReset = () => {
-    Alert.alert(
-      'Reset all progress?',
-      'This clears every solved mark, note, and streak. Content stays. This cannot be undone.',
-      [{ text: 'Cancel', style: 'cancel' }, { text: 'Reset', style: 'destructive', onPress: resetProgress }]
-    );
+  const confirmReset = async () => {
+    const ok = await confirm({
+      title: 'Reset all progress?',
+      message: 'This clears every solved mark, note, and streak. Content stays. This cannot be undone.',
+      confirmLabel: 'Reset',
+      destructive: true,
+    });
+    if (ok) resetProgress();
   };
 
   const initial = (session?.user.email ?? '?').charAt(0).toUpperCase();
@@ -128,7 +134,7 @@ export default function Profile() {
 
               <View style={s.btnRow}>
                 <GhostButton label="Sync now" onPress={() => void syncNow()} style={{ flex: 1 }} />
-                <GhostButton label="Sign out" onPress={confirmSignOut} style={{ flex: 1 }} />
+                <GhostButton label="Sign out" onPress={() => void confirmSignOut()} style={{ flex: 1 }} />
               </View>
             </>
           )}
@@ -255,7 +261,7 @@ export default function Profile() {
           </Card>
         )}
 
-        <GhostButton label="Reset all progress" tone="accent" onPress={confirmReset} />
+        <GhostButton label="Reset all progress" tone="accent" onPress={() => void confirmReset()} />
 
         {/* Footer wordmark. The rule + generous space above it signal the end
             of the screen rather than a row that got cut off. */}

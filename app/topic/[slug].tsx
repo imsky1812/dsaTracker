@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable, Linking, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, router } from 'expo-router';
 import { Palette, spacing, radius, type, tierColor, difficultyColor } from '../../src/theme/tokens';
@@ -8,6 +8,7 @@ import { Card, Pill, Markdown, CodeBlock, Bar, PrimaryButton } from '../../src/c
 import { Feather } from '@expo/vector-icons';
 import { plan, problemId, problemVideoUrl, codeFor, langName, Topic } from '../../src/lib/content';
 import { useProgress } from '../../src/store/progress';
+import { notify } from '../../src/lib/dialog';
 
 type Tab = 'learn' | 'patterns' | 'complexity' | 'code' | 'problems';
 
@@ -54,7 +55,7 @@ export default function TopicDetail() {
     try {
       await Linking.openURL(url);
     } catch {
-      Alert.alert('Couldn’t open the link', `${name}\n\n${url}`);
+      notify('Couldn’t open the link', `${name}\n\n${url}`);
     }
   };
 

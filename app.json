@@ -31,7 +31,14 @@
       ]
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro",
+      "output": "single",
+      "name": "DSA Mastery",
+      "shortName": "DSA Mastery",
+      "themeColor": "#D2593C",
+      "backgroundColor": "#F6F3ED",
+      "description": "Learn and track DSA \u2014 roadmap, 183 company-tagged problems, five languages."
     },
     "plugins": [
       "expo-router",
