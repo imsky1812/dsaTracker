@@ -31,8 +31,14 @@ if (!url) {
   }
 }
 
-if (!/^https:\/\/expo\.dev\/.+/.test(url)) {
-  console.error(`Refusing to encode a non-Expo URL: ${url}`);
+// Only the two places the APK is actually published: an EAS build page, or
+// this repo's GitHub releases (which, unlike EAS artifacts, never expire).
+const allowed = [
+  /^https:\/\/expo\.dev\/.+/,
+  /^https:\/\/github\.com\/imsky1812\/dsaTracker\/releases\/.+/,
+];
+if (!allowed.some((re) => re.test(url))) {
+  console.error(`Refusing to encode a URL outside Expo or this repo's releases: ${url}`);
   process.exit(1);
 }
 
