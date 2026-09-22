@@ -27,9 +27,9 @@ browser until you sign in).
 </td>
 <td>
 
-**[⬇ Download the APK directly](https://expo.dev/artifacts/eas/B1NFZaG1Kx_QuyB6FFHwYaOoC-yu6F3BMxs5VqsdgyM.apk)**
+**[⬇ Download the APK directly](https://expo.dev/artifacts/eas/O0-8HaU_YUA10MiPuu3IH907Pv5gnRqQKw3JjlfPReQ.apk)**
 
-or open the **[install page](https://expo.dev/accounts/imsky1812/projects/dsa-mastery/builds/959beecc-bffb-4b69-82dc-97d069f6cb42)**
+or open the **[install page](https://expo.dev/accounts/imsky1812/projects/dsa-mastery/builds/892f61d4-de25-4bfb-b273-a21915a0d3ac)**
 on your phone.
 
 1. Tap the APK to download it.
