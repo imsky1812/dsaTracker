@@ -5,9 +5,11 @@ import { router } from 'expo-router';
 import { Palette, spacing, radius, type, tabInset, difficultyColor } from '../../src/theme/tokens';
 import { useColors, useThemedStyles } from '../../src/theme/theme';
 import { Card, Eyebrow, Pill, Bar, CircleButton } from '../../src/components/ui';
-import { plan, allProblems } from '../../src/lib/content';
+import { plan, allProblems, langName } from '../../src/lib/content';
 import { useProgress } from '../../src/store/progress';
 import { effectiveStreak } from '../../src/lib/dates';
+import { phaseProgress } from '../../src/lib/journey';
+import { useShallow } from 'zustand/react/shallow';
 
 /**
  * The line at the bottom of Today.
@@ -30,7 +32,16 @@ function todayLine(solved: number, total: number, streak: number): string {
 export default function Today() {
   const c = useColors();
   const s = useThemedStyles(makeStyles);
-  const { problemStatus, currentStreak, topicDone, language, lastActiveDate } = useProgress();
+  // useShallow: re-render when these change, not on every sync-queue tick.
+  const { problemStatus, currentStreak, topicDone, language, lastActiveDate } = useProgress(
+    useShallow((st) => ({
+      problemStatus: st.problemStatus,
+      currentStreak: st.currentStreak,
+      topicDone: st.topicDone,
+      language: st.language,
+      lastActiveDate: st.lastActiveDate,
+    }))
+  );
   const streak = effectiveStreak(currentStreak, lastActiveDate);
 
   const problems = allProblems();
@@ -39,11 +50,11 @@ export default function Today() {
   const pct = total ? (solved / total) * 100 : 0;
 
   const doneTopics = Object.values(topicDone).filter(Boolean).length;
-  const phaseIdx = Math.min(
-    Math.floor((doneTopics / plan.topics.length) * plan.roadmap.phases.length),
-    plan.roadmap.phases.length - 1
-  );
-  const phase = plan.roadmap.phases[phaseIdx];
+  // Same computation as Learn's roadmap, so both screens name the same phase.
+  const { phases, currentIdx } = phaseProgress(problemStatus, topicDone);
+  const allDone = currentIdx === -1;
+  const phase = phases[allDone ? phases.length - 1 : currentIdx];
+  const phasesLeft = phases.filter((p) => !p.done).length;
 
   const nextProblem = problems.find((p) => (problemStatus[p.id] ?? 'unsolved') !== 'solved');
 
@@ -52,7 +63,7 @@ export default function Today() {
       <ScrollView contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
         <View style={s.header}>
           <View style={{ flex: 1 }}>
-            <Text style={s.kicker}>{language.toUpperCase()} · your path</Text>
+            <Text style={s.kicker}>{langName(language)} · your path</Text>
             <Text style={s.h1}>Today</Text>
           </View>
           <View style={s.streakChip}>
@@ -77,9 +88,15 @@ export default function Today() {
 
         {/* Current phase */}
         <Card style={{ marginBottom: spacing.lg }}>
-          <Eyebrow>Current phase</Eyebrow>
+          {/* Phase titles carry their own "Phase 0 —" numbering, so the eyebrow
+              must not repeat a (differently based) number next to it. */}
+          <Eyebrow>{allDone ? 'Roadmap complete' : 'Current phase'}</Eyebrow>
           <Text style={s.phaseTitle}>{phase.title}</Text>
           <Text style={s.phaseWeeks}>{phase.est_weeks}</Text>
+          <View style={s.phaseBar}>
+            <Bar pct={phase.pct} height={6} color={phase.done ? c.mint : c.accent} />
+            <Text style={s.phasePct}>{phase.pct}%</Text>
+          </View>
           <Text style={s.body}>{phase.summary}</Text>
           <Pressable style={s.rowLink} onPress={() => router.push('/(tabs)/learn')}>
             <Text style={s.rowLinkText}>Open the roadmap</Text>
@@ -99,12 +116,15 @@ export default function Today() {
                 color={difficultyColor(c, nextProblem.difficulty)}
                 small
               />
-              <Pill label={nextProblem.platform} small />
-              <Text style={s.focusTopic}>{nextProblem.topicSlug.replace(/-/g, ' ')}</Text>
+              <Text style={s.focusTopic}>
+                {plan.topics.find((t) => t.slug === nextProblem.topicSlug)?.title ?? nextProblem.topicSlug}
+              </Text>
             </View>
-            <Pressable style={s.rowLink} onPress={() => router.push('/(tabs)/practice')}>
-              <Text style={s.rowLinkText}>Go to practice</Text>
-              <CircleButton glyph="→" size="sm" onPress={() => router.push('/(tabs)/practice')} />
+            {/* The topic page has the explainer and this problem side by side —
+                a better landing than the full 183-row list. */}
+            <Pressable style={s.rowLink} onPress={() => router.push(`/topic/${nextProblem.topicSlug}`)}>
+              <Text style={s.rowLinkText}>Open this topic</Text>
+              <CircleButton glyph="→" size="sm" onPress={() => router.push(`/topic/${nextProblem.topicSlug}`)} />
             </Pressable>
           </Card>
         )}
@@ -115,7 +135,7 @@ export default function Today() {
             <Text style={s.statLabel}>of {plan.topics.length}{'\n'}topics</Text>
           </Card>
           <Card style={s.statCard}>
-            <Text style={s.statNum}>{plan.roadmap.phases.length - phaseIdx - 1}</Text>
+            <Text style={s.statNum}>{phasesLeft}</Text>
             <Text style={s.statLabel}>phases{'\n'}to go</Text>
           </Card>
         </View>
@@ -154,6 +174,8 @@ const makeStyles = (c: Palette) => StyleSheet.create({
 
   phaseTitle: { fontFamily: type.display, fontSize: 23, color: c.text, marginTop: 2, letterSpacing: -0.4 },
   phaseWeeks: { fontFamily: type.mono, fontSize: 12, color: c.accent, marginTop: 4, marginBottom: spacing.md },
+  phaseBar: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginBottom: spacing.md },
+  phasePct: { fontFamily: type.mono, fontSize: 11, color: c.textMuted, width: 38, textAlign: 'right' },
   body: { fontFamily: type.body, fontSize: 14.5, color: c.textMuted, lineHeight: 23 },
 
   rowLink: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: spacing.lg },
@@ -161,7 +183,7 @@ const makeStyles = (c: Palette) => StyleSheet.create({
 
   focusName: { fontFamily: type.display, fontSize: 22, color: c.text, marginTop: 2, marginBottom: spacing.md, letterSpacing: -0.4 },
   focusMeta: { flexDirection: 'row', alignItems: 'center', gap: 8, flexWrap: 'wrap' },
-  focusTopic: { fontFamily: type.mono, fontSize: 11, color: c.textFaint, textTransform: 'capitalize' },
+  focusTopic: { fontFamily: type.mono, fontSize: 11, color: c.textFaint },
 
   statsRow: { flexDirection: 'row', gap: spacing.md, marginBottom: spacing.xl },
   statCard: { flex: 1, alignItems: 'center', paddingVertical: spacing.xl },

@@ -74,14 +74,18 @@ milestone left.
   progress offline without a lookup round-trip. `scripts/build-content.mjs`
   emits `problems.key` to match; if you change one, change both.
 
-## Design system (dark "paper")
+## Design system (warm sand / warm charcoal)
 
-Layered charcoal surfaces (`#0E0E10` bg → `#161618` card → `#1E1E22` raised),
-soft ambient shadows, a single red accent (`#E5393B` family) used sparingly.
+Two palettes with identical keys in `src/theme/tokens.ts` — `lightPalette`
+(sand `#F6F3ED` ground, white cards, terracotta `#D2593C` accent) and
+`darkPalette` (warm charcoal `#141210`, lifted accent `#E57A57` with dark ink
+on it). `useColors()` picks one from the phone's colour scheme; screens build
+StyleSheets inside components via `useThemedStyles`, never at module scope.
+Cards carry a `cardBorder` hairline because shadows vanish on dark.
 Type: Archivo (display/heading/body) + JetBrains Mono (code/labels). Signature
-element is the GitHub-style contribution heatmap. Full tokens in
-`src/theme/tokens.ts`. Reference `/mnt/skills/public/frontend-design` principles
-if reworking UI: spend boldness in one place, keep everything else quiet.
+element is the GitHub-style contribution heatmap. Filters with many options use
+`src/components/TilePicker.tsx` (bottom sheet of tiles) rather than chip strips.
+Roadmap position ("current phase") comes from `src/lib/journey.ts` only.
 
 ## Content pipeline
 

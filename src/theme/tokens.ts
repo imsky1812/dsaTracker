@@ -1,13 +1,13 @@
-// Design system — one light palette, one shape language.
+// Design system — two palettes with identical keys, one shape language.
 //
-// Light only, by decision: a single palette means every surface, shadow and
-// contrast pair is tuned once and actually checked, rather than two half-tuned
-// sets. Colour is still read through `useColors()` in theme.ts, so a second
-// palette can be reintroduced later without touching a single screen.
+// The app follows the phone's light/dark setting. Colour is read through
+// `useColors()` in theme.ts, never imported directly by a screen, so both
+// palettes stay drop-in replacements for each other.
 //
-// Direction: warm and soft rather than clinical. The ground is a warm sand,
-// cards are near-white and float on generous radii, and a single terracotta
-// carries every primary action. Supporting colours are muted, never saturated.
+// Direction: warm and soft rather than clinical. Light is warm sand with
+// near-white cards; dark is warm charcoal (brown-black, not blue-black) so the
+// terracotta accent belongs to both. Supporting colours are muted, never
+// saturated.
 
 export interface Palette {
   // grounds, low → high elevation
@@ -51,11 +51,17 @@ export interface Palette {
   heat3: string;
   heat4: string;
 
+  /** Hairline around cards. Transparent in light (shadows carry depth); in
+   *  dark a shadow is invisible, so the edge has to do that job. */
+  cardBorder: string;
+  /** Dimmed backdrop behind bottom sheets and modals. */
+  scrim: string;
+
   shadowColor: string;
   shadowOpacity: number;
 }
 
-export const palette: Palette = {
+export const lightPalette: Palette = {
   // Warm sand, not white — paper you'd want to work on for hours.
   bg: '#F6F3ED',
   surface: '#FFFFFF',
@@ -98,8 +104,60 @@ export const palette: Palette = {
   heat3: '#DF8163',
   heat4: '#D2593C',
 
+  cardBorder: 'transparent',
+  scrim: 'rgba(42,36,32,0.45)',
+
   shadowColor: '#4A3B2E',
   shadowOpacity: 0.09,
+};
+
+// Warm charcoal. The accent is lifted a step so it holds contrast on a dark
+// ground, and text on it flips to near-black — white on a mid terracotta is
+// under 3.5:1, dark ink on it is well over 5.
+export const darkPalette: Palette = {
+  bg: '#141210',
+  surface: '#1D1A17',
+  surface2: '#27231F',
+  surface3: '#322D28',
+
+  border: '#36302A',
+  borderSoft: '#26221E',
+
+  accent: '#E57A57',
+  accentDim: '#7E3E2B',
+  accentSoft: 'rgba(229,122,87,0.14)',
+  onAccent: '#1A110C',
+
+  mint: '#62B68F',
+  mintSoft: 'rgba(98,182,143,0.14)',
+  sun: '#E4AE4C',
+  sunSoft: 'rgba(228,174,76,0.14)',
+
+  text: '#F2ECE4',
+  textMuted: '#B3A898',
+  textFaint: '#7D7367',
+
+  easy: '#62B68F',
+  medium: '#E4AE4C',
+  hard: '#E57A57',
+
+  warmup: '#62B68F',
+  core: '#E4AE4C',
+  interview: '#DD9160',
+  hardTier: '#E57A57',
+
+  // Starts just above the card surface so an empty day still reads as a cell.
+  heat0: '#2A2622',
+  heat1: '#4A2C22',
+  heat2: '#7A3D2B',
+  heat3: '#B35638',
+  heat4: '#E57A57',
+
+  cardBorder: '#2B2723',
+  scrim: 'rgba(0,0,0,0.6)',
+
+  shadowColor: '#000000',
+  shadowOpacity: 0.35,
 };
 
 // ---------- shape & rhythm ----------

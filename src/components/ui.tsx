@@ -301,8 +301,10 @@ const makeStyles = (c: Palette) => StyleSheet.create({
     backgroundColor: c.surface,
     borderRadius: radius.xl,
     padding: spacing.xl,
+    borderWidth: 1,
+    borderColor: c.cardBorder,
   },
-  cardFlat: { backgroundColor: c.surface2, borderRadius: radius.lg, padding: spacing.lg },
+  cardFlat: { backgroundColor: c.surface2, borderRadius: radius.lg, padding: spacing.lg, borderColor: 'transparent' },
 
   pill: { borderRadius: radius.pill, paddingVertical: 5, paddingHorizontal: 12, alignSelf: 'flex-start' },
   pillText: { fontFamily: type.mono, fontSize: 11, letterSpacing: 0.4, textTransform: 'uppercase' },

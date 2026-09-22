@@ -22,7 +22,7 @@ const outDir = join(root, 'assets');
 mkdirSync(outDir, { recursive: true });
 
 
-// Single light palette, mirroring `palette` in src/theme/tokens.ts.
+// Mirrors `lightPalette` in src/theme/tokens.ts.
 const LIGHT = {
   bg: [0xf6, 0xf3, 0xed, 255],
   heat: [
@@ -31,6 +31,19 @@ const LIGHT = {
     [0xed, 0xaf, 0x97, 255],
     [0xdf, 0x81, 0x63, 255],
     [0xd2, 0x59, 0x3c, 255], // heat4 — best day
+  ],
+};
+
+// Mirrors `darkPalette` — used only for the dark-mode splash, so a phone in
+// dark mode does not flash sand before the app paints charcoal.
+const DARK = {
+  bg: [0x14, 0x12, 0x10, 255],
+  heat: [
+    [0x2a, 0x26, 0x22, 255],
+    [0x4a, 0x2c, 0x22, 255],
+    [0x7a, 0x3d, 0x2b, 255],
+    [0xb3, 0x56, 0x38, 255],
+    [0xe5, 0x7a, 0x57, 255],
   ],
 };
 
@@ -176,6 +189,7 @@ const outputs = [
   ['adaptive-icon.png', render(1024, { opaqueBg: false, scale: 0.42 })],
   // Splash renders with resizeMode "contain" on the same warm sand.
   ['splash.png', render(1284, { scale: 0.34 })],
+  ['splash-dark.png', render(1284, { scale: 0.34, palette: DARK })],
   ['favicon.png', render(48)],
 ];
 

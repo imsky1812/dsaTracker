@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "dsamastery",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
@@ -17,7 +17,17 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.dsamastery.app"
+      "bundleIdentifier": "com.dsamastery.app",
+      "splash": {
+        "image": "./assets/splash.png",
+        "backgroundColor": "#F6F3ED",
+        "resizeMode": "contain",
+        "dark": {
+          "image": "./assets/splash-dark.png",
+          "backgroundColor": "#141210",
+          "resizeMode": "contain"
+        }
+      }
     },
     "android": {
       "package": "com.dsamastery.app",
@@ -28,7 +38,17 @@
       "permissions": [
         "POST_NOTIFICATIONS",
         "SCHEDULE_EXACT_ALARM"
-      ]
+      ],
+      "splash": {
+        "image": "./assets/splash.png",
+        "backgroundColor": "#F6F3ED",
+        "resizeMode": "contain",
+        "dark": {
+          "image": "./assets/splash-dark.png",
+          "backgroundColor": "#141210",
+          "resizeMode": "contain"
+        }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png",
@@ -38,7 +58,7 @@
       "shortName": "DSA Mastery",
       "themeColor": "#D2593C",
       "backgroundColor": "#F6F3ED",
-      "description": "Learn and track DSA \u2014 roadmap, 183 company-tagged problems, five languages."
+      "description": "Learn and track DSA — roadmap, 183 company-tagged problems, five languages."
     },
     "plugins": [
       "expo-router",

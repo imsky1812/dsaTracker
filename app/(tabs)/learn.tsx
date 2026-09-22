@@ -5,16 +5,22 @@ import { router } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import { Palette, spacing, radius, type, tabInset } from '../../src/theme/tokens';
 import { useColors, useThemedStyles } from '../../src/theme/theme';
-import { Card, Eyebrow, CodeBlock, Bar } from '../../src/components/ui';
-import { plan, problemId } from '../../src/lib/content';
+import { Card, Eyebrow, CodeBlock, Bar, Markdown } from '../../src/components/ui';
+import { plan, problemId, codeFor } from '../../src/lib/content';
 import { useProgress } from '../../src/store/progress';
+import { phaseProgress } from '../../src/lib/journey';
 
 type Segment = 'roadmap' | 'topics' | 'language';
 
 export default function Learn() {
+  const c = useColors();
   const s = useThemedStyles(makeStyles);
   const [seg, setSeg] = useState<Segment>('roadmap');
-  const { topicDone } = useProgress();
+  // Narrow selectors: reading the whole store re-rendered this screen on every
+  // background sync tick, not just on changes it displays.
+  const topicDone = useProgress((st) => st.topicDone);
+  const problemStatus = useProgress((st) => st.problemStatus);
+  const language = useProgress((st) => st.language);
 
   return (
     <SafeAreaView style={s.safe} edges={['top']}>
@@ -36,6 +42,11 @@ export default function Learn() {
         {seg === 'topics' &&
           plan.topics.map((t) => {
             const done = topicDone[t.slug];
+            const solvedHere = t.problems.filter(
+              (p) => problemStatus[problemId(t.slug, p.name)] === 'solved'
+            ).length;
+            // Samples in the chosen language, not every language combined.
+            const samples = codeFor(t, language).blocks.length;
             return (
               <Pressable key={t.slug} onPress={() => router.push(`/topic/${t.slug}`)}>
                 {({ pressed }) => (
@@ -48,10 +59,13 @@ export default function Learn() {
                     <View style={{ flex: 1 }}>
                       <Text style={s.topicTitle}>{t.title}</Text>
                       <Text style={s.topicMeta}>
-                        {t.problems.length} problems · {t.code.length} code samples
+                        {solvedHere}/{t.problems.length} solved · {samples} code sample{samples === 1 ? '' : 's'}
                       </Text>
+                      <View style={{ marginTop: spacing.sm }}>
+                        <Bar pct={t.problems.length ? (solvedHere / t.problems.length) * 100 : 0} height={4} />
+                      </View>
                     </View>
-                    <Text style={s.chevron}>›</Text>
+                    <Feather name="chevron-right" size={20} color={c.textFaint} />
                   </Card>
                 )}
               </Pressable>
@@ -76,27 +90,9 @@ export default function Learn() {
 function Journey() {
   const c = useColors();
   const s = useThemedStyles(makeStyles);
-  const { topicDone, problemStatus } = useProgress();
-
-  const phases = plan.roadmap.phases.map((ph) => {
-    const topics = ph.topics
-      .map((slug) => plan.topics.find((t) => t.slug === slug))
-      .filter((t): t is NonNullable<typeof t> => Boolean(t));
-
-    const problems = topics.flatMap((t) => t.problems.map((p) => problemId(t.slug, p.name)));
-    const solved = problems.filter((id) => problemStatus[id] === 'solved').length;
-    const topicsDone = topics.filter((t) => topicDone[t.slug]).length;
-
-    // Weight both signals: reading the topic and actually solving its problems.
-    const pct = problems.length
-      ? Math.round(((solved / problems.length) * 0.7 + (topicsDone / topics.length) * 0.3) * 100)
-      : 0;
-
-    return { ...ph, topics, solved, problemCount: problems.length, topicsDone, pct, done: pct >= 100 };
-  });
-
-  const currentIdx = phases.findIndex((p) => !p.done);
-  const overall = Math.round(phases.reduce((n, p) => n + p.pct, 0) / phases.length);
+  const topicDone = useProgress((st) => st.topicDone);
+  const problemStatus = useProgress((st) => st.problemStatus);
+  const { phases, currentIdx, overall } = phaseProgress(problemStatus, topicDone);
 
   return (
     <>
@@ -209,7 +205,7 @@ function Journey() {
 function LanguagePrimer() {
   const c = useColors();
   const s = useThemedStyles(makeStyles);
-  const { language } = useProgress();
+  const language = useProgress((st) => st.language);
   const primer = plan.primers[language] ?? plan.primers['cpp'];
   const [open, setOpen] = useState<number | null>(0);
 
@@ -229,13 +225,15 @@ function LanguagePrimer() {
               <View style={s.sectionHead}>
                 <Text style={s.sectionNum}>{String(sec.order).padStart(2, '0')}</Text>
                 <Text style={s.sectionTitle}>{sec.title}</Text>
-                <View style={s.expand}>
-                  <Text style={s.expandGlyph}>{isOpen ? '−' : '+'}</Text>
+                <View style={[s.expand, isOpen && s.expandOpen]}>
+                  <Feather name={isOpen ? 'minus' : 'plus'} size={16} color={isOpen ? c.onAccent : c.textMuted} />
                 </View>
               </View>
               {isOpen && (
                 <View style={{ marginTop: spacing.lg }}>
-                  <Text style={s.body}>{sec.body_md}</Text>
+                  {/* body_md carries **bold** and `code` — rendering it as
+                      plain Text showed the raw asterisks and backticks. */}
+                  <Markdown text={sec.body_md} />
                   <CodeBlock code={sec.code} />
                 </View>
               )}
@@ -253,8 +251,8 @@ const makeStyles = (c: Palette) => StyleSheet.create({
   kicker: { fontFamily: type.mono, fontSize: 11, color: c.textFaint, letterSpacing: 1.5, textTransform: 'uppercase' },
   h1: { fontFamily: type.display, fontSize: 40, color: c.text, letterSpacing: -1.2, marginTop: 2, marginBottom: spacing.lg },
 
-  segRow: { flexDirection: 'row', gap: spacing.sm },
-  seg: { paddingVertical: 9, paddingHorizontal: 18, borderRadius: radius.pill, backgroundColor: c.surface2 },
+  segRow: { flexDirection: 'row', gap: 4, padding: 4, borderRadius: radius.pill, backgroundColor: c.surface2 },
+  seg: { flex: 1, alignItems: 'center', paddingVertical: 10, borderRadius: radius.pill },
   segActive: { backgroundColor: c.accent },
   segText: { fontFamily: type.heading, fontSize: 13, color: c.textMuted, textTransform: 'capitalize' },
   segTextActive: { color: c.onAccent },
@@ -305,7 +303,6 @@ const makeStyles = (c: Palette) => StyleSheet.create({
   topicNumTextDone: { color: c.onAccent, fontSize: 20 },
   topicTitle: { fontFamily: type.heading, fontSize: 17, color: c.text },
   topicMeta: { fontFamily: type.mono, fontSize: 11, color: c.textFaint, marginTop: 4 },
-  chevron: { color: c.textFaint, fontSize: 26 },
 
   primerTagline: { fontFamily: type.display, fontSize: 20, color: c.text, marginBottom: spacing.sm, letterSpacing: -0.3 },
 
@@ -313,5 +310,5 @@ const makeStyles = (c: Palette) => StyleSheet.create({
   sectionNum: { fontFamily: type.mono, fontSize: 12, color: c.accent },
   sectionTitle: { flex: 1, fontFamily: type.heading, fontSize: 15.5, color: c.text },
   expand: { width: 32, height: 32, borderRadius: 16, backgroundColor: c.surface2, alignItems: 'center', justifyContent: 'center' },
-  expandGlyph: { fontFamily: type.heading, fontSize: 17, color: c.textMuted, includeFontPadding: false },
+  expandOpen: { backgroundColor: c.accent },
 });

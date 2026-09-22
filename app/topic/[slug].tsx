@@ -9,6 +9,7 @@ import { Feather } from '@expo/vector-icons';
 import { plan, problemId, problemVideoUrl, codeFor, langName, Topic } from '../../src/lib/content';
 import { useProgress } from '../../src/store/progress';
 import { notify } from '../../src/lib/dialog';
+import { useShallow } from 'zustand/react/shallow';
 
 type Tab = 'learn' | 'patterns' | 'complexity' | 'code' | 'problems';
 
@@ -18,7 +19,15 @@ export default function TopicDetail() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const topic = plan.topics.find((t) => t.slug === slug);
   const [tab, setTab] = useState<Tab>('learn');
-  const { topicDone, toggleTopic, problemStatus, cycleProblemStatus, language } = useProgress();
+  const { topicDone, toggleTopic, problemStatus, cycleProblemStatus, language } = useProgress(
+    useShallow((st) => ({
+      topicDone: st.topicDone,
+      toggleTopic: st.toggleTopic,
+      problemStatus: st.problemStatus,
+      cycleProblemStatus: st.cycleProblemStatus,
+      language: st.language,
+    }))
+  );
 
   // Returning null here used to render a blank white screen with no clue what
   // went wrong. A missing topic is a routing bug, so say so rather than
@@ -49,7 +58,7 @@ export default function TopicDetail() {
   ).length;
 
   const statusColor = (st?: string) => (st === 'solved' ? c.easy : st === 'revisit' ? c.medium : c.textFaint);
-  const statusGlyph = (st?: string) => (st === 'solved' ? '✓' : st === 'revisit' ? '↺' : '');
+  const statusIcon = (st?: string) => (st === 'solved' ? 'check' : st === 'revisit' ? 'rotate-ccw' : null);
 
   const openLink = async (url: string, name: string) => {
     try {
@@ -74,8 +83,9 @@ export default function TopicDetail() {
             onPress={() => toggleTopic(topic.slug)}
             style={[s.doneBtn, done && s.doneBtnActive]}
           >
+            <Feather name={done ? 'check-circle' : 'circle'} size={15} color={done ? c.onAccent : c.textMuted} />
             <Text style={[s.doneText, done && { color: c.onAccent }]}>
-              {done ? '✓ Completed' : 'Mark complete'}
+              {done ? 'Completed' : 'Mark complete'}
             </Text>
           </Pressable>
         </View>
@@ -131,7 +141,7 @@ export default function TopicDetail() {
                             pressed && { transform: [{ scale: 0.92 }] },
                           ]}
                         >
-                          <Text style={[s.statusGlyph, { color: c.onAccent }]}>{statusGlyph(st)}</Text>
+                          {statusIcon(st) && <Feather name={statusIcon(st)!} size={16} color={c.onAccent} />}
                         </Pressable>
 
                         <Pressable style={{ flex: 1 }} onPress={() => void openLink(p.url, p.name)}>
@@ -211,8 +221,7 @@ const makeStyles = (c: Palette) => StyleSheet.create({
 
   navRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.md },
   backBtn: { width: 42, height: 42, borderRadius: 21, backgroundColor: c.surface2, alignItems: 'center', justifyContent: 'center' },
-  backGlyph: { fontSize: 26, color: c.text, includeFontPadding: false, marginTop: -3 },
-  doneBtn: { paddingVertical: 11, paddingHorizontal: 20, borderRadius: radius.pill, backgroundColor: c.surface2 },
+  doneBtn: { flexDirection: 'row', alignItems: 'center', gap: 7, paddingVertical: 11, paddingHorizontal: 20, borderRadius: radius.pill, backgroundColor: c.surface2 },
   doneBtnActive: { backgroundColor: c.easy },
   doneText: { fontFamily: type.heading, fontSize: 13, color: c.textMuted },
 
@@ -235,7 +244,6 @@ const makeStyles = (c: Palette) => StyleSheet.create({
 
   problemRow: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.sm, gap: spacing.lg, paddingVertical: spacing.lg, paddingHorizontal: spacing.lg },
   statusCircle: { width: 34, height: 34, borderRadius: 17, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
-  statusGlyph: { fontSize: 15, fontFamily: type.heading, includeFontPadding: false },
   problemName: { fontFamily: type.heading, fontSize: 15.5, color: c.text, lineHeight: 21 },
   problemCompanies: { fontFamily: type.mono, fontSize: 10, color: c.textFaint, marginTop: 4 },
   problemMeta: { alignItems: 'flex-end', gap: 8 },

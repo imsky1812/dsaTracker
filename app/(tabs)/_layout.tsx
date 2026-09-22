@@ -61,7 +61,10 @@ const makeStyles = (c: Palette) => StyleSheet.create({
     height: 70,
     borderRadius: radius.pill,
     backgroundColor: c.surface,
-    borderTopWidth: 0,
+    // Explicit top width too: react-navigation sets its own hairline there.
+    borderWidth: 1,
+    borderTopWidth: 1,
+    borderColor: c.cardBorder,
     paddingHorizontal: spacing.sm,
     shadowColor: c.shadowColor,
     shadowOffset: { width: 0, height: 10 },

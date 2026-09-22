@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
+import { Feather } from '@expo/vector-icons';
 import { Palette, spacing, radius, type, tabInset } from '../../src/theme/tokens';
 import { useColors, useThemedStyles } from '../../src/theme/theme';
 import { Card, Eyebrow, Bar, PrimaryButton } from '../../src/components/ui';
@@ -11,11 +12,21 @@ import { useProgress } from '../../src/store/progress';
 import { useSession } from '../../src/store/session';
 import { supabaseEnabled } from '../../src/lib/supabase';
 import { effectiveStreak } from '../../src/lib/dates';
+import { useShallow } from 'zustand/react/shallow';
 
 export default function Progress() {
   const c = useColors();
   const s = useThemedStyles(makeStyles);
-  const { problemStatus, activity, currentStreak, longestStreak, topicDone, lastActiveDate } = useProgress();
+  const { problemStatus, activity, currentStreak, longestStreak, topicDone, lastActiveDate } = useProgress(
+    useShallow((st) => ({
+      problemStatus: st.problemStatus,
+      activity: st.activity,
+      currentStreak: st.currentStreak,
+      longestStreak: st.longestStreak,
+      topicDone: st.topicDone,
+      lastActiveDate: st.lastActiveDate,
+    }))
+  );
   const all = useMemo(() => allProblems(), []);
 
   // The stored streak only changes when something is solved, so after idle days
@@ -124,22 +135,45 @@ export default function Progress() {
           {revisit > 0 && <Text style={s.revisit}>↺ {revisit} flagged for revisit</Text>}
         </Card>
 
-        {/* Company — tap through to that company's set in Practice */}
+        {/* Company — a tile per company. The old list squeezed each name into a
+            116px column beside a thin bar, which truncated and was hard to scan
+            or hit. Tiles give the name, the count and the bar room to breathe,
+            and each one opens Practice filtered to that company. */}
         <Card style={{ marginBottom: spacing.lg }}>
           <Eyebrow>By company</Eyebrow>
           <Text style={s.subtle}>Tap a company to practise its tagged set</Text>
-          <View style={{ marginTop: spacing.md }}>
-            {companyStats.map((co) => (
-              <Pressable
-                key={co.name}
-                onPress={() => router.push({ pathname: '/(tabs)/practice', params: { company: co.name } })}
-                style={({ pressed }) => [s.listRow, pressed && { opacity: 0.6 }]}
-              >
-                <Text style={s.listName}>{co.name}</Text>
-                <Bar pct={co.total ? (co.done / co.total) * 100 : 0} height={6} />
-                <Text style={s.listCount}>{co.done}/{co.total}</Text>
-              </Pressable>
-            ))}
+          <View style={s.coGrid}>
+            {companyStats.map((co) => {
+              const pctCo = co.total ? (co.done / co.total) * 100 : 0;
+              const complete = co.total > 0 && co.done === co.total;
+              return (
+                <Pressable
+                  key={co.name}
+                  onPress={() =>
+                    router.push({
+                      pathname: '/(tabs)/practice',
+                      // t: a fresh value each tap, so Practice re-applies the
+                      // filter even when the company is the same as last time.
+                      params: { company: co.name, t: String(Date.now()) },
+                    })
+                  }
+                  accessibilityRole="button"
+                  accessibilityLabel={`${co.name}: ${co.done} of ${co.total} solved`}
+                  style={({ pressed }) => [s.coTile, complete && s.coTileDone, pressed && { transform: [{ scale: 0.97 }] }]}
+                >
+                  <View style={s.coTop}>
+                    <Text style={s.coName} numberOfLines={1}>{co.name}</Text>
+                    <Feather name="arrow-up-right" size={14} color={c.textFaint} />
+                  </View>
+                  <Text style={s.coCount}>
+                    <Text style={s.coDone}>{co.done}</Text>/{co.total}
+                  </Text>
+                  <View style={{ marginTop: spacing.sm }}>
+                    <Bar pct={pctCo} height={4} color={complete ? c.mint : c.accent} />
+                  </View>
+                </Pressable>
+              );
+            })}
           </View>
         </Card>
 
@@ -200,7 +234,20 @@ const makeStyles = (c: Palette) => StyleSheet.create({
   diffCount: { fontFamily: type.mono, fontSize: 11.5, color: c.textMuted, width: 48, textAlign: 'right' },
   revisit: { fontFamily: type.mono, fontSize: 12, color: c.medium, marginTop: spacing.lg },
 
+  coGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: spacing.sm, marginTop: spacing.lg },
+  coTile: {
+    width: '48.5%',
+    backgroundColor: c.surface2,
+    borderRadius: radius.lg,
+    padding: spacing.md + 2,
+  },
+  coTileDone: { backgroundColor: c.mintSoft },
+  coTop: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  coName: { flex: 1, fontFamily: type.heading, fontSize: 14.5, color: c.text },
+  coCount: { fontFamily: type.mono, fontSize: 11, color: c.textFaint, marginTop: spacing.sm },
+  coDone: { fontFamily: type.display, fontSize: 20, color: c.text },
+
   listRow: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.md, gap: spacing.md },
-  listName: { fontFamily: type.body, fontSize: 13.5, color: c.text, width: 116 },
+  listName: { fontFamily: type.body, fontSize: 13.5, color: c.text, width: 138 },
   listCount: { fontFamily: type.mono, fontSize: 11, color: c.textFaint, width: 44, textAlign: 'right' },
 });
