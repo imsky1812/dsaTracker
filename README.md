@@ -49,10 +49,31 @@ new version installs straight over the old one — no uninstall needed.
 > fresh APK, see [Building an APK](#building-an-apk).
 
 **On iPhone or a Mac?** Use the [web app](https://dsamastery.expo.app/) — it
-needs no Apple account. A standalone iOS build would require the Apple Developer
+needs no Apple account. On iPhone, open it in Safari and tap Share → **Add to
+Home Screen** for a full-screen icon of its own. A standalone iOS build would require the Apple Developer
 Program ($99/yr): a device build needs a distribution certificate from App Store
 Connect, which free Apple IDs cannot issue, and free "personal team" signing only
 works locally through Xcode and expires after 7 days.
+
+---
+
+## ✨ What's new in 1.1
+
+- **Dark mode.** The app follows your phone's light/dark setting — warm
+  charcoal at night, warm sand by day, with a matching splash screen.
+- **Tile filters.** Practice's five scrolling chip strips are gone. A status
+  switch (All · To do · Solved · Revisit, with live counts) sits above three
+  buttons — **Company**, **Topic**, **Level** — that each open a sheet of big
+  tiles showing every option at once, with its problem count, solved count and
+  a progress bar. Companies are sorted A–Z.
+- **Company tiles on Progress.** Each company is a tile with your solved count;
+  tap one to open Practice filtered to it.
+- **Fixes.** The language primers render their formatting instead of raw `**`
+  and backticks; Today and Learn always agree on your current phase; the topic
+  list counts code samples in *your* language; the note editor stays above the
+  keyboard; and the long problem list scrolls and responds faster.
+
+Full notes: [v1.1.0 release](https://github.com/imsky1812/dsaTracker/releases/tag/v1.1.0).
 
 ---
 
@@ -71,17 +92,20 @@ a problem ladder tiered *warmup → core → interview → hard*. Each of five l
 C++, Java, Python, C and Go — gets a ten-section primer and its own snippets
 per topic, switchable from Profile.
 
-**Practise deliberately.** All 183 problems in one list, filterable by status,
-difficulty, platform, company, and topic. Every link was verified — no
-fabricated URLs. Tap a problem to open it on LeetCode or GFG; tap its circle to
+**Practise deliberately.** All 183 problems in one list. Switch between *all*,
+*to do*, *solved* and *revisit*, then narrow by company, topic or level from a
+sheet of tiles — each tile shows how many problems it holds and how many you've
+solved. Every link was verified — no fabricated URLs. Tap a problem to open it
+on LeetCode; tap its circle to
 cycle *unsolved → solved → revisit*; keep a note per problem for the approach,
 the gotcha, the complexity. Stuck on one? **Watch** opens a video explanation
 for that exact problem (see [Explanation videos](#explanation-videos)).
 
 **See where you actually are.** A GitHub-style contribution heatmap, streaks
 that respect your local timezone, and breakdowns by difficulty, by topic, and by
-company. The company view is the placement-prep lens: tap *Amazon* and land in a
-practice list filtered to Amazon's tagged set.
+company. The company view is the placement-prep lens: a tile per company with
+your solved count — tap *Amazon* and land in a practice list filtered to
+Amazon's tagged set.
 
 **Keep it wherever you are.** Progress syncs to your account across devices, and
 the entire app keeps working with no signal — see [Offline-first](#offline-first).
@@ -96,7 +120,8 @@ the entire app keeps working with no signal — see [Offline-first](#offline-fir
 | **Languages** | C++, Java, Python, C, Go — a 10-section primer each, snippets per topic |
 | **Companies** | Amazon, Google, Microsoft, Meta, Adobe, Uber, LinkedIn, Flipkart · TCS, Infosys, Wipro, Accenture, Cognizant |
 | **Tracking** | contribution heatmap · streaks · per-problem notes · revisit flags · topic completion |
-| **Filtering** | status · difficulty · platform · company · topic |
+| **Filtering** | status switch with live counts · company, topic and level as tile pickers |
+| **Themes** | light and dark, following the phone's setting |
 | **Accounts** | email/password sign-up, sign-in, password reset — or use it with no account at all |
 | **Sync** | progress mirrors to Supabase and reconciles across devices |
 | **Reminders** | one local daily notification at a time you choose |
@@ -333,27 +358,32 @@ npm run icons   # icon / adaptive-icon / splash / favicon
 
 ## Design
 
-Warm, soft and light — one palette, tuned once.
+Warm and soft, in light and in dark. The app follows the phone's colour scheme.
 
-- The ground is a warm sand (`#F6F3ED`), not white. Paper you'd want to work on
-  for hours, rather than a spreadsheet.
-- A single terracotta accent (`#D2593C`) carries every primary action; a muted
-  sage marks completion and a warm amber marks in-progress. Nothing saturated.
-- Text is a deep warm brown (`#2A2420`) rather than black, so it belongs to the
-  ground instead of punching through it.
-- Generous radii. Cards are soft; anything interactive is a pill or a circle.
-  The tab bar floats as a pill with a filled circle behind the active icon.
+- **Light** is a warm sand ground (`#F6F3ED`) with near-white cards — paper you'd
+  want to work on for hours, not a spreadsheet. Text is a deep warm brown
+  (`#2A2420`) rather than black.
+- **Dark** is warm charcoal (`#141210`) — brown-black, not blue-black — so the
+  same accent belongs to both. Cards carry a faint hairline edge, because the
+  shadows that give light mode its depth disappear on a dark ground.
+- A single terracotta accent carries every primary action: `#D2593C` in light,
+  lifted to `#E57A57` in dark with near-black text on it, which keeps contrast
+  above 5:1 where white would fall under 3.5:1. A muted sage marks completion
+  and a warm amber marks in-progress. Nothing saturated.
+- Generous radii. Cards are soft; anything interactive is a pill, a circle or a
+  tile. The tab bar floats as a pill with a filled circle behind the active icon.
+- Choosing from many options (13 companies, 19 topics) happens in a bottom sheet
+  of tiles, never a strip of chips that scrolls off-screen.
 - Type is Archivo (display/heading/body) + JetBrains Mono (code/labels).
 - Icons are Feather — a single-weight line set that ships with Expo.
 - The contribution heatmap is the signature element, and the app icon is that
   same grid.
 
-There is one palette by decision, not omission: a single set means every
-surface, shadow and contrast pair is actually checked, rather than two
-half-tuned ones. Colour is still read through `useColors()` /
-`useThemedStyles()` (`src/theme/theme.ts`) and styles are built inside
-components rather than at module scope, so adding a second palette later is a
-token change rather than a rewrite. Never hardcode a hex in a screen.
+Both palettes live in `src/theme/tokens.ts` with identical keys. Screens read
+colour only through `useColors()` / `useThemedStyles()` (`src/theme/theme.ts`)
+and build their styles inside the component, never at module scope, so
+switching the phone's theme restyles every screen live. Never hardcode a hex in
+a screen — add a token to both palettes.
 
 ---
 
@@ -367,15 +397,16 @@ app/                        # Expo Router
     _layout.tsx             # floating pill tab bar
     index.tsx               # Today — phase, focus, streak, progress
     learn.tsx               # roadmap · topics · language primer
-    practice.tsx            # full problem list + filters + notes
-    progress.tsx            # heatmap + difficulty/company/topic breakdowns
+    practice.tsx            # problem list, status switch, tile filters, notes
+    progress.tsx            # heatmap, difficulty/topic bars, company tiles
     profile.tsx             # account, sync, language, reminder, reset
   topic/[slug].tsx          # topic detail (outside the tab group — it's a
                             #   pushed detail screen, not a tab)
 src/
   theme/tokens.ts           # light + dark palettes, spacing, radius, type
-  theme/theme.ts            # useColors / useThemedStyles / useIsLight
+  theme/theme.ts            # useColors / useThemedStyles / useIsDark
   lib/content.ts            # content types, loader, problemId(), allProblems()
+  lib/journey.ts            # roadmap progress — the one source of "current phase"
   lib/supabase.ts           # client — inert until env keys exist
   lib/auth.ts               # auth actions with humanized errors
   lib/sync.ts               # push/pull primitives (never throw)
@@ -385,7 +416,7 @@ src/
   lib/notifications.ts      # daily reminder scheduling
   store/progress.ts         # Zustand + AsyncStorage — the store screens use
   store/session.ts          # session + local-only mode
-  components/               # ui, auth-ui, Heatmap
+  components/               # ui, auth-ui, Heatmap, TilePicker (bottom-sheet tiles)
   data/                     # authored source JSON
 assets/data/plan.json       # bundled content the app imports
 scripts/                    # content pipeline, verifiers, tests, icon generator
@@ -414,6 +445,7 @@ polish, and a shipping Android build.
 | M5 Progress | per-company breakdown → filtered practice |
 | M6 Polish | reminders, local-timezone streaks, icon/splash, warm light theme |
 | M7 Ship | Android APK via EAS, web app on EAS Hosting |
+| 1.1 UI refresh | dark mode, tile filters, company tiles, six UI fixes, APK on GitHub Releases |
 
 ### Known limitations
 
@@ -428,6 +460,11 @@ polish, and a shipping Android build.
 - **Explanation videos cover 42 of 183 problems.** The rest fall back to a
   YouTube search, which always works — see [Explanation videos](#explanation-videos)
   for why the gap is deliberate rather than unfinished.
+- **A problem taught under two topics is tracked twice.** 13 problems appear in
+  more than one topic (183 entries, 170 distinct problems). Progress is keyed by
+  `topic::problem`, so solving one copy does not tick the other, and the 183 total
+  counts both. Merging them would mean re-keying stored progress, so it is left
+  as is for now.
 - **Company tags are editorial, not sourced.** They follow tier rules (warmups
   carry no big-tech tags; Amazon only on interview/hard) enforced by the build,
   which keeps them honest — but they are judgment, not interview data.
